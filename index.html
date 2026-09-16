@@ -373,9 +373,8 @@
             });
         };
 
-        // পিন পাথ গ্রুপভিত্তিক করা হয়েছে: pins/{currentGroup}_{currentSubject}
-        function getPinPath() {
-            return `evaluation_system/pins/${currentGroup}_${currentSubject}`;
+       function getPinPath() {
+            return `evaluation_system/pins/${currentSubject}`;
         }
 
         window.onSubjectSelected = async function () {
