@@ -1,19 +1,17 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CPSCL - Teacher Marks Entry</title>
-    <!-- Fonts & FontAwesome -->
+    <title>CPSCL - Marks Entry</title>
+    <!-- Fonts & Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Tiro+Bangla&display=swap" rel="stylesheet">
-    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     
     <style>
         :root {
             --primary: #1e40af;
-            --primary-hover: #1e3a8a;
             --bg-body: #f8fafc;
         }
 
@@ -25,28 +23,27 @@
 
         body {
             background-color: var(--bg-body);
-            padding-bottom: 90px;
+            padding-bottom: 95px;
         }
 
-        /* হেডার ও লোগো ডিজাইন */
         .app-header {
             background: linear-gradient(135deg, #0f172a, #1e40af);
             color: white;
-            padding: 18px 14px 14px 14px;
+            padding: 16px 14px 12px 14px;
             border-radius: 0 0 20px 20px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             text-align: center;
         }
 
         .school-logo {
-            width: 65px;
-            height: 65px;
+            width: 60px;
+            height: 60px;
             object-fit: contain;
             background: #ffffff;
             border-radius: 50%;
             padding: 4px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .exam-badge {
@@ -54,28 +51,26 @@
             background: rgba(255, 255, 255, 0.18);
             border: 1px solid rgba(255, 255, 255, 0.3);
             border-radius: 20px;
-            padding: 3px 12px;
+            padding: 2px 12px;
             font-size: 0.78rem;
             font-weight: 700;
-            letter-spacing: 0.3px;
-            margin-top: 4px;
+            margin-top: 3px;
         }
 
         .card-custom {
             background: #ffffff;
             border: 1px solid #e2e8f0;
             border-radius: 14px;
-            padding: 14px 16px;
-            margin-bottom: 12px;
+            padding: 12px 14px;
+            margin-bottom: 10px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.02);
         }
 
-        /* স্টুডেন্ট কার্ড ও নম্বর ইনপুট */
         .student-row-card {
             background: #ffffff;
             border: 1.5px solid #e2e8f0;
             border-radius: 12px;
-            padding: 10px 14px;
+            padding: 9px 12px;
             margin-bottom: 8px;
             display: flex;
             align-items: center;
@@ -87,22 +82,23 @@
         .student-row-card:focus-within {
             border-color: var(--primary);
             background-color: #eff6ff;
-            box-shadow: 0 2px 8px rgba(30, 64, 175, 0.12);
         }
+
+        .student-row-card.hidden { display: none !important; }
 
         .sl-badge {
             background-color: #eff6ff;
             color: var(--primary);
             font-weight: 800;
-            padding: 4px 8px;
+            padding: 3px 7px;
             border-radius: 8px;
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             min-width: 36px;
             text-align: center;
         }
 
         .student-title {
-            font-size: 0.92rem;
+            font-size: 0.90rem;
             font-weight: 700;
             color: #0f172a;
             margin-bottom: 2px;
@@ -112,13 +108,12 @@
         }
 
         .student-sub {
-            font-size: 0.75rem;
+            font-size: 0.74rem;
             color: #64748b;
         }
 
-        /* মোবাইল নম্বর কিবোর্ড ইনপুট */
         .mark-input {
-            width: 72px;
+            width: 70px;
             height: 42px;
             border-radius: 10px;
             border: 1.5px solid #cbd5e1;
@@ -134,7 +129,12 @@
         .mark-input:focus {
             border-color: #2563eb;
             box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
-            background-color: #fff;
+        }
+
+        .mark-input:disabled {
+            background: #f1f5f9;
+            color: #94a3b8;
+            border-color: #e2e8f0;
         }
 
         .pin-box {
@@ -147,7 +147,6 @@
             border: 2px solid var(--primary);
         }
 
-        /* ফিক্সড বটম সেভ বার */
         .fixed-bottom-bar {
             position: fixed;
             bottom: 0;
@@ -167,40 +166,80 @@
             border-radius: 25px;
             padding: 11px;
             font-weight: 700;
-            font-size: 0.98rem;
+            font-size: 0.95rem;
             width: 100%;
             max-width: 480px;
             box-shadow: 0 3px 10px rgba(22, 163, 74, 0.3);
-            transition: 0.15s;
         }
-        .save-btn:active {
-            transform: scale(0.98);
+
+        .save-btn:disabled {
+            background-color: #94a3b8;
+            box-shadow: none;
+            cursor: not-allowed;
         }
+
+        .search-wrap {
+            position: relative;
+            margin-bottom: 8px;
+        }
+        .search-wrap i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            font-size: 0.85rem;
+        }
+        .search-inp {
+            width: 100%;
+            padding: 8px 12px 8px 34px;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            outline: none;
+        }
+        .search-inp:focus { border-color: var(--primary); }
 
         .rule-note {
             background: #fffbeb;
-            border: 1px solid #fef3c7;
             border-left: 4px solid #f59e0b;
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-size: 0.76rem;
+            padding: 7px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
             color: #92400e;
+            margin-bottom: 8px;
+        }
+
+        .locked-alert {
+            background: #fee2e2;
+            border: 1px solid #fca5a5;
+            color: #991b1b;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            text-align: center;
             margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
 
-    <!-- হেডার: লোগো ও পরীক্ষার বিবরণ -->
     <div class="app-header mb-3">
         <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg-795xmOcuKYH8wjija8JrA-qVjfOp_4KieeZ1pOQJaqX2uXsqGLMo09AXsGGsfGjH9LpK5fPlUNGbebFguiAzPC_YvbRXcHePj7cORQd6GMxDUg-LCeXtmNkccGI2K4Hv73PJqJkGX0Ju9N4knQuqKOAImqB6qy_WWFXpKeIaQhRgk7YbLqBLpCmL0cio/s1600/%E0%A6%95%E0%A7%8D%E0%A6%AF%E0%A6%AA%E0%A6%BE%E0%A6%A8%E0%A7%8D%E0%A6%9F%E0%A6%A8%E0%A6%AE%E0%A7%87%E0%A6%A8%E0%A7%8D%E0%A6%9F_%E0%A6%AA%E0%A6%BE%E0%A6%AC%E0%A6%B2%E0%A6%BF%E0%A6%95_%E0%A6%B8%E0%A7%8D%E0%A6%9F%E0%A7%81%E0%A6%B2_%E0%A6%93_%E0%A6%95%E0%A6%B2%E0%A7%87%E0%A6%9C_%E0%A6%B2%E0%A6%BE%E0%A6%B2%E0%A6%AE%E0%A6%A8%E0%A6%BF%E0%A6%B0%E0%A6%B9%E0%A6%BE%E0%A6%9F%E0%A7%87%E0%A6%B0_%E0%A6%B2%E0%A7%8B%E0%A6%97%E0%A7%8B.png" alt="CPSCL Logo" class="school-logo">
         <h6 class="mb-0 fw-bold" style="font-size: 0.95rem;">Cantonment Public School & College Lalmonirhat</h6>
-        <div class="exam-badge" id="liveExamName">Exam: Fortnightly Test-02 (2026)</div>
+        <div class="exam-badge" id="liveExamName">Loading Active Exam...</div>
     </div>
 
     <div class="container" style="max-width: 480px;">
 
-        <!-- ১. শ্রেণি ও গ্রুপ নির্বাচন কার্ড -->
+        <!-- লক অ্যালার্ট (যদি অ্যাডমিন বন্ধ করে) -->
+        <div id="examLockedAlert" class="locked-alert" style="display:none;">
+            <i class="fa-solid fa-lock"></i> Entry Closed by Admin
+        </div>
+
+        <!-- গ্রুপ ও সাবজেক্ট সিলেকশন -->
         <div class="card-custom">
             <div class="row g-2">
                 <div class="col-6">
@@ -223,13 +262,12 @@
             </div>
         </div>
 
-        <!-- ২. পিন সিকিউরিটি কার্ড -->
+        <!-- পিন কার্ড -->
         <div id="pinCard" class="card-custom text-center p-4" style="display: none;">
-            
             <div id="setPinView" style="display: none;">
                 <div class="mb-2"><i class="fa-solid fa-key text-warning" style="font-size: 2.2rem;"></i></div>
                 <h6 class="fw-bold text-dark mb-1">Set 4-Digit Secret PIN</h6>
-                <p class="small text-muted mb-3">এই বিষয়ের জন্য কোনো পিন সেট করা নেই। ৪ সংখ্যার পিন দিন:</p>
+                <p class="small text-muted mb-3">No PIN set for this subject. Enter 4-digit PIN:</p>
                 <input type="password" id="newPin" class="form-control pin-box mx-auto mb-3" maxlength="4" placeholder="••••" inputmode="numeric">
                 <button type="button" class="btn btn-primary w-100 rounded-pill fw-bold" onclick="saveNewPin()">Save PIN & Open</button>
             </div>
@@ -237,23 +275,26 @@
             <div id="enterPinView" style="display: none;">
                 <div class="mb-2"><i class="fa-solid fa-lock text-primary" style="font-size: 2.2rem;"></i></div>
                 <h6 class="fw-bold text-dark mb-1">Subject PIN Protected</h6>
-                <p class="small text-muted mb-3">এই বিষয়ের ৪ ডিজিটের গোপন পিনটি দিন:</p>
+                <p class="small text-muted mb-3">Enter the 4-digit PIN for this subject:</p>
                 <input type="password" id="inputPin" class="form-control pin-box mx-auto mb-2" maxlength="4" placeholder="••••" inputmode="numeric">
-                <div id="pinError" class="text-danger small mb-2 fw-bold" style="display: none;">ভুল পিন! সঠিক পিন দিন।</div>
+                <div id="pinError" class="text-danger small mb-2 fw-bold" style="display: none;">Incorrect PIN! Try again.</div>
                 <button type="button" class="btn btn-primary w-100 rounded-pill fw-bold" onclick="verifyPin()">Unlock Entry</button>
             </div>
-
         </div>
 
-        <!-- ৩. স্টুডেন্টদের মার্কস এন্ট্রি সেকশন -->
+        <!-- নম্বর এন্ট্রি সেকশন -->
         <div id="entrySection" style="display: none;">
             
-            <!-- নিয়মাবলি নোট -->
-            <div class="rule-note d-flex align-items-center gap-2">
-                <i class="fa-solid fa-circle-info fa-lg"></i>
-                <div>
-                    <strong>নির্দেশনা:</strong> পরীক্ষায় অনুপস্থিত থাকলে বাধ্যতামূলক <b>০ (Zero)</b> লিখুন। পূর্ণমান: <b id="maxMarkDisplay">15</b>।
-                </div>
+            <div class="rule-note d-flex align-items-center justify-content-between">
+                <div><i class="fa-solid fa-circle-info"></i> Absent = <strong>0</strong> | Full Mark: <strong id="maxMarkDisplay">15</strong></div>
+                <button type="button" class="btn btn-sm btn-outline-danger py-0 px-2 fw-bold" onclick="clearAllMarks()" id="clearAllBtn" style="font-size:0.75rem;">
+                    <i class="fa-solid fa-trash"></i> Clear All
+                </button>
+            </div>
+
+            <div class="search-wrap">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="studentSearchInp" class="search-inp" placeholder="Search ID, Name or Roll..." oninput="filterStudentsOnTheFly()">
             </div>
 
             <div class="d-flex justify-content-between align-items-center mb-2 px-1">
@@ -268,7 +309,7 @@
 
                 <div class="fixed-bottom-bar text-center">
                     <button type="submit" class="save-btn" id="saveBtnEl">
-                        <i class="fa-solid fa-cloud-arrow-up"></i> Save Marks to Firebase
+                        <i class="fa-solid fa-cloud-arrow-up"></i> Save Marks
                     </button>
                 </div>
             </form>
@@ -326,29 +367,52 @@
 
         let currentSubject = "";
         let currentGroup = "";
-        const EXAM_ID = "exam_fn02_2026";
+        let activeExamId = "exam_fn02_2026";
+        let isExamLocked = false;
         let maxMarkAllowed = 15;
         let storedPIN = null;
+        let activeExamSubjects = null; // সক্রিয় বিষয়ের তালিকা
 
         signInAnonymously(auth).catch(() => {});
 
-        // পরীক্ষা সেটিংস লাইভ নিয়ে আসা
-        async function fetchExamInfo() {
+        // সক্রিয় পরীক্ষার তথ্য লাইভ লোড করা
+        async function fetchActiveExam() {
             try {
-                const snap = await get(ref(db, `evaluation_system/exams/${EXAM_ID}`));
-                if (snap.exists()) {
-                    const data = snap.val();
-                    if (data.title) {
-                        document.getElementById('liveExamName').innerText = `Exam: ${data.title}`;
+                // ১. কোন পরীক্ষা সক্রিয় তা জানা
+                const actSnap = await get(ref(db, 'evaluation_system/active_exam_id'));
+                if (actSnap.exists() && actSnap.val()) {
+                    activeExamId = actSnap.val();
+                }
+
+                // ২. পরীক্ষার ডিটেইল আনা
+                const exSnap = await get(ref(db, `evaluation_system/exams/${activeExamId}`));
+                if (exSnap.exists()) {
+                    const data = exSnap.val();
+                    document.getElementById('liveExamName').innerText = `${data.title || 'Exam'} (${data.date || ''})`;
+                    maxMarkAllowed = parseFloat(data.max) || 15;
+                    document.getElementById('maxMarkDisplay').innerText = maxMarkAllowed;
+                    
+                    isExamLocked = data.isLocked === true;
+                    if (isExamLocked) {
+                        document.getElementById('examLockedAlert').style.display = 'block';
+                        const saveBtn = document.getElementById('saveBtnEl');
+                        if (saveBtn) {
+                            saveBtn.disabled = true;
+                            saveBtn.innerText = 'Entry Closed by Admin';
+                        }
+                    } else {
+                        document.getElementById('examLockedAlert').style.display = 'none';
                     }
-                    if (data.max) {
-                        maxMarkAllowed = parseFloat(data.max) || 15;
-                        document.getElementById('maxMarkDisplay').innerText = maxMarkAllowed;
+
+                    if (data.activeSubjects && Array.isArray(data.activeSubjects)) {
+                        activeExamSubjects = data.activeSubjects;
                     }
                 }
-            } catch(e) {}
+            } catch (e) {
+                console.error("Exam load error:", e);
+            }
         }
-        fetchExamInfo();
+        fetchActiveExam();
 
         window.onGroupChanged = function () {
             currentGroup = document.getElementById('groupSelect').value;
@@ -364,7 +428,13 @@
             if (currentGroup === 'Humanities') groupCategory = "Humanities";
             else if (currentGroup === 'B.Studies') groupCategory = "BStudies";
 
-            const subs = SUBJECTS_LIST[groupCategory] || [];
+            let subs = SUBJECTS_LIST[groupCategory] || [];
+            
+            // যদি অ্যাডমিন কোনো বিষয় বাদ দিয়ে থাকে, তা ড্রপডাউনে আসবে না
+            if (activeExamSubjects && activeExamSubjects.length > 0) {
+                subs = subs.filter(s => activeExamSubjects.includes(s.key));
+            }
+
             subs.forEach(s => {
                 const opt = document.createElement('option');
                 opt.value = s.key;
@@ -373,7 +443,8 @@
             });
         };
 
-       function getPinPath() {
+        // সহজ বিষয়ভিত্তিক পিন পাথ
+        function getPinPath() {
             return `evaluation_system/pins/${currentSubject}`;
         }
 
@@ -417,7 +488,7 @@
         window.saveNewPin = function () {
             const pin = document.getElementById('newPin').value.trim();
             if (pin.length !== 4 || isNaN(pin)) {
-                alert("অনুগ্রহ করে ৪ ডিজিটের সঠিক পিন দিন!");
+                alert("Please enter a 4-digit numeric PIN!");
                 return;
             }
 
@@ -445,9 +516,9 @@
         };
 
         async function renderStudentsLive() {
-            document.getElementById('statusBadge').innerText = `✓ ${currentSubject} (${currentGroup})`;
+            document.getElementById('statusBadge').innerText = `${currentSubject} • ${currentGroup}`;
             const container = document.getElementById('studentsContainer');
-            container.innerHTML = '<div class="text-center p-4 text-primary"><i class="fa-solid fa-spinner fa-spin fa-2x"></i><p class="mt-2 fw-bold">শিক্ষার্থীদের তালিকা লোড হচ্ছে...</p></div>';
+            container.innerHTML = '<div class="text-center p-4 text-primary"><i class="fa-solid fa-spinner fa-spin fa-2x"></i><p class="mt-2 fw-bold">Loading students...</p></div>';
 
             try {
                 const stdSnap = await get(ref(db, 'evaluation_system/students'));
@@ -456,6 +527,7 @@
                     students = Object.values(stdSnap.val());
                 }
 
+                // গ্রুপ অনুযায়ী শিক্ষার্থী ফিল্টার
                 let filtered = students.filter(s => {
                     if (currentGroup === 'Humanities') return s.group === 'Humanities';
                     if (currentGroup === 'B.Studies') return s.group === 'B.Studies';
@@ -470,14 +542,14 @@
 
                 let existingMarks = {};
                 try {
-                    const mSnap = await get(ref(db, `evaluation_system/marks/${EXAM_ID}`));
+                    const mSnap = await get(ref(db, `evaluation_system/marks/${activeExamId}`));
                     if (mSnap.exists()) existingMarks = mSnap.val() || {};
                 } catch(e) {}
 
                 container.innerHTML = '';
 
                 if (filtered.length === 0) {
-                    container.innerHTML = `<div class="text-center p-4 text-danger fw-bold">No students found for ${currentGroup}!<br><small class="text-muted">Admin প্যানেল থেকে এই গ্রুপের এক্সেল ফাইল আপলোড করুন।</small></div>`;
+                    container.innerHTML = `<div class="text-center p-4 text-danger fw-bold">No students found for ${currentGroup}!<br><small class="text-muted">Upload student list from Admin Panel.</small></div>`;
                     return;
                 }
 
@@ -486,6 +558,7 @@
 
                     const row = document.createElement('div');
                     row.className = 'student-row-card';
+                    row.setAttribute('data-search', `${s.id} ${s.name.toLowerCase()} ${s.roll}`);
                     row.innerHTML = `
                         <div class="d-flex align-items-center gap-2" style="min-width: 0; flex: 1;">
                             <span class="sl-badge">#${s.sl || s.overallRank}</span>
@@ -502,6 +575,7 @@
                                value="${prevVal}" 
                                maxlength="4" 
                                placeholder="-"
+                               ${isExamLocked ? 'disabled' : ''}
                                onfocus="this.select()"
                                autocomplete="off">
                     `;
@@ -515,21 +589,42 @@
             }
         }
 
-        // কঠোর নম্বর ভ্যালিডেশন এবং শুধু নম্বর কিবোর্ড সাপোর্ট
+        // লাইভ সার্চ ফিল্টার
+        window.filterStudentsOnTheFly = function () {
+            const query = document.getElementById('studentSearchInp').value.toLowerCase().trim();
+            const cards = document.querySelectorAll('.student-row-card');
+            cards.forEach(card => {
+                const text = card.getAttribute('data-search') || '';
+                if (!query || text.includes(query)) {
+                    card.classList.remove('hidden');
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+        };
+
+        // ক্লিয়ার অল বাটন
+        window.clearAllMarks = function () {
+            if (isExamLocked) {
+                alert("Cannot clear! Exam is locked by Admin.");
+                return;
+            }
+            if (confirm(`Are you sure you want to CLEAR all entered marks for ${currentSubject} (${currentGroup})?`)) {
+                const inputs = document.querySelectorAll('.mark-input');
+                inputs.forEach(inp => inp.value = '');
+            }
+        };
+
         function bindInputValidation() {
             const inputs = Array.from(document.querySelectorAll('.mark-input'));
             inputs.forEach((inp, idx) => {
-
-                // শুধুমাত্র সংখ্যা ও ডট অনুমোদন
                 inp.addEventListener('input', function () {
                     this.value = this.value.replace(/[^0-9.]/g, '');
-                    // একাধিক ডট প্রতিরোধ
                     if ((this.value.match(/\./g) || []).length > 1) {
                         this.value = this.value.slice(0, -1);
                     }
                 });
 
-                // এন্টার চাপলে পরবর্তী স্টুডেন্টের ইনপুটে চলে যাবে
                 inp.addEventListener('keydown', (e) => {
                     if (e.key === 'Enter') {
                         e.preventDefault();
@@ -537,27 +632,31 @@
                     }
                 });
 
-                // ফোকাস সরলে পূর্ণমান চেক করা
                 inp.addEventListener('blur', function () {
                     const val = this.value.trim();
                     if (val === '') return;
                     const num = parseFloat(val);
                     if (isNaN(num) || num > maxMarkAllowed || num < 0) {
-                        alert(`সতর্কতা: পূর্ণমান ${maxMarkAllowed}। ০ থেকে ${maxMarkAllowed}-এর মধ্যে নম্বর লিখুন।`);
+                        alert(`Full mark is ${maxMarkAllowed}. Enter between 0 to ${maxMarkAllowed}.`);
                         this.value = '';
                     }
                 });
             });
         }
 
-        // এক ক্লিকে অ্যাটমিক ব্যাচ আপডেট (Atomic Multi-Path Update)
+        // ব্যাচ সেভ
         window.saveAllMarks = async function () {
+            if (isExamLocked) {
+                alert("Exam is locked by Admin. Marks cannot be modified.");
+                return;
+            }
+
             const inputs = document.querySelectorAll('.mark-input');
             if (inputs.length === 0) return;
 
             const saveBtn = document.getElementById('saveBtnEl');
             saveBtn.disabled = true;
-            saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> সেভ হচ্ছে...';
+            saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
 
             const updates = {};
             let validCount = 0;
@@ -565,11 +664,9 @@
             for (let inp of inputs) {
                 const stdId = inp.getAttribute('data-id');
                 const val = inp.value.trim();
-
-                const dbPath = `evaluation_system/marks/${EXAM_ID}/${stdId}/${currentSubject}`;
+                const dbPath = `evaluation_system/marks/${activeExamId}/${stdId}/${currentSubject}`;
 
                 if (val === '') {
-                    // খালি রাখলে ডেটাবেজ থেকে মুছে যাবে
                     updates[dbPath] = null;
                 } else {
                     const num = parseFloat(val);
@@ -581,14 +678,13 @@
             }
 
             try {
-                // ১টি নেটওয়ার্ক কলেই ১০০% ডেটা নিরাপদভাবে সেভ হবে
                 await update(ref(db), updates);
-                alert(`🎉 সফলভাবে সংরক্ষিত!\n${currentSubject} (${currentGroup}) এর মোট ${validCount} জন শিক্ষার্থীর নম্বর Firebase-এ সেভ হয়েছে।`);
+                alert(`🎉 Saved Successfully!\n${validCount} students updated for ${currentSubject} (${currentGroup}).`);
             } catch (err) {
-                alert("নম্বর সেভ করতে সমস্যা হয়েছে: " + err.message);
+                alert("Failed to save: " + err.message);
             } finally {
                 saveBtn.disabled = false;
-                saveBtn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> Save Marks to Firebase';
+                saveBtn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> Save Marks';
             }
         };
 
