@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CPSCL - Detailed Evaluation Tracker</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Tiro+Bangla&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #1e40af;
+            --success: #16a34a;
+            --warning: #d97706;
+            --danger: #dc2626;
+            --bg-body: #f8fafc;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif !important;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: #0f172a;
+            padding-bottom: 70px;
+        }
+
+        .app-header {
+            background: linear-gradient(135deg, #0f172a, #1e40af);
+            color: white;
+            padding: 22px 14px 18px 14px;
+            border-radius: 0 0 28px 28px;
+            text-align: center;
+        }
+
+        .school-logo {
+            width: 65px;
+            height: 65px;
+            object-fit: contain;
+            background: #ffffff;
+            border-radius: 50%;
+            padding: 4px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.25);
+            margin-bottom: 8px;
+        }
+
+        .school-title {
+            font-size: 1.05rem;
+            font-weight: 800;
+            margin: 0;
+            line-height: 1.3;
+        }
+
+        .pill-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            border-radius: 50px;
+            padding: 3px 14px;
+            font-size: 0.76rem;
+            font-weight: 700;
+            margin-top: 6px;
+        }
+
+        .rounded-box {
+            background: #ffffff;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 24px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+        }
+
+        .progress-pill {
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 50px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            text-align: center;
+        }
+
+        .stat-card {
+            border-radius: 18px;
+            padding: 8px 4px;
+            border: 1.5px solid transparent;
+        }
+        .stat-card.success { background: #f0fdf4; border-color: #bbf7d0; color: var(--success); }
+        .stat-card.warning { background: #fffbeb; border-color: #fde68a; color: var(--warning); }
+        .stat-card.danger { background: #fef2f2; border-color: #fecaca; color: var(--danger); }
+
+        .stat-num { font-size: 1.25rem; font-weight: 800; line-height: 1.1; }
+        .stat-lbl { font-size: 0.68rem; font-weight: 800; text-transform: uppercase; }
+
+        .filter-scroller {
+            display: flex;
+            gap: 6px;
+            overflow-x: auto;
+            padding: 6px 2px;
+            margin: 10px 0 6px 0;
+            scrollbar-width: none;
+        }
+        .filter-scroller::-webkit-scrollbar { display: none; }
+
+        .btn-pill {
+            border-radius: 50px !important;
+            padding: 6px 14px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            white-space: nowrap;
+            border: 1.5px solid #cbd5e1;
+            background: #ffffff;
+            color: #64748b;
+            cursor: pointer;
+            transition: 0.15s ease;
+        }
+        .btn-pill.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* কার্ড ডিজাইন */
+        .subject-card {
+            background: #ffffff;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 20px;
+            padding: 14px 16px;
+            margin-bottom: 10px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+            transition: 0.15s ease;
+        }
+        .subject-card:hover { border-color: var(--primary); }
+
+        /* গ্রুপভিত্তিক মিনি চিপস */
+        .grp-chip-wrap {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 8px;
+        }
+
+        .grp-pill {
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 50px;
+            border: 1px solid transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .grp-pill.done { background: #dcfce7; color: #15803d; border-color: #bbf7d0; }
+        .grp-pill.partial { background: #fef3c7; color: #b45309; border-color: #fde68a; }
+        .grp-pill.pending { background: #fee2e2; color: #b91c1c; border-color: #fecaca; }
+
+        .chip-status {
+            font-size: 0.70rem;
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: 50px;
+            white-space: nowrap;
+        }
+
+        .pin-pill-input {
+            letter-spacing: 8px;
+            font-size: 1.6rem;
+            text-align: center;
+            font-weight: 800;
+            border-radius: 50px;
+            border: 2px solid var(--primary);
+            width: 170px;
+            height: 48px;
+            margin: 12px auto;
+            outline: none;
+        }
+
+        .mark-inp-pill {
+            width: 68px;
+            height: 40px;
+            border-radius: 12px;
+            border: 1.5px solid #cbd5e1;
+            text-align: center;
+            font-weight: 800;
+            font-size: 1.2rem;
+            color: var(--primary);
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ১. অথরাইজড পিন গেটওয়ে -->
+    <div id="viewAuth" class="container" style="max-width: 400px; margin-top: 50px;">
+        <div class="rounded-box text-center p-4">
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg-795xmOcuKYH8wjija8JrA-qVjfOp_4KieeZ1pOQJaqX2uXsqGLMo09AXsGGsfGjH9LpK5fPlUNGbebFguiAzPC_YvbRXcHePj7cORQd6GMxDUg-LCeXtmNkccGI2K4Hv73PJqJkGX0Ju9N4knQuqKOAImqB6qy_WWFXpKeIaQhRgk7YbLqBLpCmL0cio/s1600/%E0%A6%95%E0%A7%8D%E0%A6%AF%E0%A6%AA%E0%A6%BE%E0%A6%A8%E0%A7%8D%E0%A6%9F%E0%A6%A8%E0%A6%AE%E0%A7%87%E0%A6%A8%E0%A7%8D%E0%A6%9F_%E0%A6%AA%E0%A6%BE%E0%A6%AC%E0%A6%B2%E0%A6%BF%E0%A6%95_%E0%A6%B8%E0%A7%8D%E0%A6%9F%E0%A7%81%E0%A6%B2_%E0%A6%93_%E0%A6%95%E0%A6%B2%E0%A7%87%E0%A6%9C_%E0%A6%B2%E0%A6%BE%E0%A6%B2%E0%A6%AE%E0%A6%A8%E0%A6%BF%E0%A6%B0%E0%A6%B9%E0%A6%BE%E0%A6%9F%E0%A7%87%E0%A6%B0_%E0%A6%B2%E0%A7%8B%E0%A6%97%E0%A7%8B.png" alt="CPSCL Logo" class="school-logo">
+            <h5 class="school-title mb-1">Cantonment Public School & College Lalmonirhat</h5>
+            <div class="pill-badge bg-light text-primary border mb-3">Live Progress Monitor</div>
+            
+            <p class="text-muted small mb-2">Enter Master PIN to continue</p>
+            <input type="password" id="inpMasterPin" class="form-control pin-pill-input" maxlength="4" placeholder="••••" inputmode="numeric">
+            <div id="authErr" class="text-danger small fw-bold mb-2" style="display: none;">Invalid PIN!</div>
+            
+            <button class="btn btn-primary rounded-pill w-100 fw-bold py-2 mt-2" onclick="verifyAuthPin()">
+                Unlock Portal <i class="fa-solid fa-arrow-right ms-1"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- ২. মূল ড্যাশবোর্ড -->
+    <div id="viewDashboard" style="display: none;">
+        <div class="app-header">
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg-795xmOcuKYH8wjija8JrA-qVjfOp_4KieeZ1pOQJaqX2uXsqGLMo09AXsGGsfGjH9LpK5fPlUNGbebFguiAzPC_YvbRXcHePj7cORQd6GMxDUg-LCeXtmNkccGI2K4Hv73PJqJkGX0Ju9N4knQuqKOAImqB6qy_WWFXpKeIaQhRgk7YbLqBLpCmL0cio/s1600/%E0%A6%95%E0%A7%8D%E0%A6%AF%E0%A6%AA%E0%A6%BE%E0%A6%A8%E0%A7%8D%E0%A6%9F%E0%A6%A8%E0%A6%AE%E0%A7%87%E0%A6%A8%E0%A7%8D%E0%A6%9F_%E0%A6%AA%E0%A6%BE%E0%A6%AC%E0%A6%B2%E0%A6%BF%E0%A6%95_%E0%A6%B8%E0%A7%8D%E0%A6%9F%E0%A7%81%E0%A6%B2_%E0%A6%93_%E0%A6%95%E0%A6%B2%E0%A7%87%E0%A6%9C_%E0%A6%B2%E0%A6%BE%E0%A6%B2%E0%A6%AE%E0%A6%A8%E0%A6%BF%E0%A6%B0%E0%A6%B9%E0%A6%BE%E0%A6%9F%E0%A7%87%E0%A6%B0_%E0%A6%B2%E0%A7%8B%E0%A6%97%E0%A7%8B.png" alt="CPSCL Logo" class="school-logo">
+            <h5 class="school-title">Cantonment Public School & College Lalmonirhat</h5>
+            <div class="pill-badge" id="lblLiveExam">Fortnightly Test-02 (2026)</div>
+        </div>
+
+        <div class="container" style="max-width: 480px; margin-top: -10px;">
+            <div class="rounded-box">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="small text-muted fw-bold">Overall Progress</span>
+                        <h4 class="mb-0 fw-bold" id="lblOverallPct">0%</h4>
+                    </div>
+                    <button class="btn btn-sm btn-outline-success rounded-pill fw-bold px-3" onclick="copyPendingWhatsAppNotice()">
+                        <i class="fa-brands fa-whatsapp"></i> Copy Notice
+                    </button>
+                </div>
+
+                <div class="progress progress-pill">
+                    <div class="progress-bar bg-primary" id="barOverall" style="width: 0%;"></div>
+                </div>
+
+                <div class="stat-grid">
+                    <div class="stat-card success">
+                        <div class="stat-num" id="cntDone">0</div>
+                        <div class="stat-lbl">Done</div>
+                    </div>
+                    <div class="stat-card warning">
+                        <div class="stat-num" id="cntWait">0</div>
+                        <div class="stat-lbl">Partial</div>
+                    </div>
+                    <div class="stat-card danger">
+                        <div class="stat-num" id="cntDue">0</div>
+                        <div class="stat-lbl">Due</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ফিল্টার -->
+            <div class="filter-scroller">
+                <button class="btn-pill active" onclick="setFilter('All', this)">All</button>
+                <button class="btn-pill" onclick="setFilter('Science', this)">Science</button>
+                <button class="btn-pill" onclick="setFilter('Humanities', this)">Humanities</button>
+                <button class="btn-pill" onclick="setFilter('B.Studies', this)">B.Studies</button>
+                <button class="btn-pill" style="color: var(--danger); border-color: #fca5a5;" onclick="setFilter('Due', this)">Due Only</button>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center px-2 mb-2">
+                <span class="small text-muted fw-bold">Tap a group badge to enter marks</span>
+                <span class="small text-primary fw-bold" style="cursor: pointer;" onclick="fetchLiveData()"><i class="fa-solid fa-arrows-rotate"></i> Sync</span>
+            </div>
+
+            <div id="subjectListContainer"></div>
+        </div>
+    </div>
+
+    <!-- ৩. পিন মডাল -->
+    <div class="modal fade" id="modalSubPin" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 360px;">
+            <div class="modal-content rounded-box p-3 border-0">
+                <div class="text-center">
+                    <h6 class="fw-bold mb-1" id="lblSelectedSubName">Subject Entry</h6>
+                    <p class="small text-muted mb-2" id="lblPinInstruction">Enter 4-digit PIN</p>
+                    
+                    <input type="password" id="inpSubPin" class="form-control pin-pill-input" maxlength="4" placeholder="••••" inputmode="numeric">
+                    <div id="subPinErr" class="text-danger small fw-bold mb-2" style="display: none;">Incorrect PIN!</div>
+
+                    <button class="btn btn-primary rounded-pill w-100 fw-bold py-2 mt-2" id="btnPinAction" onclick="submitSubPinAction()">
+                        Unlock Entry
+                    </button>
+                    <button class="btn btn-light rounded-pill w-100 fw-bold py-2 mt-2" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ৪. মার্ক এন্ট্রি মডাল -->
+    <div class="modal fade" id="modalMarkEntry" tabindex="-1">
+        <div class="modal-dialog modal-fullscreen-sm-down modal-dialog-scrollable">
+            <div class="modal-content" style="border-radius: 28px 28px 0 0; background: #f8fafc;">
+                <div class="modal-header border-0 bg-white" style="border-radius: 28px 28px 0 0; padding: 14px 20px;">
+                    <div>
+                        <h6 class="fw-bold mb-0" id="lblSheetTitle">Marks Sheet</h6>
+                        <span class="small text-muted" id="lblSheetGroupMeta">Full Mark: 15</span>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-3" id="sheetContainer"></div>
+                <div class="modal-footer border-0 bg-white p-3" style="border-radius: 0 0 28px 28px;">
+                    <button class="btn btn-success rounded-pill w-100 fw-bold py-2" id="btnSaveMarks" onclick="saveDirectMarksToFirebase()">
+                        <i class="fa-solid fa-cloud-arrow-up"></i> Save Marks
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK v10 -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, get, set, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyA1PhRiTkICNCd8sA4he3ZxKjHtIzM0d5E",
+            authDomain: "mousumi-computer.firebaseapp.com",
+            databaseURL: "https://mousumi-computer-default-rtdb.firebaseio.com",
+            projectId: "mousumi-computer",
+            storageBucket: "mousumi-computer.firebasestorage.app",
+            messagingSenderId: "104820462623",
+            appId: "1:104820462623:web:e3abae9533cc841463712a"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const auth = getAuth(app);
+        signInAnonymously(auth).catch(() => {});
+
+        const MASTER_PIN = "9988";
+        let activeExamId = "exam_fn02_2026";
+        let activeExamMax = 15;
+
+        let allStudents = [];
+        let liveMarks = {};
+        let allPins = {};
+
+        let currentFilter = 'All';
+        let activeSelectedSub = null;
+        let activeTargetSubGroup = null;
+        let isCreatingNewPin = false;
+
+        const MASTER_SUBJECTS = [
+            { stream: 'Science', key: 'B1', name: 'Bangla 1st' },
+            { stream: 'Science', key: 'B2', name: 'Bangla 2nd' },
+            { stream: 'Science', key: 'E1', name: 'English 1st' },
+            { stream: 'Science', key: 'E2', name: 'English 2nd' },
+            { stream: 'Science', key: 'Math', name: 'General Math' },
+            { stream: 'Science', key: 'HM_AG', name: 'HM/AG' },
+            { stream: 'Science', key: 'Phy', name: 'Physics' },
+            { stream: 'Science', key: 'Che', name: 'Chemistry' },
+            { stream: 'Science', key: 'Bio', name: 'Biology' },
+            { stream: 'Science', key: 'BGS', name: 'BGS' },
+            { stream: 'Science', key: 'Reli', name: 'Religion' },
+            { stream: 'Science', key: 'ICT', name: 'ICT' },
+            
+            { stream: 'Humanities', key: 'B1', name: 'Bangla 1st' },
+            { stream: 'Humanities', key: 'His', name: 'History' },
+            { stream: 'Humanities', key: 'Geo', name: 'Geography' },
+            { stream: 'Humanities', key: 'Civ', name: 'Civics' },
+            { stream: 'Humanities', key: 'Sci', name: 'General Science' },
+            
+            { stream: 'B.Studies', key: 'B1', name: 'Bangla 1st' },
+            { stream: 'B.Studies', key: 'Fin', name: 'Finance' },
+            { stream: 'B.Studies', key: 'Acc', name: 'Accounting' }
+        ];
+
+        window.verifyAuthPin = function () {
+            const val = document.getElementById('inpMasterPin').value.trim();
+            if (val === MASTER_PIN) {
+                document.getElementById('viewAuth').style.display = 'none';
+                document.getElementById('viewDashboard').style.display = 'block';
+                fetchLiveData();
+            } else {
+                document.getElementById('authErr').style.display = 'block';
+                document.getElementById('inpMasterPin').value = '';
+            }
+        };
+
+        document.getElementById('inpMasterPin').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') window.verifyAuthPin();
+        });
+
+        window.fetchLiveData = async function () {
+            try {
+                const actSnap = await get(ref(db, 'evaluation_system/active_exam_id'));
+                if (actSnap.exists()) activeExamId = actSnap.val();
+
+                const exSnap = await get(ref(db, `evaluation_system/exams/${activeExamId}`));
+                if (exSnap.exists()) {
+                    const exData = exSnap.val();
+                    document.getElementById('lblLiveExam').innerText = `${exData.title} (${exData.date || ''})`;
+                    activeExamMax = parseFloat(exData.max) || 15;
+                }
+
+                const stdSnap = await get(ref(db, 'evaluation_system/students'));
+                allStudents = stdSnap.exists() ? Object.values(stdSnap.val()) : [];
+
+                const pinSnap = await get(ref(db, 'evaluation_system/pins'));
+                allPins = pinSnap.exists() ? pinSnap.val() : {};
+
+                const mSnap = await get(ref(db, `evaluation_system/marks/${activeExamId}`));
+                liveMarks = mSnap.exists() ? mSnap.val() : {};
+
+                renderDashboardMetrics();
+            } catch (e) {
+                console.error(e);
+            }
+        };
+
+        function renderDashboardMetrics() {
+            let totalTarget = 0, totalEntered = 0;
+            let cDone = 0, cWait = 0, cDue = 0;
+
+            MASTER_SUBJECTS.forEach(sub => {
+                const targetStudents = allStudents.filter(s => s.group === sub.stream);
+                const subTarget = targetStudents.length;
+
+                // প্রতিটি সাব-গ্রুপ আলাদাভাবে হিসেব
+                let breakdown = {};
+                if (sub.stream === 'Science') {
+                    breakdown['Group-A'] = { target: 0, done: 0 };
+                    breakdown['Group-B'] = { target: 0, done: 0 };
+                    breakdown['Group-C'] = { target: 0, done: 0 };
+                } else {
+                    breakdown[sub.stream] = { target: 0, done: 0 };
+                }
+
+                let subEntered = 0;
+                targetStudents.forEach(s => {
+                    const grpKey = sub.stream === 'Science' ? (s.subGroup || 'Group-A') : sub.stream;
+                    if (!breakdown[grpKey]) breakdown[grpKey] = { target: 0, done: 0 };
+                    
+                    breakdown[grpKey].target++;
+                    if (liveMarks[s.id] && liveMarks[s.id][sub.key] !== undefined && liveMarks[s.id][sub.key] !== '') {
+                        breakdown[grpKey].done++;
+                        subEntered++;
+                    }
+                });
+
+                sub.target = subTarget;
+                sub.entered = subEntered;
+                sub.breakdown = breakdown;
+
+                totalTarget += subTarget;
+                totalEntered += subEntered;
+
+                if (subTarget > 0 && subEntered === subTarget) cDone++;
+                else if (subEntered > 0) cWait++;
+                else cDue++;
+            });
+
+            const overallPct = totalTarget > 0 ? Math.round((totalEntered / totalTarget) * 100) : 0;
+            document.getElementById('lblOverallPct').innerText = `${overallPct}%`;
+            document.getElementById('barOverall').style.width = `${overallPct}%`;
+
+            document.getElementById('cntDone').innerText = cDone;
+            document.getElementById('cntWait').innerText = cWait;
+            document.getElementById('cntDue').innerText = cDue;
+
+            renderSubjectCards();
+        }
+
+        window.setFilter = function (flt, btn) {
+            currentFilter = flt;
+            document.querySelectorAll('.btn-pill').forEach(b => b.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+            renderSubjectCards();
+        };
+
+        function renderSubjectCards() {
+            const container = document.getElementById('subjectListContainer');
+            container.innerHTML = '';
+
+            let list = MASTER_SUBJECTS.filter(s => {
+                if (currentFilter === 'All') return true;
+                if (currentFilter === 'Due') return s.entered < s.target;
+                return s.stream === currentFilter;
+            });
+
+            if (list.length === 0) {
+                container.innerHTML = '<div class="text-center p-4 small text-muted">No records found.</div>';
+                return;
+            }
+
+            list.forEach(sub => {
+                let badgeClass = 'chip-due', badgeText = 'Due';
+                if (sub.target > 0 && sub.entered === sub.target) {
+                    badgeClass = 'chip-done'; badgeText = 'Done';
+                } else if (sub.entered > 0) {
+                    badgeClass = 'chip-partial'; badgeText = 'Partial';
+                }
+
+                // গ্রুপ ব্রেকডাউন এইচটিএমএল চিপস
+                let breakdownHTML = '';
+                Object.keys(sub.breakdown).forEach(gKey => {
+                    const b = sub.breakdown[gKey];
+                    let stCls = 'pending', stIcon = '✕';
+                    if (b.target > 0 && b.done === b.target) {
+                        stCls = 'done'; stIcon = '✓';
+                    } else if (b.done > 0) {
+                        stCls = 'partial'; stIcon = '⏳';
+                    }
+
+                    breakdownHTML += `
+                        <span class="grp-pill ${stCls}" onclick="event.stopPropagation(); triggerGroupEntry('${sub.key}', '${gKey}')">
+                            ${gKey.replace('Group-', 'Grp-')}: ${b.done}/${b.target} ${stIcon}
+                        </span>
+                    `;
+                });
+
+                const card = document.createElement('div');
+                card.className = 'subject-card';
+                card.innerHTML = `
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="fw-bold" style="font-size:0.90rem; color:#0f172a;">${sub.name} (${sub.key})</div>
+                            <div class="small text-muted">${sub.stream} • Total: <b>${sub.entered} / ${sub.target}</b></div>
+                        </div>
+                        <span class="chip-status ${badgeClass}">${badgeText}</span>
+                    </div>
+                    <div class="grp-chip-wrap">
+                        ${breakdownHTML}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        const modalPin = new bootstrap.Modal(document.getElementById('modalSubPin'));
+        const modalSheet = new bootstrap.Modal(document.getElementById('modalMarkEntry'));
+
+        window.triggerGroupEntry = function (subKey, grpKey) {
+            const sub = MASTER_SUBJECTS.find(s => s.key === subKey);
+            activeSelectedSub = sub;
+            activeTargetSubGroup = grpKey;
+
+            document.getElementById('lblSelectedSubName').innerText = `${sub.name} (${grpKey})`;
+            document.getElementById('inpSubPin').value = '';
+            document.getElementById('subPinErr').style.display = 'none';
+
+            const existingPin = allPins[sub.key];
+            if (!existingPin) {
+                isCreatingNewPin = true;
+                document.getElementById('lblPinInstruction').innerText = 'No PIN set. Create 4-digit PIN:';
+                document.getElementById('btnPinAction').innerText = 'Save PIN & Open';
+            } else {
+                isCreatingNewPin = false;
+                document.getElementById('lblPinInstruction').innerText = 'Enter 4-digit Subject PIN:';
+                document.getElementById('btnPinAction').innerText = 'Unlock Entry';
+            }
+
+            modalPin.show();
+        };
+
+        window.submitSubPinAction = async function () {
+            const entered = document.getElementById('inpSubPin').value.trim();
+            if (entered.length !== 4 || isNaN(entered)) {
+                alert("Please enter a 4-digit numeric PIN!");
+                return;
+            }
+
+            if (isCreatingNewPin) {
+                await set(ref(db, `evaluation_system/pins/${activeSelectedSub.key}`), entered);
+                allPins[activeSelectedSub.key] = entered;
+                modalPin.hide();
+                openMarkEntrySheet();
+            } else {
+                if (entered === allPins[activeSelectedSub.key]) {
+                    modalPin.hide();
+                    openMarkEntrySheet();
+                } else {
+                    document.getElementById('subPinErr').style.display = 'block';
+                    document.getElementById('inpSubPin').value = '';
+                }
+            }
+        };
+
+        function openMarkEntrySheet() {
+            document.getElementById('lblSheetTitle').innerText = `${activeSelectedSub.name} (${activeTargetSubGroup})`;
+            document.getElementById('lblSheetGroupMeta').innerText = `Max Mark: ${activeExamMax}`;
+
+            const container = document.getElementById('sheetContainer');
+            container.innerHTML = '';
+
+            let list = allStudents.filter(s => {
+                if (activeSelectedSub.stream === 'Science') {
+                    return s.group === 'Science' && (s.subGroup === activeTargetSubGroup);
+                }
+                return s.group === activeSelectedSub.stream;
+            });
+
+            list.sort((a, b) => (a.overallRank || a.sl) - (b.overallRank || b.sl));
+
+            if (list.length === 0) {
+                container.innerHTML = `<div class="text-center p-3 text-danger fw-bold">No students found in ${activeTargetSubGroup}!</div>`;
+                modalSheet.show();
+                return;
+            }
+
+            list.forEach(s => {
+                const prev = (liveMarks[s.id] && liveMarks[s.id][activeSelectedSub.key] !== undefined) ? liveMarks[s.id][activeSelectedSub.key] : '';
+
+                const row = document.createElement('div');
+                row.className = 'rounded-box d-flex align-items-center justify-content-between p-2 mb-2';
+                row.innerHTML = `
+                    <div class="d-flex align-items-center gap-2 ps-1">
+                        <span class="badge rounded-pill bg-light text-primary fw-bold">#${s.sl || s.overallRank}</span>
+                        <div>
+                            <div class="fw-bold small mb-0">${s.name}</div>
+                            <span class="text-muted" style="font-size:0.72rem;">Roll: ${s.roll} ${s.section ? '• Sec: ' + s.section : ''}</span>
+                        </div>
+                    </div>
+                    <input type="text" 
+                           inputmode="decimal" 
+                           class="mark-inp-pill mark-field" 
+                           data-id="${s.id}" 
+                           value="${prev}" 
+                           placeholder="-">
+                `;
+                container.appendChild(row);
+            });
+
+            bindValidation();
+            modalSheet.show();
+        }
+
+        function bindValidation() {
+            const inputs = Array.from(document.querySelectorAll('.mark-field'));
+            inputs.forEach((inp, idx) => {
+                inp.addEventListener('input', function () {
+                    this.value = this.value.replace(/[^0-9.]/g, '');
+                    if ((this.value.match(/\./g) || []).length > 1) {
+                        this.value = this.value.slice(0, -1);
+                    }
+                    if (parseFloat(this.value) > activeExamMax) {
+                        alert(`Full mark is ${activeExamMax}!`);
+                        this.value = '';
+                    }
+                });
+
+                inp.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        if (inputs[idx + 1]) inputs[idx + 1].focus();
+                    }
+                });
+            });
+        }
+
+        window.saveDirectMarksToFirebase = async function () {
+            const inputs = document.querySelectorAll('.mark-field');
+            const btn = document.getElementById('btnSaveMarks');
+            btn.disabled = true;
+            btn.innerText = "Saving...";
+
+            const updates = {};
+            inputs.forEach(inp => {
+                const sId = inp.getAttribute('data-id');
+                const val = inp.value.trim();
+                const path = `evaluation_system/marks/${activeExamId}/${sId}/${activeSelectedSub.key}`;
+
+                if (val === '') {
+                    updates[path] = null;
+                    if (liveMarks[sId]) delete liveMarks[sId][activeSelectedSub.key];
+                } else {
+                    updates[path] = String(val);
+                    if (!liveMarks[sId]) liveMarks[sId] = {};
+                    liveMarks[sId][activeSelectedSub.key] = String(val);
+                }
+            });
+
+            try {
+                await update(ref(db), updates);
+                alert(`Marks saved for ${activeSelectedSub.name} (${activeTargetSubGroup})!`);
+                modalSheet.hide();
+                renderDashboardMetrics();
+            } catch (err) {
+                alert("Error saving: " + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Save Marks`;
+            }
+        };
+
+        window.copyPendingWhatsAppNotice = function () {
+            let msg = `*Notice: Pending Mark Submission*\n`;
+            let foundDue = false;
+
+            MASTER_SUBJECTS.forEach(sub => {
+                let dueGrps = [];
+                Object.keys(sub.breakdown).forEach(gKey => {
+                    const b = sub.breakdown[gKey];
+                    if (b.done < b.target) {
+                        dueGrps.push(`${gKey.replace('Group-', 'Grp-')} (${b.target - b.done} due)`);
+                    }
+                });
+
+                if (dueGrps.length > 0) {
+                    foundDue = true;
+                    msg += `• *${sub.name}* [${sub.stream}]: ${dueGrps.join(', ')}\n`;
+                }
+            });
+
+            if (!foundDue) {
+                alert("All subjects complete!");
+                return;
+            }
+
+            msg += `\nPlease submit the marks as soon as possible.`;
+
+            navigator.clipboard.writeText(msg).then(() => {
+                alert("Group-wise notice copied to clipboard!");
+            });
+        };
+    </script>
+</body>
+</html>
