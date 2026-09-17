@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CPSCL - Detailed Evaluation Tracker</title>
+    <title>CPSCL - Evaluation Tracker & Marks Entry</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Tiro+Bangla&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
@@ -33,24 +33,24 @@
         .app-header {
             background: linear-gradient(135deg, #0f172a, #1e40af);
             color: white;
-            padding: 22px 14px 18px 14px;
+            padding: 20px 14px 16px 14px;
             border-radius: 0 0 28px 28px;
             text-align: center;
         }
 
         .school-logo {
-            width: 65px;
-            height: 65px;
+            width: 60px;
+            height: 60px;
             object-fit: contain;
             background: #ffffff;
             border-radius: 50%;
             padding: 4px;
             box-shadow: 0 3px 10px rgba(0,0,0,0.25);
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .school-title {
-            font-size: 1.05rem;
+            font-size: 1.02rem;
             font-weight: 800;
             margin: 0;
             line-height: 1.3;
@@ -64,22 +64,22 @@
             border: 1px solid rgba(255, 255, 255, 0.35);
             border-radius: 50px;
             padding: 3px 14px;
-            font-size: 0.76rem;
+            font-size: 0.74rem;
             font-weight: 700;
-            margin-top: 6px;
+            margin-top: 5px;
         }
 
         .rounded-box {
             background: #ffffff;
             border: 1.5px solid #e2e8f0;
-            border-radius: 24px;
-            padding: 16px;
+            border-radius: 22px;
+            padding: 14px;
             margin-bottom: 12px;
             box-shadow: 0 2px 6px rgba(0,0,0,0.02);
         }
 
         .progress-pill {
-            height: 10px;
+            height: 9px;
             background: #e2e8f0;
             border-radius: 50px;
             overflow: hidden;
@@ -94,7 +94,7 @@
         }
 
         .stat-card {
-            border-radius: 18px;
+            border-radius: 16px;
             padding: 8px 4px;
             border: 1.5px solid transparent;
         }
@@ -109,23 +109,22 @@
             display: flex;
             gap: 6px;
             overflow-x: auto;
-            padding: 6px 2px;
-            margin: 10px 0 6px 0;
+            padding: 4px 2px;
+            margin: 8px 0 6px 0;
             scrollbar-width: none;
         }
         .filter-scroller::-webkit-scrollbar { display: none; }
 
         .btn-pill {
             border-radius: 50px !important;
-            padding: 6px 14px;
-            font-size: 0.78rem;
+            padding: 5px 13px;
+            font-size: 0.76rem;
             font-weight: 700;
             white-space: nowrap;
             border: 1.5px solid #cbd5e1;
             background: #ffffff;
             color: #64748b;
             cursor: pointer;
-            transition: 0.15s ease;
         }
         .btn-pill.active {
             background: var(--primary);
@@ -133,44 +132,52 @@
             border-color: var(--primary);
         }
 
-        /* কার্ড ডিজাইন */
+        /* বিষয় কার্ড */
         .subject-card {
             background: #ffffff;
             border: 1.5px solid #e2e8f0;
-            border-radius: 20px;
-            padding: 14px 16px;
-            margin-bottom: 10px;
+            border-radius: 18px;
+            padding: 10px 14px;
+            margin-bottom: 8px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+            cursor: pointer;
             transition: 0.15s ease;
         }
-        .subject-card:hover { border-color: var(--primary); }
-
-        /* গ্রুপভিত্তিক মিনি চিপস */
-        .grp-chip-wrap {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            margin-top: 8px;
+        .subject-card:active {
+            background-color: #eff6ff;
+            border-color: var(--primary);
         }
 
+        /* এক লাইনে সুন্দর কমপ্যাক্ট চিপস */
+        .grp-chip-row {
+            display: flex;
+            gap: 5px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            margin-top: 6px;
+            white-space: nowrap;
+        }
+        .grp-chip-row::-webkit-scrollbar { display: none; }
+
         .grp-pill {
-            font-size: 0.72rem;
+            font-size: 0.70rem;
             font-weight: 700;
-            padding: 3px 10px;
+            padding: 2px 8px;
             border-radius: 50px;
             border: 1px solid transparent;
             display: inline-flex;
             align-items: center;
-            gap: 4px;
+            gap: 3px;
+            flex-shrink: 0;
         }
         .grp-pill.done { background: #dcfce7; color: #15803d; border-color: #bbf7d0; }
         .grp-pill.partial { background: #fef3c7; color: #b45309; border-color: #fde68a; }
         .grp-pill.pending { background: #fee2e2; color: #b91c1c; border-color: #fecaca; }
 
         .chip-status {
-            font-size: 0.70rem;
+            font-size: 0.68rem;
             font-weight: 800;
-            padding: 4px 10px;
+            padding: 3px 8px;
             border-radius: 50px;
             white-space: nowrap;
         }
@@ -183,7 +190,7 @@
             border-radius: 50px;
             border: 2px solid var(--primary);
             width: 170px;
-            height: 48px;
+            height: 46px;
             margin: 12px auto;
             outline: none;
         }
@@ -198,6 +205,11 @@
             font-size: 1.2rem;
             color: var(--primary);
             outline: none;
+            background: #ffffff;
+        }
+        .mark-inp-pill:focus {
+            border-color: var(--primary);
+            background: #eff6ff;
         }
     </style>
 </head>
@@ -225,7 +237,7 @@
         <div class="app-header">
             <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg-795xmOcuKYH8wjija8JrA-qVjfOp_4KieeZ1pOQJaqX2uXsqGLMo09AXsGGsfGjH9LpK5fPlUNGbebFguiAzPC_YvbRXcHePj7cORQd6GMxDUg-LCeXtmNkccGI2K4Hv73PJqJkGX0Ju9N4knQuqKOAImqB6qy_WWFXpKeIaQhRgk7YbLqBLpCmL0cio/s1600/%E0%A6%95%E0%A7%8D%E0%A6%AF%E0%A6%AA%E0%A6%BE%E0%A6%A8%E0%A7%8D%E0%A6%9F%E0%A6%A8%E0%A6%AE%E0%A7%87%E0%A6%A8%E0%A7%8D%E0%A6%9F_%E0%A6%AA%E0%A6%BE%E0%A6%AC%E0%A6%B2%E0%A6%BF%E0%A6%95_%E0%A6%B8%E0%A7%8D%E0%A6%9F%E0%A7%81%E0%A6%B2_%E0%A6%93_%E0%A6%95%E0%A6%B2%E0%A7%87%E0%A6%9C_%E0%A6%B2%E0%A6%BE%E0%A6%B2%E0%A6%AE%E0%A6%A8%E0%A6%BF%E0%A6%B0%E0%A6%B9%E0%A6%BE%E0%A6%9F%E0%A7%87%E0%A6%B0_%E0%A6%B2%E0%A7%8B%E0%A6%97%E0%A7%8B.png" alt="CPSCL Logo" class="school-logo">
             <h5 class="school-title">Cantonment Public School & College Lalmonirhat</h5>
-            <div class="pill-badge" id="lblLiveExam">Fortnightly Test-02 (2026)</div>
+            <div class="pill-badge" id="lblLiveExam">Loading Exam...</div>
         </div>
 
         <div class="container" style="max-width: 480px; margin-top: -10px;">
@@ -260,7 +272,7 @@
                 </div>
             </div>
 
-            <!-- ফিল্টার -->
+            <!-- ফিল্টার বাটন -->
             <div class="filter-scroller">
                 <button class="btn-pill active" onclick="setFilter('All', this)">All</button>
                 <button class="btn-pill" onclick="setFilter('Science', this)">Science</button>
@@ -270,7 +282,7 @@
             </div>
 
             <div class="d-flex justify-content-between align-items-center px-2 mb-2">
-                <span class="small text-muted fw-bold">Tap a group badge to enter marks</span>
+                <span class="small text-muted fw-bold">Tap on any subject to Enter Marks</span>
                 <span class="small text-primary fw-bold" style="cursor: pointer;" onclick="fetchLiveData()"><i class="fa-solid fa-arrows-rotate"></i> Sync</span>
             </div>
 
@@ -279,11 +291,15 @@
     </div>
 
     <!-- ৩. পিন মডাল -->
-    <div class="modal fade" id="modalSubPin" tabindex="-1">
+    <div class="modal fade" id="modalSubPin" tabindex="-1" style="z-index: 1060;">
         <div class="modal-dialog modal-dialog-centered" style="max-width: 360px;">
             <div class="modal-content rounded-box p-3 border-0">
                 <div class="text-center">
                     <h6 class="fw-bold mb-1" id="lblSelectedSubName">Subject Entry</h6>
+                    <div class="mb-2" id="grpSelectionBox" style="display:none;">
+                        <label class="small text-muted fw-bold mb-1">Select Group to Enter:</label>
+                        <select id="selEntryGroup" class="form-select form-select-sm rounded-pill text-center fw-bold"></select>
+                    </div>
                     <p class="small text-muted mb-2" id="lblPinInstruction">Enter 4-digit PIN</p>
                     
                     <input type="password" id="inpSubPin" class="form-control pin-pill-input" maxlength="4" placeholder="••••" inputmode="numeric">
@@ -299,7 +315,7 @@
     </div>
 
     <!-- ৪. মার্ক এন্ট্রি মডাল -->
-    <div class="modal fade" id="modalMarkEntry" tabindex="-1">
+    <div class="modal fade" id="modalMarkEntry" tabindex="-1" style="z-index: 1070;">
         <div class="modal-dialog modal-fullscreen-sm-down modal-dialog-scrollable">
             <div class="modal-content" style="border-radius: 28px 28px 0 0; background: #f8fafc;">
                 <div class="modal-header border-0 bg-white" style="border-radius: 28px 28px 0 0; padding: 14px 20px;">
@@ -318,6 +334,9 @@
             </div>
         </div>
     </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- Firebase SDK v10 -->
     <script type="module">
@@ -350,7 +369,6 @@
 
         let currentFilter = 'All';
         let activeSelectedSub = null;
-        let activeTargetSubGroup = null;
         let isCreatingNewPin = false;
 
         const MASTER_SUBJECTS = [
@@ -383,7 +401,7 @@
             if (val === MASTER_PIN) {
                 document.getElementById('viewAuth').style.display = 'none';
                 document.getElementById('viewDashboard').style.display = 'block';
-                fetchLiveData();
+                window.fetchLiveData();
             } else {
                 document.getElementById('authErr').style.display = 'block';
                 document.getElementById('inpMasterPin').value = '';
@@ -429,7 +447,6 @@
                 const targetStudents = allStudents.filter(s => s.group === sub.stream);
                 const subTarget = targetStudents.length;
 
-                // প্রতিটি সাব-গ্রুপ আলাদাভাবে হিসেব
                 let breakdown = {};
                 if (sub.stream === 'Science') {
                     breakdown['Group-A'] = { target: 0, done: 0 };
@@ -504,35 +521,37 @@
                     badgeClass = 'chip-partial'; badgeText = 'Partial';
                 }
 
-                // গ্রুপ ব্রেকডাউন এইচটিএমএল চিপস
+                // কম্প্যাক্ট ১-লাইনের চিপস
                 let breakdownHTML = '';
                 Object.keys(sub.breakdown).forEach(gKey => {
                     const b = sub.breakdown[gKey];
-                    let stCls = 'pending', stIcon = '✕';
+                    let stCls = 'pending', shortIcon = '✕';
                     if (b.target > 0 && b.done === b.target) {
-                        stCls = 'done'; stIcon = '✓';
+                        stCls = 'done'; shortIcon = '✓';
                     } else if (b.done > 0) {
-                        stCls = 'partial'; stIcon = '⏳';
+                        stCls = 'partial'; shortIcon = '⏳';
                     }
 
+                    const shortLabel = gKey.replace('Group-', '');
                     breakdownHTML += `
-                        <span class="grp-pill ${stCls}" onclick="event.stopPropagation(); triggerGroupEntry('${sub.key}', '${gKey}')">
-                            ${gKey.replace('Group-', 'Grp-')}: ${b.done}/${b.target} ${stIcon}
+                        <span class="grp-pill ${stCls}">
+                            ${shortLabel}: ${b.done}/${b.target} ${shortIcon}
                         </span>
                     `;
                 });
 
                 const card = document.createElement('div');
                 card.className = 'subject-card';
+                card.onclick = () => window.triggerSubjectEntry(sub.key, sub.stream);
                 card.innerHTML = `
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <div class="fw-bold" style="font-size:0.90rem; color:#0f172a;">${sub.name} (${sub.key})</div>
-                            <div class="small text-muted">${sub.stream} • Total: <b>${sub.entered} / ${sub.target}</b></div>
+                            <div class="fw-bold" style="font-size:0.88rem; color:#0f172a;">${sub.name} (${sub.key})</div>
+                            <div class="text-muted" style="font-size:0.72rem;">${sub.stream} • Total: <b>${sub.entered}/${sub.target}</b></div>
                         </div>
                         <span class="chip-status ${badgeClass}">${badgeText}</span>
                     </div>
-                    <div class="grp-chip-wrap">
+                    <div class="grp-chip-row">
                         ${breakdownHTML}
                     </div>
                 `;
@@ -540,17 +559,35 @@
             });
         }
 
-        const modalPin = new bootstrap.Modal(document.getElementById('modalSubPin'));
-        const modalSheet = new bootstrap.Modal(document.getElementById('modalMarkEntry'));
-
-        window.triggerGroupEntry = function (subKey, grpKey) {
-            const sub = MASTER_SUBJECTS.find(s => s.key === subKey);
+        // কার্ডে ট্যাপ করলে পিন উইন্ডো খোলা
+        window.triggerSubjectEntry = function (subKey, stream) {
+            const sub = MASTER_SUBJECTS.find(s => s.key === subKey && s.stream === stream);
             activeSelectedSub = sub;
-            activeTargetSubGroup = grpKey;
 
-            document.getElementById('lblSelectedSubName').innerText = `${sub.name} (${grpKey})`;
+            document.getElementById('lblSelectedSubName').innerText = `${sub.name} (${sub.stream})`;
             document.getElementById('inpSubPin').value = '';
             document.getElementById('subPinErr').style.display = 'none';
+
+            // গ্রুপ ড্রপডাউন প্রস্তুত
+            const grpBox = document.getElementById('grpSelectionBox');
+            const selGrp = document.getElementById('selEntryGroup');
+            selGrp.innerHTML = '';
+
+            if (sub.stream === 'Science') {
+                grpBox.style.display = 'block';
+                ['Group-A', 'Group-B', 'Group-C'].forEach(g => {
+                    const opt = document.createElement('option');
+                    opt.value = g;
+                    opt.innerText = `Science (${g})`;
+                    selGrp.appendChild(opt);
+                });
+            } else {
+                grpBox.style.display = 'none';
+                const opt = document.createElement('option');
+                opt.value = sub.stream;
+                opt.innerText = sub.stream;
+                selGrp.appendChild(opt);
+            }
 
             const existingPin = allPins[sub.key];
             if (!existingPin) {
@@ -563,7 +600,8 @@
                 document.getElementById('btnPinAction').innerText = 'Unlock Entry';
             }
 
-            modalPin.show();
+            const pinModal = new bootstrap.Modal(document.getElementById('modalSubPin'));
+            pinModal.show();
         };
 
         window.submitSubPinAction = async function () {
@@ -573,14 +611,17 @@
                 return;
             }
 
+            const pinModalEl = document.getElementById('modalSubPin');
+            const pinModal = bootstrap.Modal.getInstance(pinModalEl);
+
             if (isCreatingNewPin) {
                 await set(ref(db, `evaluation_system/pins/${activeSelectedSub.key}`), entered);
                 allPins[activeSelectedSub.key] = entered;
-                modalPin.hide();
+                if (pinModal) pinModal.hide();
                 openMarkEntrySheet();
             } else {
                 if (entered === allPins[activeSelectedSub.key]) {
-                    modalPin.hide();
+                    if (pinModal) pinModal.hide();
                     openMarkEntrySheet();
                 } else {
                     document.getElementById('subPinErr').style.display = 'block';
@@ -590,15 +631,16 @@
         };
 
         function openMarkEntrySheet() {
-            document.getElementById('lblSheetTitle').innerText = `${activeSelectedSub.name} (${activeTargetSubGroup})`;
-            document.getElementById('lblSheetGroupMeta').innerText = `Max Mark: ${activeExamMax}`;
+            const targetGroup = document.getElementById('selEntryGroup').value;
+            document.getElementById('lblSheetTitle').innerText = `${activeSelectedSub.name} - ${targetGroup}`;
+            document.getElementById('lblSheetGroupMeta').innerText = `Full Mark: ${activeExamMax}`;
 
             const container = document.getElementById('sheetContainer');
             container.innerHTML = '';
 
             let list = allStudents.filter(s => {
                 if (activeSelectedSub.stream === 'Science') {
-                    return s.group === 'Science' && (s.subGroup === activeTargetSubGroup);
+                    return s.group === 'Science' && (s.subGroup === targetGroup);
                 }
                 return s.group === activeSelectedSub.stream;
             });
@@ -606,36 +648,35 @@
             list.sort((a, b) => (a.overallRank || a.sl) - (b.overallRank || b.sl));
 
             if (list.length === 0) {
-                container.innerHTML = `<div class="text-center p-3 text-danger fw-bold">No students found in ${activeTargetSubGroup}!</div>`;
-                modalSheet.show();
-                return;
+                container.innerHTML = `<div class="text-center p-3 text-danger fw-bold">No students found in ${targetGroup}!</div>`;
+            } else {
+                list.forEach(s => {
+                    const prev = (liveMarks[s.id] && liveMarks[s.id][activeSelectedSub.key] !== undefined) ? liveMarks[s.id][activeSelectedSub.key] : '';
+
+                    const row = document.createElement('div');
+                    row.className = 'rounded-box d-flex align-items-center justify-content-between p-2 mb-2';
+                    row.innerHTML = `
+                        <div class="d-flex align-items-center gap-2 ps-1">
+                            <span class="badge rounded-pill bg-light text-primary fw-bold">#${s.sl || s.overallRank}</span>
+                            <div>
+                                <div class="fw-bold small mb-0">${s.name}</div>
+                                <span class="text-muted" style="font-size:0.72rem;">Roll: ${s.roll} ${s.section ? '• Sec: ' + s.section : ''}</span>
+                            </div>
+                        </div>
+                        <input type="text" 
+                               inputmode="decimal" 
+                               class="mark-inp-pill mark-field" 
+                               data-id="${s.id}" 
+                               value="${prev}" 
+                               placeholder="-">
+                    `;
+                    container.appendChild(row);
+                });
             }
 
-            list.forEach(s => {
-                const prev = (liveMarks[s.id] && liveMarks[s.id][activeSelectedSub.key] !== undefined) ? liveMarks[s.id][activeSelectedSub.key] : '';
-
-                const row = document.createElement('div');
-                row.className = 'rounded-box d-flex align-items-center justify-content-between p-2 mb-2';
-                row.innerHTML = `
-                    <div class="d-flex align-items-center gap-2 ps-1">
-                        <span class="badge rounded-pill bg-light text-primary fw-bold">#${s.sl || s.overallRank}</span>
-                        <div>
-                            <div class="fw-bold small mb-0">${s.name}</div>
-                            <span class="text-muted" style="font-size:0.72rem;">Roll: ${s.roll} ${s.section ? '• Sec: ' + s.section : ''}</span>
-                        </div>
-                    </div>
-                    <input type="text" 
-                           inputmode="decimal" 
-                           class="mark-inp-pill mark-field" 
-                           data-id="${s.id}" 
-                           value="${prev}" 
-                           placeholder="-">
-                `;
-                container.appendChild(row);
-            });
-
             bindValidation();
-            modalSheet.show();
+            const sheetModal = new bootstrap.Modal(document.getElementById('modalMarkEntry'));
+            sheetModal.show();
         }
 
         function bindValidation() {
@@ -685,8 +726,10 @@
 
             try {
                 await update(ref(db), updates);
-                alert(`Marks saved for ${activeSelectedSub.name} (${activeTargetSubGroup})!`);
-                modalSheet.hide();
+                alert(`Marks saved successfully!`);
+                const sheetModalEl = document.getElementById('modalMarkEntry');
+                const sheetModal = bootstrap.Modal.getInstance(sheetModalEl);
+                if (sheetModal) sheetModal.hide();
                 renderDashboardMetrics();
             } catch (err) {
                 alert("Error saving: " + err.message);
@@ -705,7 +748,7 @@
                 Object.keys(sub.breakdown).forEach(gKey => {
                     const b = sub.breakdown[gKey];
                     if (b.done < b.target) {
-                        dueGrps.push(`${gKey.replace('Group-', 'Grp-')} (${b.target - b.done} due)`);
+                        dueGrps.push(`${gKey.replace('Group-', '')} (${b.target - b.done} due)`);
                     }
                 });
 
@@ -723,7 +766,7 @@
             msg += `\nPlease submit the marks as soon as possible.`;
 
             navigator.clipboard.writeText(msg).then(() => {
-                alert("Group-wise notice copied to clipboard!");
+                alert("Notice copied to clipboard!");
             });
         };
     </script>
