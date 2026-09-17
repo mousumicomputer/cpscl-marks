@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>CPSCL - Evaluation Tracker & Marks Entry</title>
     
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
@@ -22,12 +21,22 @@
             box-sizing: border-box;
             font-family: 'Plus Jakarta Sans', sans-serif !important;
             -webkit-tap-highlight-color: transparent;
+            user-select: none;
         }
 
         body {
             background-color: var(--bg-body);
             color: #0f172a;
             padding-bottom: 70px;
+        }
+
+        /* SVG আইকন হেল্পার */
+        .icon-svg {
+            width: 14px;
+            height: 14px;
+            fill: currentColor;
+            display: inline-block;
+            vertical-align: middle;
         }
 
         .app-header {
@@ -132,7 +141,7 @@
             border-color: var(--primary);
         }
 
-        /* বিষয় কার্ড */
+        /* কার্ড ডিজাইন */
         .subject-card {
             background: #ffffff;
             border: 1.5px solid #e2e8f0;
@@ -148,7 +157,7 @@
             border-color: var(--primary);
         }
 
-        /* এক লাইনে সুন্দর কমপ্যাক্ট চিপস */
+        /* ১-লাইনে গ্রুপ চিপস */
         .grp-chip-row {
             display: flex;
             gap: 5px;
@@ -167,7 +176,7 @@
             border: 1px solid transparent;
             display: inline-flex;
             align-items: center;
-            gap: 3px;
+            gap: 4px;
             flex-shrink: 0;
         }
         .grp-pill.done { background: #dcfce7; color: #15803d; border-color: #bbf7d0; }
@@ -227,7 +236,8 @@
             <div id="authErr" class="text-danger small fw-bold mb-2" style="display: none;">Invalid PIN!</div>
             
             <button class="btn btn-primary rounded-pill w-100 fw-bold py-2 mt-2" onclick="verifyAuthPin()">
-                Unlock Portal <i class="fa-solid fa-arrow-right ms-1"></i>
+                Unlock Portal
+                <svg class="icon-svg ms-1" viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
             </button>
         </div>
     </div>
@@ -247,8 +257,10 @@
                         <span class="small text-muted fw-bold">Overall Progress</span>
                         <h4 class="mb-0 fw-bold" id="lblOverallPct">0%</h4>
                     </div>
-                    <button class="btn btn-sm btn-outline-success rounded-pill fw-bold px-3" onclick="copyPendingWhatsAppNotice()">
-                        <i class="fa-brands fa-whatsapp"></i> Copy Notice
+                    <button class="btn btn-sm btn-outline-success rounded-pill fw-bold px-3 d-inline-flex align-items-center gap-1" onclick="copyPendingWhatsAppNotice()">
+                        <!-- WhatsApp SVG -->
+                        <svg class="icon-svg" style="fill:#16a34a;" viewBox="0 0 24 24"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2m.01 1.67c4.54 0 8.24 3.7 8.24 8.24 0 2.2-.86 4.28-2.42 5.84a8.17 8.17 0 0 1-5.82 2.41c-1.47 0-2.93-.39-4.21-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.216 8.216 0 0 1-1.26-4.39c0-4.54 3.7-8.24 8.24-8.24m4.53 11.66c-.25-.13-1.47-.72-1.7-.81-.23-.08-.39-.13-.56.13-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.13-1.06-.39-2.02-1.24-.74-.66-1.24-1.48-1.39-1.73-.14-.25-.02-.39.11-.51.11-.11.25-.29.37-.43.13-.15.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.13-.56-1.34-.76-1.84-.2-.48-.4-.42-.56-.43h-.48c-.17 0-.44.06-.67.31-.23.25-.87.85-.87 2.08 0 1.23.89 2.42 1.02 2.59.13.17 1.76 2.69 4.26 3.77.6.26 1.06.41 1.42.53.6.19 1.15.16 1.58.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.15-1.18-.07-.1-.23-.17-.48-.29z"/></svg>
+                        Copy Notice
                     </button>
                 </div>
 
@@ -282,8 +294,10 @@
             </div>
 
             <div class="d-flex justify-content-between align-items-center px-2 mb-2">
-                <span class="small text-muted fw-bold">Tap on any subject to Enter Marks</span>
-                <span class="small text-primary fw-bold" style="cursor: pointer;" onclick="fetchLiveData()"><i class="fa-solid fa-arrows-rotate"></i> Sync</span>
+                <span class="small text-muted fw-bold">Double-tap on a subject to enter marks</span>
+                <span class="small text-primary fw-bold" style="cursor: pointer;" onclick="fetchLiveData()">
+                    <svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46A7.93 7.93 0 0 0 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74A7.93 7.93 0 0 0 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg> Sync
+                </span>
             </div>
 
             <div id="subjectListContainer"></div>
@@ -327,8 +341,9 @@
                 </div>
                 <div class="modal-body p-3" id="sheetContainer"></div>
                 <div class="modal-footer border-0 bg-white p-3" style="border-radius: 0 0 28px 28px;">
-                    <button class="btn btn-success rounded-pill w-100 fw-bold py-2" id="btnSaveMarks" onclick="saveDirectMarksToFirebase()">
-                        <i class="fa-solid fa-cloud-arrow-up"></i> Save Marks
+                    <button class="btn btn-success rounded-pill w-100 fw-bold py-2 d-inline-flex align-items-center justify-content-center gap-1" id="btnSaveMarks" onclick="saveDirectMarksToFirebase()">
+                        <svg class="icon-svg" style="fill:white;" viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/></svg>
+                        Save Marks
                     </button>
                 </div>
             </div>
@@ -521,7 +536,7 @@
                     badgeClass = 'chip-partial'; badgeText = 'Partial';
                 }
 
-                // কম্প্যাক্ট ১-লাইনের চিপস
+                // ক্লিন চিহ্ন ও সংখ্যা
                 let breakdownHTML = '';
                 Object.keys(sub.breakdown).forEach(gKey => {
                     const b = sub.breakdown[gKey];
@@ -542,7 +557,23 @@
 
                 const card = document.createElement('div');
                 card.className = 'subject-card';
-                card.onclick = () => window.triggerSubjectEntry(sub.key, sub.stream);
+                
+                // মোবাইল ও ডেস্কটপ উভয়ের জন্য ডাবল-ট্যাপ লজিক
+                let lastTouchTime = 0;
+                card.addEventListener('touchend', function(e) {
+                    const currentTime = new Date().getTime();
+                    const tapLength = currentTime - lastTouchTime;
+                    if (tapLength < 350 && tapLength > 0) {
+                        e.preventDefault();
+                        window.triggerSubjectEntry(sub.key, sub.stream);
+                    }
+                    lastTouchTime = currentTime;
+                });
+
+                card.addEventListener('dblclick', function() {
+                    window.triggerSubjectEntry(sub.key, sub.stream);
+                });
+
                 card.innerHTML = `
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
@@ -559,7 +590,6 @@
             });
         }
 
-        // কার্ডে ট্যাপ করলে পিন উইন্ডো খোলা
         window.triggerSubjectEntry = function (subKey, stream) {
             const sub = MASTER_SUBJECTS.find(s => s.key === subKey && s.stream === stream);
             activeSelectedSub = sub;
@@ -568,7 +598,6 @@
             document.getElementById('inpSubPin').value = '';
             document.getElementById('subPinErr').style.display = 'none';
 
-            // গ্রুপ ড্রপডাউন প্রস্তুত
             const grpBox = document.getElementById('grpSelectionBox');
             const selGrp = document.getElementById('selEntryGroup');
             selGrp.innerHTML = '';
@@ -735,7 +764,9 @@
                 alert("Error saving: " + err.message);
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Save Marks`;
+                btn.innerHTML = `
+                    <svg class="icon-svg" style="fill:white;" viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/></svg> Save Marks
+                `;
             }
         };
 
