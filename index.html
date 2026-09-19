@@ -521,7 +521,7 @@
             const inputVal = document.getElementById('inputPin').value.trim();
             const pinError = document.getElementById('pinError');
 
-            // নিরাপদ স্ট্রিং তুলনা (বিনা পিনে এন্ট্রি বন্ধ)
+            // নিরাপদ স্ট্রিং তুলনা
             if (storedPIN && inputVal === storedPIN) {
                 pinError.style.display = 'none';
                 document.getElementById('pinCard').style.display = 'none';
@@ -550,12 +550,12 @@
                     if (currentGroup === 'B.Studies') return s.group === 'B.Studies';
                     
                     // সায়েন্স গ্রুপ সমন্বয় (fallback সহ)
-                    const sRank = Number(s.sl || s.overallRank);
+                    const sRank = Number(s.overallRank !== undefined && s.overallRank !== null ? s.overallRank : s.sl);
                     const subGrp = s.subGroup || (sRank <= 55 ? 'Group-A' : (sRank <= 105 ? 'Group-B' : 'Group-C'));
                     return s.group === 'Science' && subGrp === currentGroup;
                 });
 
-                // রোল নয়, গত পরীক্ষার ক্রমিক (overallRank / sl) অনুযায়ী মেধা তালিকায় সর্ট
+                // সর্বশেষ মেধা ক্রমিক (overallRank) অনুযায়ী সর্টিং
                 filtered.sort((a, b) => {
                     const rA = (a.overallRank !== undefined && a.overallRank !== null) ? Number(a.overallRank) : (Number(a.sl) || 9999);
                     const rB = (b.overallRank !== undefined && b.overallRank !== null) ? Number(b.overallRank) : (Number(b.sl) || 9999);
@@ -577,7 +577,9 @@
 
                 filtered.forEach(s => {
                     const prevVal = (existingMarks[s.id] && existingMarks[s.id][currentSubject] !== undefined) ? existingMarks[s.id][currentSubject] : '';
-                    const meritNumber = s.sl || s.overallRank;
+                    
+                    // মেধা পজিশন নিখুঁতভাবে নির্ধারণ
+                    const meritNumber = (s.overallRank !== undefined && s.overallRank !== null && s.overallRank !== '') ? s.overallRank : (s.sl || '-');
 
                     const row = document.createElement('div');
                     row.className = 'student-row-card';
@@ -624,7 +626,7 @@
             });
         };
 
-        // নিরাপদ রিসেট (ডাটাবেজ ডিলিট হবে না)
+        // নিরাপদ রিসেট
         window.clearScreenMarks = function () {
             if (isExamLocked) {
                 alert("Exam is locked by Admin.");
@@ -664,7 +666,7 @@
             });
         }
 
-        // নিরাপদ মার্কস সেভ (ফাঁকা ঘর থাকলেও আগের কোনো নম্বর ডিলিট হবে না)
+        // নিরাপদ মার্কস সেভ (নিরাপত্তা গার্ড সহ)
         window.saveAllMarks = async function () {
             if (isExamLocked) {
                 alert("Exam is locked by Admin. Marks cannot be modified.");
@@ -686,9 +688,6 @@
             }
 
             const saveBtn = document.getElementById('saveBtnEl');
-            saveBtn.disabled = true;
-            saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
-
             const updates = {};
             let validCount = 0;
 
@@ -697,7 +696,7 @@
                 const val = inp.value.trim();
                 const dbPath = `evaluation_system/marks/${activeExamId}/${stdId}/${currentSubject}`;
 
-                // ফাঁকা থাকলে ডাটা ডিলিট না করে অক্ষত রাখা
+                // ফাঁকা থাকলে ডেটা অক্ষত রাখা
                 if (val !== '') {
                     const num = parseFloat(val);
                     if (!isNaN(num) && num >= 0 && num <= maxMarkAllowed) {
@@ -707,10 +706,17 @@
                 }
             }
 
+            // নিরাপত্তা গার্ড: কোনো নম্বর না লিখে সেভ চাপলে আটকাবে
+            if (Object.keys(updates).length === 0) {
+                alert("কোনো নতুন বা পরিবর্তিত নম্বর পাওয়া যায়নি। দয়া করে নম্বর বসিয়ে সেভ করুন।");
+                return;
+            }
+
+            saveBtn.disabled = true;
+            saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+
             try {
-                if (Object.keys(updates).length > 0) {
-                    await update(ref(db), updates);
-                }
+                await update(ref(db), updates);
                 alert(`🎉 Saved Successfully!\n${validCount} students updated for ${currentSubject} (${currentGroup}).`);
             } catch (err) {
                 alert("Failed to save: " + err.message);
