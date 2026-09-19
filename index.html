@@ -21,6 +21,11 @@
             -webkit-tap-highlight-color: transparent;
         }
 
+        input, select, textarea {
+            user-select: text !important;
+            -webkit-user-select: text !important;
+        }
+
         body {
             background-color: var(--bg-body);
             padding-bottom: 95px;
@@ -93,7 +98,7 @@
             padding: 3px 7px;
             border-radius: 8px;
             font-size: 0.82rem;
-            min-width: 36px;
+            min-width: 38px;
             text-align: center;
         }
 
@@ -293,14 +298,14 @@
         <div id="entrySection" style="display: none;">
             <div class="rule-note d-flex align-items-center justify-content-between">
                 <div><i class="fa-solid fa-circle-info"></i> Absent/Zero = <strong>0</strong> | Full Mark: <strong id="maxMarkDisplay">15</strong></div>
-                <button type="button" class="btn btn-sm btn-outline-danger py-0 px-2 fw-bold" onclick="clearAllMarks()" id="clearAllBtn" style="font-size:0.75rem;">
-                    <i class="fa-solid fa-trash"></i> Clear All
+                <button type="button" class="btn btn-sm btn-outline-danger py-0 px-2 fw-bold" onclick="clearScreenMarks()" id="clearAllBtn" style="font-size:0.75rem;">
+                    <i class="fa-solid fa-rotate-left"></i> Reset Fields
                 </button>
             </div>
 
             <div class="search-wrap">
                 <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" id="studentSearchInp" class="search-inp" placeholder="Search ID, Name or Roll..." oninput="filterStudentsOnTheFly()">
+                <input type="text" id="studentSearchInp" class="search-inp" placeholder="Search ID, Name or Merit..." oninput="filterStudentsOnTheFly()">
             </div>
 
             <div class="d-flex justify-content-between align-items-center mb-2 px-1">
@@ -443,7 +448,7 @@
             });
         };
 
-        // স্ট্রিম-ভিত্তিক পিন পাথ (PIN Collision Fix)
+        // স্ট্রিম-ভিত্তিক পিন পাথ
         function getPinPath() {
             let stream = "Science";
             if (currentGroup === 'Humanities') stream = "Humanities";
@@ -472,7 +477,6 @@
             pinCard.style.display = 'block';
 
             try {
-                // স্ট্রিম-সচেতন পিন চেক, না পাওয়া গেলে গ্লোবাল কি ফলব্যাক
                 let pSnap = await get(ref(db, getPinPath()));
                 if (!pSnap.exists()) {
                     pSnap = await get(ref(db, `evaluation_system/pins/${currentSubject}`));
@@ -493,7 +497,7 @@
             }
         };
 
-        window.saveNewPin = function () {
+        window.saveNewPin = async function () {
             const pin = document.getElementById('newPin').value.trim();
             if (pin.length !== 4 || isNaN(pin)) {
                 alert("Please enter a 4-digit numeric PIN!");
@@ -501,18 +505,22 @@
             }
 
             storedPIN = pin;
-            document.getElementById('pinCard').style.display = 'none';
-            document.getElementById('entrySection').style.display = 'block';
-
-            set(ref(db, getPinPath()), pin).catch(e => console.error(e));
-            renderStudentsLive();
+            try {
+                await set(ref(db, getPinPath()), pin);
+                document.getElementById('pinCard').style.display = 'none';
+                document.getElementById('entrySection').style.display = 'block';
+                renderStudentsLive();
+            } catch (e) {
+                alert("Failed to save PIN: " + e.message);
+            }
         };
 
         window.verifyPin = function () {
             const inputVal = document.getElementById('inputPin').value.trim();
             const pinError = document.getElementById('pinError');
 
-            if (inputVal === storedPIN || !storedPIN) {
+            // নিরাপদ স্ট্রিং তুলনা (বিনা পিনে এন্ট্রি বন্ধ)
+            if (storedPIN && inputVal === storedPIN) {
                 pinError.style.display = 'none';
                 document.getElementById('pinCard').style.display = 'none';
                 document.getElementById('entrySection').style.display = 'block';
@@ -538,12 +546,17 @@
                 let filtered = students.filter(s => {
                     if (currentGroup === 'Humanities') return s.group === 'Humanities';
                     if (currentGroup === 'B.Studies') return s.group === 'B.Studies';
-                    return s.group === 'Science' && s.subGroup === currentGroup;
+                    
+                    // সায়েন্স গ্রুপ সমন্বয় (fallback সহ)
+                    const sRank = Number(s.sl || s.overallRank);
+                    const subGrp = s.subGroup || (sRank <= 55 ? 'Group-A' : (sRank <= 105 ? 'Group-B' : 'Group-C'));
+                    return s.group === 'Science' && subGrp === currentGroup;
                 });
 
+                // রোল নয়, গত পরীক্ষার ক্রমিক (overallRank / sl) অনুযায়ী মেধা তালিকায় সর্ট
                 filtered.sort((a, b) => {
-                    let rA = (a.overallRank !== undefined) ? a.overallRank : (a.sl || 0);
-                    let rB = (b.overallRank !== undefined) ? b.overallRank : (b.sl || 0);
+                    const rA = (a.overallRank !== undefined && a.overallRank !== null) ? Number(a.overallRank) : (Number(a.sl) || 9999);
+                    const rB = (b.overallRank !== undefined && b.overallRank !== null) ? Number(b.overallRank) : (Number(b.sl) || 9999);
                     return rA - rB;
                 });
 
@@ -562,16 +575,17 @@
 
                 filtered.forEach(s => {
                     const prevVal = (existingMarks[s.id] && existingMarks[s.id][currentSubject] !== undefined) ? existingMarks[s.id][currentSubject] : '';
+                    const meritNumber = s.sl || s.overallRank;
 
                     const row = document.createElement('div');
                     row.className = 'student-row-card';
-                    row.setAttribute('data-search', `${s.id} ${s.name.toLowerCase()} ${s.roll}`);
+                    row.setAttribute('data-search', `${s.id} ${s.name} ${meritNumber}`.toLowerCase());
                     row.innerHTML = `
                         <div class="d-flex align-items-center gap-2" style="min-width: 0; flex: 1;">
-                            <span class="sl-badge">#${s.sl || s.overallRank}</span>
+                            <span class="sl-badge">#${meritNumber}</span>
                             <div style="min-width: 0;">
                                 <div class="student-title">${s.name}</div>
-                                <div class="student-sub">ID: ${s.id} • Roll: ${s.roll} ${s.section && !['HUM','BS','N/A'].includes(s.section) ? '• Sec: ' + s.section : ''}</div>
+                                <div class="student-sub">ID: ${s.id} • Merit: #${meritNumber} ${s.section && !['HUM','BS','N/A'].includes(s.section) ? '• Sec: ' + s.section : ''}</div>
                             </div>
                         </div>
                         <input type="text" 
@@ -608,12 +622,13 @@
             });
         };
 
-        window.clearAllMarks = function () {
+        // নিরাপদ রিসেট (ডাটাবেজ ডিলিট হবে না)
+        window.clearScreenMarks = function () {
             if (isExamLocked) {
-                alert("Cannot clear! Exam is locked by Admin.");
+                alert("Exam is locked by Admin.");
                 return;
             }
-            if (confirm(`Are you sure you want to CLEAR all entered marks for ${currentSubject} (${currentGroup})?`)) {
+            if (confirm(`Do you want to reset the inputs on screen for ${currentSubject}? (Unsaved changes will be cleared)`)) {
                 const inputs = document.querySelectorAll('.mark-input');
                 inputs.forEach(inp => {
                     inp.value = '';
@@ -647,6 +662,7 @@
             });
         }
 
+        // নিরাপদ মার্কস সেভ (ফাঁকা ঘর থাকলেও আগের কোনো নম্বর ডিলিট হবে না)
         window.saveAllMarks = async function () {
             if (isExamLocked) {
                 alert("Exam is locked by Admin. Marks cannot be modified.");
@@ -679,9 +695,8 @@
                 const val = inp.value.trim();
                 const dbPath = `evaluation_system/marks/${activeExamId}/${stdId}/${currentSubject}`;
 
-                if (val === '') {
-                    updates[dbPath] = null;
-                } else {
+                // ফাঁকা থাকলে ডাটা ডিলিট না করে অক্ষত রাখা
+                if (val !== '') {
                     const num = parseFloat(val);
                     if (!isNaN(num) && num >= 0 && num <= maxMarkAllowed) {
                         updates[dbPath] = String(num);
@@ -691,7 +706,9 @@
             }
 
             try {
-                await update(ref(db), updates);
+                if (Object.keys(updates).length > 0) {
+                    await update(ref(db), updates);
+                }
                 alert(`🎉 Saved Successfully!\n${validCount} students updated for ${currentSubject} (${currentGroup}).`);
             } catch (err) {
                 alert("Failed to save: " + err.message);
