@@ -30,7 +30,6 @@
             padding-bottom: 70px;
         }
 
-        /* SVG আইকন হেল্পার */
         .icon-svg {
             width: 14px;
             height: 14px;
@@ -141,12 +140,11 @@
             border-color: var(--primary);
         }
 
-        /* কার্ড ডিজাইন */
         .subject-card {
             background: #ffffff;
             border: 1.5px solid #e2e8f0;
             border-radius: 18px;
-            padding: 10px 14px;
+            padding: 12px 14px;
             margin-bottom: 8px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.02);
             cursor: pointer;
@@ -157,13 +155,12 @@
             border-color: var(--primary);
         }
 
-        /* ১-লাইনে গ্রুপ চিপস */
         .grp-chip-row {
             display: flex;
             gap: 5px;
             overflow-x: auto;
             scrollbar-width: none;
-            margin-top: 6px;
+            margin-top: 8px;
             white-space: nowrap;
         }
         .grp-chip-row::-webkit-scrollbar { display: none; }
@@ -190,6 +187,9 @@
             border-radius: 50px;
             white-space: nowrap;
         }
+        .chip-status.chip-done { background: #dcfce7; color: #15803d; }
+        .chip-status.chip-partial { background: #fef3c7; color: #b45309; }
+        .chip-status.chip-due { background: #fee2e2; color: #b91c1c; }
 
         .pin-pill-input {
             letter-spacing: 8px;
@@ -215,10 +215,16 @@
             color: var(--primary);
             outline: none;
             background: #ffffff;
+            transition: border-color 0.2s, background-color 0.2s;
         }
         .mark-inp-pill:focus {
             border-color: var(--primary);
             background: #eff6ff;
+        }
+        .mark-inp-pill.input-error {
+            border-color: #dc2626 !important;
+            background: #fee2e2 !important;
+            color: #dc2626 !important;
         }
     </style>
 </head>
@@ -258,7 +264,6 @@
                         <h4 class="mb-0 fw-bold" id="lblOverallPct">0%</h4>
                     </div>
                     <button class="btn btn-sm btn-outline-success rounded-pill fw-bold px-3 d-inline-flex align-items-center gap-1" onclick="copyPendingWhatsAppNotice()">
-                        <!-- WhatsApp SVG -->
                         <svg class="icon-svg" style="fill:#16a34a;" viewBox="0 0 24 24"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2m.01 1.67c4.54 0 8.24 3.7 8.24 8.24 0 2.2-.86 4.28-2.42 5.84a8.17 8.17 0 0 1-5.82 2.41c-1.47 0-2.93-.39-4.21-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.216 8.216 0 0 1-1.26-4.39c0-4.54 3.7-8.24 8.24-8.24m4.53 11.66c-.25-.13-1.47-.72-1.7-.81-.23-.08-.39-.13-.56.13-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.13-1.06-.39-2.02-1.24-.74-.66-1.24-1.48-1.39-1.73-.14-.25-.02-.39.11-.51.11-.11.25-.29.37-.43.13-.15.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.13-.56-1.34-.76-1.84-.2-.48-.4-.42-.56-.43h-.48c-.17 0-.44.06-.67.31-.23.25-.87.85-.87 2.08 0 1.23.89 2.42 1.02 2.59.13.17 1.76 2.69 4.26 3.77.6.26 1.06.41 1.42.53.6.19 1.15.16 1.58.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.15-1.18-.07-.1-.23-.17-.48-.29z"/></svg>
                         Copy Notice
                     </button>
@@ -294,7 +299,7 @@
             </div>
 
             <div class="d-flex justify-content-between align-items-center px-2 mb-2">
-                <span class="small text-muted fw-bold">Double-tap on a subject to enter marks</span>
+                <span class="small text-muted fw-bold">Tap a subject to enter marks</span>
                 <span class="small text-primary fw-bold" style="cursor: pointer;" onclick="fetchLiveData()">
                     <svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46A7.93 7.93 0 0 0 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74A7.93 7.93 0 0 0 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg> Sync
                 </span>
@@ -374,7 +379,16 @@
         const auth = getAuth(app);
         signInAnonymously(auth).catch(() => {});
 
-        const MASTER_PIN = "9988";
+        // SHA-256 Hashing Helper
+        async function hashPin(pin) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(pin);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        // মাস্টার পিন "9988"-এর নিরাপদ SHA-256 হ্যাশ
+        const MASTER_PIN_HASH = "80f1b51829e1eb13f8c857774c106fa4923e1e24749f7e8a936a281878d6b88e";
         let activeExamId = "exam_fn02_2026";
         let activeExamMax = 15;
 
@@ -386,7 +400,9 @@
         let activeSelectedSub = null;
         let isCreatingNewPin = false;
 
+        // সম্পূর্ণ ৩ গ্রুপের বিষয় তালিকা
         const MASTER_SUBJECTS = [
+            // Science
             { stream: 'Science', key: 'B1', name: 'Bangla 1st' },
             { stream: 'Science', key: 'B2', name: 'Bangla 2nd' },
             { stream: 'Science', key: 'E1', name: 'English 1st' },
@@ -400,20 +416,37 @@
             { stream: 'Science', key: 'Reli', name: 'Religion' },
             { stream: 'Science', key: 'ICT', name: 'ICT' },
             
+            // Humanities
             { stream: 'Humanities', key: 'B1', name: 'Bangla 1st' },
+            { stream: 'Humanities', key: 'B2', name: 'Bangla 2nd' },
+            { stream: 'Humanities', key: 'E1', name: 'English 1st' },
+            { stream: 'Humanities', key: 'E2', name: 'English 2nd' },
+            { stream: 'Humanities', key: 'Math', name: 'General Math' },
+            { stream: 'Humanities', key: 'AG_HE', name: 'AG/HE' },
             { stream: 'Humanities', key: 'His', name: 'History' },
             { stream: 'Humanities', key: 'Geo', name: 'Geography' },
             { stream: 'Humanities', key: 'Civ', name: 'Civics' },
             { stream: 'Humanities', key: 'Sci', name: 'General Science' },
+            { stream: 'Humanities', key: 'Reli', name: 'Religion' },
+            { stream: 'Humanities', key: 'ICT', name: 'ICT' },
             
+            // Business Studies
             { stream: 'B.Studies', key: 'B1', name: 'Bangla 1st' },
+            { stream: 'B.Studies', key: 'B2', name: 'Bangla 2nd' },
+            { stream: 'B.Studies', key: 'E1', name: 'English 1st' },
+            { stream: 'B.Studies', key: 'E2', name: 'English 2nd' },
+            { stream: 'B.Studies', key: 'Math', name: 'General Math' },
+            { stream: 'B.Studies', key: 'AG_HE', name: 'AG/HE' },
             { stream: 'B.Studies', key: 'Fin', name: 'Finance' },
-            { stream: 'B.Studies', key: 'Acc', name: 'Accounting' }
+            { stream: 'B.Studies', key: 'Acc', name: 'Accounting' },
+            { stream: 'B.Studies', key: 'Sci', name: 'General Science' },
+            { stream: 'B.Studies', key: 'Reli', name: 'Religion' }
         ];
 
-        window.verifyAuthPin = function () {
+        window.verifyAuthPin = async function () {
             const val = document.getElementById('inpMasterPin').value.trim();
-            if (val === MASTER_PIN) {
+            const hashed = await hashPin(val);
+            if (hashed === MASTER_PIN_HASH) {
                 document.getElementById('viewAuth').style.display = 'none';
                 document.getElementById('viewDashboard').style.display = 'block';
                 window.fetchLiveData();
@@ -536,7 +569,6 @@
                     badgeClass = 'chip-partial'; badgeText = 'Partial';
                 }
 
-                // ক্লিন চিহ্ন ও সংখ্যা
                 let breakdownHTML = '';
                 Object.keys(sub.breakdown).forEach(gKey => {
                     const b = sub.breakdown[gKey];
@@ -557,22 +589,7 @@
 
                 const card = document.createElement('div');
                 card.className = 'subject-card';
-                
-                // মোবাইল ও ডেস্কটপ উভয়ের জন্য ডাবল-ট্যাপ লজিক
-                let lastTouchTime = 0;
-                card.addEventListener('touchend', function(e) {
-                    const currentTime = new Date().getTime();
-                    const tapLength = currentTime - lastTouchTime;
-                    if (tapLength < 350 && tapLength > 0) {
-                        e.preventDefault();
-                        window.triggerSubjectEntry(sub.key, sub.stream);
-                    }
-                    lastTouchTime = currentTime;
-                });
-
-                card.addEventListener('dblclick', function() {
-                    window.triggerSubjectEntry(sub.key, sub.stream);
-                });
+                card.onclick = () => window.triggerSubjectEntry(sub.key, sub.stream);
 
                 card.innerHTML = `
                     <div class="d-flex justify-content-between align-items-center">
@@ -618,7 +635,10 @@
                 selGrp.appendChild(opt);
             }
 
-            const existingPin = allPins[sub.key];
+            const cleanStream = sub.stream === 'B.Studies' ? 'BStudies' : sub.stream;
+            const pinKey = `${cleanStream}_${sub.key}`;
+            const existingPin = allPins[pinKey] || allPins[sub.key];
+
             if (!existingPin) {
                 isCreatingNewPin = true;
                 document.getElementById('lblPinInstruction').innerText = 'No PIN set. Create 4-digit PIN:';
@@ -640,16 +660,19 @@
                 return;
             }
 
+            const cleanStream = activeSelectedSub.stream === 'B.Studies' ? 'BStudies' : activeSelectedSub.stream;
+            const pinKey = `${cleanStream}_${activeSelectedSub.key}`;
             const pinModalEl = document.getElementById('modalSubPin');
             const pinModal = bootstrap.Modal.getInstance(pinModalEl);
 
             if (isCreatingNewPin) {
-                await set(ref(db, `evaluation_system/pins/${activeSelectedSub.key}`), entered);
-                allPins[activeSelectedSub.key] = entered;
+                await set(ref(db, `evaluation_system/pins/${pinKey}`), entered);
+                allPins[pinKey] = entered;
                 if (pinModal) pinModal.hide();
                 openMarkEntrySheet();
             } else {
-                if (entered === allPins[activeSelectedSub.key]) {
+                const correctPin = allPins[pinKey] || allPins[activeSelectedSub.key];
+                if (entered === correctPin) {
                     if (pinModal) pinModal.hide();
                     openMarkEntrySheet();
                 } else {
@@ -716,9 +739,11 @@
                     if ((this.value.match(/\./g) || []).length > 1) {
                         this.value = this.value.slice(0, -1);
                     }
-                    if (parseFloat(this.value) > activeExamMax) {
-                        alert(`Full mark is ${activeExamMax}!`);
-                        this.value = '';
+                    const num = parseFloat(this.value);
+                    if (!isNaN(num) && (num > activeExamMax || num < 0)) {
+                        this.classList.add('input-error');
+                    } else {
+                        this.classList.remove('input-error');
                     }
                 });
 
@@ -733,6 +758,17 @@
 
         window.saveDirectMarksToFirebase = async function () {
             const inputs = document.querySelectorAll('.mark-field');
+            let hasErrors = false;
+            inputs.forEach(inp => {
+                const num = parseFloat(inp.value.trim());
+                if (!isNaN(num) && (num > activeExamMax || num < 0)) hasErrors = true;
+            });
+
+            if (hasErrors) {
+                alert(`Some marks exceed the full mark (${activeExamMax}). Please fix highlighted inputs.`);
+                return;
+            }
+
             const btn = document.getElementById('btnSaveMarks');
             btn.disabled = true;
             btn.innerText = "Saving...";
