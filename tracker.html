@@ -405,12 +405,15 @@
         // SHA-256 Hashing Helper with non-HTTPS Fallback
         async function hashPin(pin) {
             if (window.crypto && crypto.subtle) {
-                const encoder = new TextEncoder();
-                const data = encoder.encode(pin);
-                const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-                return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+                try {
+                    const encoder = new TextEncoder();
+                    const data = encoder.encode(pin);
+                    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+                    return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+                } catch (e) {
+                    return pin === "9988" ? MASTER_PIN_HASH : "invalid";
+                }
             }
-            // ফলব্যাক (ইনসিকিউর/নন-এসএসএল লোকাল আইপির জন্য)
             return pin === "9988" ? MASTER_PIN_HASH : "invalid";
         }
 
@@ -428,9 +431,9 @@
         let activeSelectedSub = null;
         let isCreatingNewPin = false;
 
-        // সম্পূর্ণ বিষয়ের মাস্টার তালিকা
+        // সম্পূর্ণ বিষয়ের মাস্টার তালিকা (বিজ্ঞান ১২, মানবিক ১২, ব্যবসায় শিক্ষা ১২)
         const ALL_MASTER_SUBJECTS = [
-            // Science
+            // Science (12)
             { stream: 'Science', key: 'B1', name: 'Bangla 1st' },
             { stream: 'Science', key: 'B2', name: 'Bangla 2nd' },
             { stream: 'Science', key: 'E1', name: 'English 1st' },
@@ -444,7 +447,7 @@
             { stream: 'Science', key: 'Reli', name: 'Religion' },
             { stream: 'Science', key: 'ICT', name: 'ICT' },
             
-            // Humanities
+            // Humanities (12)
             { stream: 'Humanities', key: 'B1', name: 'Bangla 1st' },
             { stream: 'Humanities', key: 'B2', name: 'Bangla 2nd' },
             { stream: 'Humanities', key: 'E1', name: 'English 1st' },
@@ -458,7 +461,7 @@
             { stream: 'Humanities', key: 'Reli', name: 'Religion' },
             { stream: 'Humanities', key: 'ICT', name: 'ICT' },
             
-            // Business Studies
+            // Business Studies (12)
             { stream: 'B.Studies', key: 'B1', name: 'Bangla 1st' },
             { stream: 'B.Studies', key: 'B2', name: 'Bangla 2nd' },
             { stream: 'B.Studies', key: 'E1', name: 'English 1st' },
@@ -471,24 +474,42 @@
             { stream: 'B.Studies', key: 'Sci', name: 'General Science' },
             { stream: 'B.Studies', key: 'Reli', name: 'Religion' },
             { stream: 'B.Studies', key: 'ICT', name: 'ICT' }
+        ];
+
         let activeSubjectsList = ALL_MASTER_SUBJECTS;
 
         window.verifyAuthPin = async function () {
-            const val = document.getElementById('inpMasterPin').value.trim();
+            const inp = document.getElementById('inpMasterPin');
+            const val = inp ? inp.value.trim() : '';
+            const errEl = document.getElementById('authErr');
+
+            // সরাসরি "9988" চেক
+            if (val === "9988") {
+                if (errEl) errEl.style.display = 'none';
+                document.getElementById('viewAuth').style.display = 'none';
+                document.getElementById('viewDashboard').style.display = 'block';
+                window.fetchLiveData();
+                return;
+            }
+
             const hashed = await hashPin(val);
-            if (hashed === MASTER_PIN_HASH || val === "9988") {
+            if (hashed === MASTER_PIN_HASH) {
+                if (errEl) errEl.style.display = 'none';
                 document.getElementById('viewAuth').style.display = 'none';
                 document.getElementById('viewDashboard').style.display = 'block';
                 window.fetchLiveData();
             } else {
-                document.getElementById('authErr').style.display = 'block';
-                document.getElementById('inpMasterPin').value = '';
+                if (errEl) errEl.style.display = 'block';
+                if (inp) inp.value = '';
             }
         };
 
-        document.getElementById('inpMasterPin').addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') window.verifyAuthPin();
-        });
+        const masterPinInput = document.getElementById('inpMasterPin');
+        if (masterPinInput) {
+            masterPinInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') window.verifyAuthPin();
+            });
+        }
 
         window.fetchLiveData = async function () {
             try {
@@ -507,7 +528,6 @@
                         lockStatusEl.style.display = isExamLocked ? 'inline-block' : 'none';
                     }
 
-                    // সক্রিয় বিষয় ফিল্টারিং (Active Exam Subjects Only)
                     if (exData.activeSubjects && Array.isArray(exData.activeSubjects)) {
                         activeExamSubjects = exData.activeSubjects;
                         activeSubjectsList = ALL_MASTER_SUBJECTS.filter(s => activeExamSubjects.includes(s.key));
@@ -719,7 +739,6 @@
                 if (pinModal) pinModal.hide();
                 openMarkEntrySheet();
             } else {
-                // স্ট্রিং হিসেবে নির্ভুল তুলনা
                 const correctPin = String(allPins[pinKey] || allPins[activeSelectedSub.key] || '').trim();
                 if (entered === correctPin) {
                     if (pinModal) pinModal.hide();
@@ -753,7 +772,7 @@
                 return s.group === activeSelectedSub.stream;
             });
 
-            // রোল নয়, গত পরীক্ষার ক্রমিক (overallRank / sl) অনুযায়ী মেধা তালিকায় সর্ট
+            // পূর্ববর্তী পরীক্ষার ক্রমিক (overallRank / sl) অনুযায়ী মেধা তালিকায় সাজানো
             list.sort((a, b) => {
                 const rankA = (a.overallRank !== undefined && a.overallRank !== null) ? Number(a.overallRank) : (Number(a.sl) || 9999);
                 const rankB = (b.overallRank !== undefined && b.overallRank !== null) ? Number(b.overallRank) : (Number(b.sl) || 9999);
@@ -818,7 +837,6 @@
             });
         }
 
-        // নিরাপদ মার্কস সেভ (ফাঁকা ঘর থাকলেও আগের নম্বর ডিলিট হবে না)
         window.saveDirectMarksToFirebase = async function () {
             if (isExamLocked) {
                 alert("Exam is locked by Admin. Marks cannot be modified!");
