@@ -124,11 +124,18 @@
             outline: none;
             background: #ffffff;
             flex-shrink: 0;
+            transition: border-color 0.2s, background-color 0.2s;
         }
 
         .mark-input:focus {
             border-color: #2563eb;
             box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+        }
+
+        .mark-input.input-error {
+            border-color: #dc2626 !important;
+            background-color: #fee2e2 !important;
+            color: #dc2626 !important;
         }
 
         .mark-input:disabled {
@@ -234,7 +241,7 @@
 
     <div class="container" style="max-width: 480px;">
 
-        <!-- লক অ্যালার্ট (যদি অ্যাডমিন বন্ধ করে) -->
+        <!-- লক অ্যালার্ট -->
         <div id="examLockedAlert" class="locked-alert" style="display:none;">
             <i class="fa-solid fa-lock"></i> Entry Closed by Admin
         </div>
@@ -267,7 +274,7 @@
             <div id="setPinView" style="display: none;">
                 <div class="mb-2"><i class="fa-solid fa-key text-warning" style="font-size: 2.2rem;"></i></div>
                 <h6 class="fw-bold text-dark mb-1">Set 4-Digit Secret PIN</h6>
-                <p class="small text-muted mb-3">No PIN set for this subject. Enter 4-digit PIN:</p>
+                <p class="small text-muted mb-3">No PIN set for this subject in this group. Enter 4-digit PIN:</p>
                 <input type="password" id="newPin" class="form-control pin-box mx-auto mb-3" maxlength="4" placeholder="••••" inputmode="numeric">
                 <button type="button" class="btn btn-primary w-100 rounded-pill fw-bold" onclick="saveNewPin()">Save PIN & Open</button>
             </div>
@@ -284,9 +291,8 @@
 
         <!-- নম্বর এন্ট্রি সেকশন -->
         <div id="entrySection" style="display: none;">
-            
             <div class="rule-note d-flex align-items-center justify-content-between">
-                <div><i class="fa-solid fa-circle-info"></i> Absent = <strong>0</strong> | Full Mark: <strong id="maxMarkDisplay">15</strong></div>
+                <div><i class="fa-solid fa-circle-info"></i> Absent/Zero = <strong>0</strong> | Full Mark: <strong id="maxMarkDisplay">15</strong></div>
                 <button type="button" class="btn btn-sm btn-outline-danger py-0 px-2 fw-bold" onclick="clearAllMarks()" id="clearAllBtn" style="font-size:0.75rem;">
                     <i class="fa-solid fa-trash"></i> Clear All
                 </button>
@@ -313,7 +319,6 @@
                     </button>
                 </div>
             </form>
-
         </div>
 
     </div>
@@ -371,20 +376,17 @@
         let isExamLocked = false;
         let maxMarkAllowed = 15;
         let storedPIN = null;
-        let activeExamSubjects = null; // সক্রিয় বিষয়ের তালিকা
+        let activeExamSubjects = null;
 
         signInAnonymously(auth).catch(() => {});
 
-        // সক্রিয় পরীক্ষার তথ্য লাইভ লোড করা
         async function fetchActiveExam() {
             try {
-                // ১. কোন পরীক্ষা সক্রিয় তা জানা
                 const actSnap = await get(ref(db, 'evaluation_system/active_exam_id'));
                 if (actSnap.exists() && actSnap.val()) {
                     activeExamId = actSnap.val();
                 }
 
-                // ২. পরীক্ষার ডিটেইল আনা
                 const exSnap = await get(ref(db, `evaluation_system/exams/${activeExamId}`));
                 if (exSnap.exists()) {
                     const data = exSnap.val();
@@ -429,8 +431,6 @@
             else if (currentGroup === 'B.Studies') groupCategory = "BStudies";
 
             let subs = SUBJECTS_LIST[groupCategory] || [];
-            
-            // যদি অ্যাডমিন কোনো বিষয় বাদ দিয়ে থাকে, তা ড্রপডাউনে আসবে না
             if (activeExamSubjects && activeExamSubjects.length > 0) {
                 subs = subs.filter(s => activeExamSubjects.includes(s.key));
             }
@@ -443,9 +443,12 @@
             });
         };
 
-        // সহজ বিষয়ভিত্তিক পিন পাথ
+        // স্ট্রিম-ভিত্তিক পিন পাথ (PIN Collision Fix)
         function getPinPath() {
-            return `evaluation_system/pins/${currentSubject}`;
+            let stream = "Science";
+            if (currentGroup === 'Humanities') stream = "Humanities";
+            else if (currentGroup === 'B.Studies') stream = "BStudies";
+            return `evaluation_system/pins/${stream}_${currentSubject}`;
         }
 
         window.onSubjectSelected = async function () {
@@ -469,7 +472,12 @@
             pinCard.style.display = 'block';
 
             try {
-                const pSnap = await get(ref(db, getPinPath()));
+                // স্ট্রিম-সচেতন পিন চেক, না পাওয়া গেলে গ্লোবাল কি ফলব্যাক
+                let pSnap = await get(ref(db, getPinPath()));
+                if (!pSnap.exists()) {
+                    pSnap = await get(ref(db, `evaluation_system/pins/${currentSubject}`));
+                }
+
                 if (pSnap.exists() && pSnap.val()) {
                     storedPIN = String(pSnap.val()).trim();
                     setPinView.style.display = 'none';
@@ -527,7 +535,6 @@
                     students = Object.values(stdSnap.val());
                 }
 
-                // গ্রুপ অনুযায়ী শিক্ষার্থী ফিল্টার
                 let filtered = students.filter(s => {
                     if (currentGroup === 'Humanities') return s.group === 'Humanities';
                     if (currentGroup === 'B.Studies') return s.group === 'B.Studies';
@@ -569,7 +576,6 @@
                         </div>
                         <input type="text" 
                                inputmode="decimal" 
-                               pattern="[0-9]*" 
                                class="mark-input" 
                                data-id="${s.id}" 
                                value="${prevVal}" 
@@ -589,7 +595,6 @@
             }
         }
 
-        // লাইভ সার্চ ফিল্টার
         window.filterStudentsOnTheFly = function () {
             const query = document.getElementById('studentSearchInp').value.toLowerCase().trim();
             const cards = document.querySelectorAll('.student-row-card');
@@ -603,7 +608,6 @@
             });
         };
 
-        // ক্লিয়ার অল বাটন
         window.clearAllMarks = function () {
             if (isExamLocked) {
                 alert("Cannot clear! Exam is locked by Admin.");
@@ -611,7 +615,10 @@
             }
             if (confirm(`Are you sure you want to CLEAR all entered marks for ${currentSubject} (${currentGroup})?`)) {
                 const inputs = document.querySelectorAll('.mark-input');
-                inputs.forEach(inp => inp.value = '');
+                inputs.forEach(inp => {
+                    inp.value = '';
+                    inp.classList.remove('input-error');
+                });
             }
         };
 
@@ -623,6 +630,12 @@
                     if ((this.value.match(/\./g) || []).length > 1) {
                         this.value = this.value.slice(0, -1);
                     }
+                    const num = parseFloat(this.value);
+                    if (!isNaN(num) && (num > maxMarkAllowed || num < 0)) {
+                        this.classList.add('input-error');
+                    } else {
+                        this.classList.remove('input-error');
+                    }
                 });
 
                 inp.addEventListener('keydown', (e) => {
@@ -631,20 +644,9 @@
                         if (inputs[idx + 1]) inputs[idx + 1].focus();
                     }
                 });
-
-                inp.addEventListener('blur', function () {
-                    const val = this.value.trim();
-                    if (val === '') return;
-                    const num = parseFloat(val);
-                    if (isNaN(num) || num > maxMarkAllowed || num < 0) {
-                        alert(`Full mark is ${maxMarkAllowed}. Enter between 0 to ${maxMarkAllowed}.`);
-                        this.value = '';
-                    }
-                });
             });
         }
 
-        // ব্যাচ সেভ
         window.saveAllMarks = async function () {
             if (isExamLocked) {
                 alert("Exam is locked by Admin. Marks cannot be modified.");
@@ -653,6 +655,17 @@
 
             const inputs = document.querySelectorAll('.mark-input');
             if (inputs.length === 0) return;
+
+            let hasErrors = false;
+            inputs.forEach(inp => {
+                const num = parseFloat(inp.value.trim());
+                if (!isNaN(num) && (num > maxMarkAllowed || num < 0)) hasErrors = true;
+            });
+
+            if (hasErrors) {
+                alert(`Some marks exceed full mark (${maxMarkAllowed}). Please correct red fields.`);
+                return;
+            }
 
             const saveBtn = document.getElementById('saveBtnEl');
             saveBtn.disabled = true;
