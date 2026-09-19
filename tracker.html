@@ -24,6 +24,11 @@
             user-select: none;
         }
 
+        input, select, textarea {
+            user-select: text !important;
+            -webkit-user-select: text !important;
+        }
+
         body {
             background-color: var(--bg-body);
             color: #0f172a;
@@ -75,6 +80,18 @@
             font-size: 0.74rem;
             font-weight: 700;
             margin-top: 5px;
+        }
+
+        .locked-badge {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+            border-radius: 50px;
+            padding: 3px 12px;
+            font-size: 0.72rem;
+            font-weight: 800;
+            margin-top: 5px;
+            display: inline-block;
         }
 
         .rounded-box {
@@ -226,6 +243,11 @@
             background: #fee2e2 !important;
             color: #dc2626 !important;
         }
+        .mark-inp-pill:disabled {
+            background: #f1f5f9;
+            color: #94a3b8;
+            border-color: #e2e8f0;
+        }
     </style>
 </head>
 <body>
@@ -254,6 +276,7 @@
             <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg-795xmOcuKYH8wjija8JrA-qVjfOp_4KieeZ1pOQJaqX2uXsqGLMo09AXsGGsfGjH9LpK5fPlUNGbebFguiAzPC_YvbRXcHePj7cORQd6GMxDUg-LCeXtmNkccGI2K4Hv73PJqJkGX0Ju9N4knQuqKOAImqB6qy_WWFXpKeIaQhRgk7YbLqBLpCmL0cio/s1600/%E0%A6%95%E0%A7%8D%E0%A6%AF%E0%A6%AA%E0%A6%BE%E0%A6%A8%E0%A7%8D%E0%A6%9F%E0%A6%A8%E0%A6%AE%E0%A7%87%E0%A6%A8%E0%A7%8D%E0%A6%9F_%E0%A6%AA%E0%A6%BE%E0%A6%AC%E0%A6%B2%E0%A6%BF%E0%A6%95_%E0%A6%B8%E0%A7%8D%E0%A6%9F%E0%A7%81%E0%A6%B2_%E0%A6%93_%E0%A6%95%E0%A6%B2%E0%A7%87%E0%A6%9C_%E0%A6%B2%E0%A6%BE%E0%A6%B2%E0%A6%AE%E0%A6%A8%E0%A6%BF%E0%A6%B0%E0%A6%B9%E0%A6%BE%E0%A6%9F%E0%A7%87%E0%A6%B0_%E0%A6%B2%E0%A7%8B%E0%A6%97%E0%A7%8B.png" alt="CPSCL Logo" class="school-logo">
             <h5 class="school-title">Cantonment Public School & College Lalmonirhat</h5>
             <div class="pill-badge" id="lblLiveExam">Loading Exam...</div>
+            <div id="lblExamLockStatus" style="display:none;" class="locked-badge">🔒 Entry Closed by Admin</div>
         </div>
 
         <div class="container" style="max-width: 480px; margin-top: -10px;">
@@ -379,18 +402,23 @@
         const auth = getAuth(app);
         signInAnonymously(auth).catch(() => {});
 
-        // SHA-256 Hashing Helper
+        // SHA-256 Hashing Helper with non-HTTPS Fallback
         async function hashPin(pin) {
-            const encoder = new TextEncoder();
-            const data = encoder.encode(pin);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-            return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+            if (window.crypto && crypto.subtle) {
+                const encoder = new TextEncoder();
+                const data = encoder.encode(pin);
+                const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+                return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+            }
+            // ফলব্যাক (ইনসিকিউর/নন-এসএসএল লোকাল আইপির জন্য)
+            return pin === "9988" ? MASTER_PIN_HASH : "invalid";
         }
 
-        // মাস্টার পিন "9988"-এর নিরাপদ SHA-256 হ্যাশ
         const MASTER_PIN_HASH = "80f1b51829e1eb13f8c857774c106fa4923e1e24749f7e8a936a281878d6b88e";
         let activeExamId = "exam_fn02_2026";
         let activeExamMax = 15;
+        let isExamLocked = false;
+        let activeExamSubjects = null;
 
         let allStudents = [];
         let liveMarks = {};
@@ -400,8 +428,8 @@
         let activeSelectedSub = null;
         let isCreatingNewPin = false;
 
-        // সম্পূর্ণ ৩ গ্রুপের বিষয় তালিকা
-        const MASTER_SUBJECTS = [
+        // সম্পূর্ণ বিষয়ের মাস্টার তালিকা
+        const ALL_MASTER_SUBJECTS = [
             // Science
             { stream: 'Science', key: 'B1', name: 'Bangla 1st' },
             { stream: 'Science', key: 'B2', name: 'Bangla 2nd' },
@@ -443,10 +471,12 @@
             { stream: 'B.Studies', key: 'Reli', name: 'Religion' }
         ];
 
+        let activeSubjectsList = ALL_MASTER_SUBJECTS;
+
         window.verifyAuthPin = async function () {
             const val = document.getElementById('inpMasterPin').value.trim();
             const hashed = await hashPin(val);
-            if (hashed === MASTER_PIN_HASH) {
+            if (hashed === MASTER_PIN_HASH || val === "9988") {
                 document.getElementById('viewAuth').style.display = 'none';
                 document.getElementById('viewDashboard').style.display = 'block';
                 window.fetchLiveData();
@@ -470,6 +500,20 @@
                     const exData = exSnap.val();
                     document.getElementById('lblLiveExam').innerText = `${exData.title} (${exData.date || ''})`;
                     activeExamMax = parseFloat(exData.max) || 15;
+                    isExamLocked = exData.isLocked === true;
+
+                    const lockStatusEl = document.getElementById('lblExamLockStatus');
+                    if (lockStatusEl) {
+                        lockStatusEl.style.display = isExamLocked ? 'inline-block' : 'none';
+                    }
+
+                    // সক্রিয় বিষয় ফিল্টারিং (Active Exam Subjects Only)
+                    if (exData.activeSubjects && Array.isArray(exData.activeSubjects)) {
+                        activeExamSubjects = exData.activeSubjects;
+                        activeSubjectsList = ALL_MASTER_SUBJECTS.filter(s => activeExamSubjects.includes(s.key));
+                    } else {
+                        activeSubjectsList = ALL_MASTER_SUBJECTS;
+                    }
                 }
 
                 const stdSnap = await get(ref(db, 'evaluation_system/students'));
@@ -483,7 +527,7 @@
 
                 renderDashboardMetrics();
             } catch (e) {
-                console.error(e);
+                console.error("Tracker sync error:", e);
             }
         };
 
@@ -491,7 +535,7 @@
             let totalTarget = 0, totalEntered = 0;
             let cDone = 0, cWait = 0, cDue = 0;
 
-            MASTER_SUBJECTS.forEach(sub => {
+            activeSubjectsList.forEach(sub => {
                 const targetStudents = allStudents.filter(s => s.group === sub.stream);
                 const subTarget = targetStudents.length;
 
@@ -506,7 +550,10 @@
 
                 let subEntered = 0;
                 targetStudents.forEach(s => {
-                    const grpKey = sub.stream === 'Science' ? (s.subGroup || 'Group-A') : sub.stream;
+                    let grpKey = sub.stream;
+                    if (sub.stream === 'Science') {
+                        grpKey = s.subGroup || (Number(s.sl || s.overallRank) <= 55 ? 'Group-A' : (Number(s.sl || s.overallRank) <= 105 ? 'Group-B' : 'Group-C'));
+                    }
                     if (!breakdown[grpKey]) breakdown[grpKey] = { target: 0, done: 0 };
                     
                     breakdown[grpKey].target++;
@@ -550,14 +597,14 @@
             const container = document.getElementById('subjectListContainer');
             container.innerHTML = '';
 
-            let list = MASTER_SUBJECTS.filter(s => {
+            let list = activeSubjectsList.filter(s => {
                 if (currentFilter === 'All') return true;
                 if (currentFilter === 'Due') return s.entered < s.target;
                 return s.stream === currentFilter;
             });
 
             if (list.length === 0) {
-                container.innerHTML = '<div class="text-center p-4 small text-muted">No records found.</div>';
+                container.innerHTML = '<div class="text-center p-4 small text-muted">No records found for this filter.</div>';
                 return;
             }
 
@@ -608,7 +655,8 @@
         }
 
         window.triggerSubjectEntry = function (subKey, stream) {
-            const sub = MASTER_SUBJECTS.find(s => s.key === subKey && s.stream === stream);
+            const sub = activeSubjectsList.find(s => s.key === subKey && s.stream === stream);
+            if (!sub) return;
             activeSelectedSub = sub;
 
             document.getElementById('lblSelectedSubName').innerText = `${sub.name} (${sub.stream})`;
@@ -671,7 +719,8 @@
                 if (pinModal) pinModal.hide();
                 openMarkEntrySheet();
             } else {
-                const correctPin = allPins[pinKey] || allPins[activeSelectedSub.key];
+                // স্ট্রিং হিসেবে নির্ভুল তুলনা
+                const correctPin = String(allPins[pinKey] || allPins[activeSelectedSub.key] || '').trim();
                 if (entered === correctPin) {
                     if (pinModal) pinModal.hide();
                     openMarkEntrySheet();
@@ -685,19 +734,31 @@
         function openMarkEntrySheet() {
             const targetGroup = document.getElementById('selEntryGroup').value;
             document.getElementById('lblSheetTitle').innerText = `${activeSelectedSub.name} - ${targetGroup}`;
-            document.getElementById('lblSheetGroupMeta').innerText = `Full Mark: ${activeExamMax}`;
+            document.getElementById('lblSheetGroupMeta').innerText = `Full Mark: ${activeExamMax} ${isExamLocked ? '• (Locked by Admin)' : ''}`;
+
+            const saveBtn = document.getElementById('btnSaveMarks');
+            if (saveBtn) {
+                saveBtn.disabled = isExamLocked;
+                saveBtn.innerText = isExamLocked ? "Entry Closed by Admin" : "Save Marks";
+            }
 
             const container = document.getElementById('sheetContainer');
             container.innerHTML = '';
 
             let list = allStudents.filter(s => {
                 if (activeSelectedSub.stream === 'Science') {
-                    return s.group === 'Science' && (s.subGroup === targetGroup);
+                    const subGrp = s.subGroup || (Number(s.sl || s.overallRank) <= 55 ? 'Group-A' : (Number(s.sl || s.overallRank) <= 105 ? 'Group-B' : 'Group-C'));
+                    return s.group === 'Science' && (subGrp === targetGroup);
                 }
                 return s.group === activeSelectedSub.stream;
             });
 
-            list.sort((a, b) => (a.overallRank || a.sl) - (b.overallRank || b.sl));
+            // রোল নয়, গত পরীক্ষার ক্রমিক (overallRank / sl) অনুযায়ী মেধা তালিকায় সর্ট
+            list.sort((a, b) => {
+                const rankA = (a.overallRank !== undefined && a.overallRank !== null) ? Number(a.overallRank) : (Number(a.sl) || 9999);
+                const rankB = (b.overallRank !== undefined && b.overallRank !== null) ? Number(b.overallRank) : (Number(b.sl) || 9999);
+                return rankA - rankB;
+            });
 
             if (list.length === 0) {
                 container.innerHTML = `<div class="text-center p-3 text-danger fw-bold">No students found in ${targetGroup}!</div>`;
@@ -720,7 +781,8 @@
                                class="mark-inp-pill mark-field" 
                                data-id="${s.id}" 
                                value="${prev}" 
-                               placeholder="-">
+                               placeholder="-"
+                               ${isExamLocked ? 'disabled' : ''}>
                     `;
                     container.appendChild(row);
                 });
@@ -756,7 +818,13 @@
             });
         }
 
+        // নিরাপদ মার্কস সেভ (ফাঁকা ঘর থাকলেও আগের নম্বর ডিলিট হবে না)
         window.saveDirectMarksToFirebase = async function () {
+            if (isExamLocked) {
+                alert("Exam is locked by Admin. Marks cannot be modified!");
+                return;
+            }
+
             const inputs = document.querySelectorAll('.mark-field');
             let hasErrors = false;
             inputs.forEach(inp => {
@@ -774,24 +842,27 @@
             btn.innerText = "Saving...";
 
             const updates = {};
+            let count = 0;
+
             inputs.forEach(inp => {
                 const sId = inp.getAttribute('data-id');
                 const val = inp.value.trim();
                 const path = `evaluation_system/marks/${activeExamId}/${sId}/${activeSelectedSub.key}`;
 
-                if (val === '') {
-                    updates[path] = null;
-                    if (liveMarks[sId]) delete liveMarks[sId][activeSelectedSub.key];
-                } else {
-                    updates[path] = String(val);
-                    if (!liveMarks[sId]) liveMarks[sId] = {};
-                    liveMarks[sId][activeSelectedSub.key] = String(val);
+                if (val !== '') {
+                    const num = parseFloat(val);
+                    if (!isNaN(num) && num >= 0 && num <= activeExamMax) {
+                        updates[path] = String(num);
+                        if (!liveMarks[sId]) liveMarks[sId] = {};
+                        liveMarks[sId][activeSelectedSub.key] = String(num);
+                        count++;
+                    }
                 }
             });
 
             try {
                 await update(ref(db), updates);
-                alert(`Marks saved successfully!`);
+                alert(`Marks saved successfully for ${count} students!`);
                 const sheetModalEl = document.getElementById('modalMarkEntry');
                 const sheetModal = bootstrap.Modal.getInstance(sheetModalEl);
                 if (sheetModal) sheetModal.hide();
@@ -810,7 +881,7 @@
             let msg = `*Notice: Pending Mark Submission*\n`;
             let foundDue = false;
 
-            MASTER_SUBJECTS.forEach(sub => {
+            activeSubjectsList.forEach(sub => {
                 let dueGrps = [];
                 Object.keys(sub.breakdown).forEach(gKey => {
                     const b = sub.breakdown[gKey];
@@ -826,7 +897,7 @@
             });
 
             if (!foundDue) {
-                alert("All subjects complete!");
+                alert("All active subjects complete!");
                 return;
             }
 
