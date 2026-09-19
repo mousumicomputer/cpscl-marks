@@ -431,7 +431,7 @@
         let activeSelectedSub = null;
         let isCreatingNewPin = false;
 
-        // সম্পূর্ণ বিষয়ের মাস্টার তালিকা (বিজ্ঞান ১২, মানবিক ১২, ব্যবসায় শিক্ষা ১২)
+        // সম্পূর্ণ বিষয়ের মাস্টার তালিকা
         const ALL_MASTER_SUBJECTS = [
             // Science (12)
             { stream: 'Science', key: 'B1', name: 'Bangla 1st' },
@@ -483,7 +483,6 @@
             const val = inp ? inp.value.trim() : '';
             const errEl = document.getElementById('authErr');
 
-            // সরাসরি "9988" চেক
             if (val === "9988") {
                 if (errEl) errEl.style.display = 'none';
                 document.getElementById('viewAuth').style.display = 'none';
@@ -572,7 +571,8 @@
                 targetStudents.forEach(s => {
                     let grpKey = sub.stream;
                     if (sub.stream === 'Science') {
-                        grpKey = s.subGroup || (Number(s.sl || s.overallRank) <= 55 ? 'Group-A' : (Number(s.sl || s.overallRank) <= 105 ? 'Group-B' : 'Group-C'));
+                        const sRank = Number(s.overallRank !== undefined && s.overallRank !== null ? s.overallRank : s.sl);
+                        grpKey = s.subGroup || (sRank <= 55 ? 'Group-A' : (sRank <= 105 ? 'Group-B' : 'Group-C'));
                     }
                     if (!breakdown[grpKey]) breakdown[grpKey] = { target: 0, done: 0 };
                     
@@ -657,7 +657,7 @@
                 const card = document.createElement('div');
                 card.className = 'subject-card';
 
-                // স্ক্রোলিং সুরক্ষা: পরপর দুইবার ট্যাপ (Double Tap) করলেই কেবল এন্ট্রি খুলবে
+                // ডাবল ট্যাপে এন্ট্রি খোলা
                 let lastTap = 0;
                 card.addEventListener('click', () => {
                     const currentTime = Date.now();
@@ -778,13 +778,14 @@
 
             let list = allStudents.filter(s => {
                 if (activeSelectedSub.stream === 'Science') {
-                    const subGrp = s.subGroup || (Number(s.sl || s.overallRank) <= 55 ? 'Group-A' : (Number(s.sl || s.overallRank) <= 105 ? 'Group-B' : 'Group-C'));
+                    const sRank = Number(s.overallRank !== undefined && s.overallRank !== null ? s.overallRank : s.sl);
+                    const subGrp = s.subGroup || (sRank <= 55 ? 'Group-A' : (sRank <= 105 ? 'Group-B' : 'Group-C'));
                     return s.group === 'Science' && (subGrp === targetGroup);
                 }
                 return s.group === activeSelectedSub.stream;
             });
 
-            // পূর্ববর্তী পরীক্ষার ক্রমিক (overallRank / sl) অনুযায়ী মেধা তালিকায় সাজানো
+            // মেধা ক্রমিক অনুযায়ী সর্ট
             list.sort((a, b) => {
                 const rankA = (a.overallRank !== undefined && a.overallRank !== null) ? Number(a.overallRank) : (Number(a.sl) || 9999);
                 const rankB = (b.overallRank !== undefined && b.overallRank !== null) ? Number(b.overallRank) : (Number(b.sl) || 9999);
@@ -796,12 +797,13 @@
             } else {
                 list.forEach(s => {
                     const prev = (liveMarks[s.id] && liveMarks[s.id][activeSelectedSub.key] !== undefined) ? liveMarks[s.id][activeSelectedSub.key] : '';
+                    const meritRank = (s.overallRank !== undefined && s.overallRank !== null && s.overallRank !== '') ? s.overallRank : (s.sl || '-');
 
                     const row = document.createElement('div');
                     row.className = 'rounded-box d-flex align-items-center justify-content-between p-2 mb-2';
                     row.innerHTML = `
                         <div class="d-flex align-items-center gap-2 ps-1">
-                            <span class="badge rounded-pill bg-light text-primary fw-bold">#${s.sl || s.overallRank}</span>
+                            <span class="badge rounded-pill bg-light text-primary fw-bold">#${meritRank}</span>
                             <div>
                                 <div class="fw-bold small mb-0">${s.name}</div>
                                 <span class="text-muted" style="font-size:0.72rem;">Roll: ${s.roll} ${s.section ? '• Sec: ' + s.section : ''}</span>
@@ -849,6 +851,7 @@
             });
         }
 
+        // নিরাপদ মার্কস সেভ (নিরাপত্তা গার্ড সহ)
         window.saveDirectMarksToFirebase = async function () {
             if (isExamLocked) {
                 alert("Exam is locked by Admin. Marks cannot be modified!");
@@ -868,9 +871,6 @@
             }
 
             const btn = document.getElementById('btnSaveMarks');
-            btn.disabled = true;
-            btn.innerText = "Saving...";
-
             const updates = {};
             let count = 0;
 
@@ -889,6 +889,15 @@
                     }
                 }
             });
+
+            // নিরাপত্তা গার্ড: ফাঁকা অবস্থায় সেভ চাপলে আটকাবে
+            if (Object.keys(updates).length === 0) {
+                alert("কোনো নতুন বা পরিবর্তিত নম্বর পাওয়া যায়নি। দয়া করে নম্বর বসিয়ে সেভ করুন।");
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerText = "Saving...";
 
             try {
                 await update(ref(db), updates);
