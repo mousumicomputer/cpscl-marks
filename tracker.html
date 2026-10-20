@@ -35,7 +35,7 @@
         body {
             background-color: var(--bg-body);
             color: #0f172a;
-            padding-bottom: 75px;
+            padding-bottom: 80px;
         }
 
         .icon-svg {
@@ -101,7 +101,7 @@
         .app-header {
             background: linear-gradient(135deg, #064e3b, #059669);
             color: white;
-            padding: 18px 14px 14px 14px;
+            padding: 18px 14px 16px 14px;
             border-radius: 0 0 24px 24px;
             text-align: center;
             box-shadow: 0 4px 15px rgba(5, 150, 105, 0.15);
@@ -147,20 +147,21 @@
             box-shadow: 0 2px 6px rgba(5, 150, 105, 0.03);
         }
 
-        /* Fix for Exam Select dropdown - Full Text Visible */
+        /* Responsive Exam Select Box (Multi-line wrap, no cut-off) */
         .exam-select-box {
             width: 100%;
-            min-height: 42px;
+            min-height: 44px;
             border: 1.5px solid var(--primary);
             color: var(--primary-dark);
             border-radius: 10px;
             font-size: 0.88rem;
             font-weight: 700;
-            padding: 6px 12px;
+            padding: 8px 12px;
             outline: none;
             background: #ffffff;
             white-space: normal;
             word-wrap: break-word;
+            line-height: 1.35;
         }
 
         .progress-pill {
@@ -194,15 +195,15 @@
             display: flex;
             gap: 6px;
             overflow-x: auto;
-            padding: 4px 2px;
-            margin: 8px 0 6px 0;
+            padding: 6px 2px;
+            margin: 6px 0 10px 0;
             scrollbar-width: none;
         }
         .filter-scroller::-webkit-scrollbar { display: none; }
 
         .btn-pill {
             border-radius: 50px !important;
-            padding: 5px 14px;
+            padding: 6px 14px;
             font-size: 0.76rem;
             font-weight: 700;
             white-space: nowrap;
@@ -213,10 +214,10 @@
             transition: all 0.15s ease;
         }
         .btn-pill.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-            box-shadow: 0 2px 6px rgba(5, 150, 105, 0.2);
+            background: var(--primary) !important;
+            color: white !important;
+            border-color: var(--primary) !important;
+            box-shadow: 0 2px 6px rgba(5, 150, 105, 0.25);
         }
 
         .subject-card {
@@ -302,7 +303,6 @@
             box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15);
         }
 
-        /* Sleek Button for Print & Notice */
         .btn-icon-action {
             height: 36px;
             padding: 0 14px;
@@ -389,10 +389,11 @@
             <div class="pill-badge" id="lblLiveExam">Loading...</div>
         </div>
 
-        <div class="container" style="max-width: 480px; margin-top: -10px;">
+        <!-- Spacing fixed: No negative margin, header never covered -->
+        <div class="container" style="max-width: 480px; margin-top: 15px;">
             
-            <!-- Examination Selection Dropdown (Responsive & Non-overflowing) -->
-            <div class="card-custom mb-2">
+            <!-- Examination Selection Dropdown (Multi-line wrap, no cut-off) -->
+            <div class="card-custom mb-3">
                 <label class="form-label small fw-bold text-muted mb-1 d-flex align-items-center gap-1">
                     <svg class="icon-svg" style="fill: var(--primary);" viewBox="0 0 24 24"><path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/></svg>
                     Select Examination
@@ -410,8 +411,8 @@
                         <h4 class="mb-0 fw-bold" id="lblOverallPct" style="color: var(--primary-dark);">0%</h4>
                     </div>
                     <div class="d-flex gap-2">
-                        <!-- Sleek Print Button (Downloads Super Admin Live Tabulation PDF) -->
-                        <button class="btn-icon-action" onclick="printLiveTabulationSheet()" title="Print / Download Live Tabulation PDF">
+                        <!-- Print Button: Prints Live Tabulation of the Active Group / All Combined -->
+                        <button class="btn-icon-action" onclick="printLiveTabulationSheet()" title="Print Live Tabulation Sheet for Selected Group">
                             <svg class="icon-svg" viewBox="0 0 24 24"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>
                             Print
                         </button>
@@ -443,11 +444,8 @@
                 </div>
             </div>
 
-            <!-- Filter Scroller Pills -->
-            <div class="filter-scroller" id="filterPillsContainer">
-                <button class="btn-pill active" onclick="setFilter('All', this)">All</button>
-                <button class="btn-pill" style="color: var(--danger); border-color: #fca5a5;" onclick="setFilter('Due', this)">Due Only</button>
-            </div>
+            <!-- Dynamic Group & Stream Filter Pills (Group A, B, C, Streams, Due) -->
+            <div class="filter-scroller" id="filterPillsContainer"></div>
 
             <div class="d-flex justify-content-between align-items-center px-2 mb-2">
                 <span class="small text-muted fw-bold">Double-tap a subject to enter marks</span>
@@ -510,7 +508,7 @@
     <div id="printableTabulationSheet" class="printable-area">
         <div class="print-header">
             <h2>CANTONMENT PUBLIC SCHOOL AND COLLEGE LALMONIRHAT</h2>
-            <h3 id="printTabSubTitle">Performance Evaluation Statement (Full Tabulation)</h3>
+            <h3 id="printTabSubTitle">Performance Evaluation Statement</h3>
             <p><span id="printTabExamName">---</span> • Date: <span id="printTabDate">---</span></p>
         </div>
         <table class="tab-table">
@@ -753,28 +751,43 @@
             isLegacyExam = (currentExam.type === 'legacy');
             document.getElementById('lblLiveExam').innerText = currentExam.name;
 
-            renderFilterPills();
+            renderDynamicFilterPills();
             fetchTrackerLiveData();
         };
 
-        function renderFilterPills() {
+        // Render Dynamic Group & Stream Pills (Group A, Group B, Group C, Streams, Due)
+        function renderDynamicFilterPills() {
             const container = document.getElementById('filterPillsContainer');
             if (!container) return;
 
             let html = `<button class="btn-pill active" onclick="setFilter('All', this)">All</button>`;
+
             if (isLegacyExam) {
+                // Legacy System Groups & Streams (From cpscl_result_engine.js)
                 html += `
-                    <button class="btn-pill" onclick="setFilter('Science', this)">Science</button>
+                    <button class="btn-pill" onclick="setFilter('Group-A', this)">Group-A</button>
+                    <button class="btn-pill" onclick="setFilter('Group-B', this)">Group-B</button>
+                    <button class="btn-pill" onclick="setFilter('Group-C', this)">Group-C</button>
                     <button class="btn-pill" onclick="setFilter('Humanities', this)">Humanities</button>
                     <button class="btn-pill" onclick="setFilter('B.Studies', this)">B.Studies</button>
                 `;
+            } else {
+                // New CPSCL ERP Module Groups (From exam_manager.js)
+                const grpList = (currentExam.groups && currentExam.groups.length > 0) 
+                    ? currentExam.groups 
+                    : [{ name: 'Group A' }, { name: 'Group B' }];
+
+                grpList.forEach(g => {
+                    html += `<button class="btn-pill" onclick="setFilter('${g.name}', this)">${g.name}</button>`;
+                });
             }
+
             html += `<button class="btn-pill" style="color: var(--danger); border-color: #fca5a5;" onclick="setFilter('Due', this)">Due Only</button>`;
             container.innerHTML = html;
             currentFilter = 'All';
         }
 
-        // 4. Fetch Live Data from Firebase
+        // 4. Fetch Live Progress Data from Cloud
         window.fetchTrackerLiveData = async function () {
             if (!currentExam) return;
 
@@ -785,6 +798,16 @@
                 if (isLegacyExam) {
                     const stdSnap = await get(ref(db, 'evaluation_system/students'));
                     allStudents = stdSnap.exists() ? Object.values(stdSnap.val()) : [];
+
+                    // Determine assignedGroup for each student (Top 55: Group-A, Next 50: Group-B, Rest: Group-C)
+                    allStudents.forEach(s => {
+                        if (s.group === 'Science') {
+                            const sRank = Number(s.overallRank !== undefined && s.overallRank !== null ? s.overallRank : (s.sl || 9999));
+                            s.assignedGroup = s.subGroup || (sRank <= 55 ? 'Group-A' : (sRank <= 105 ? 'Group-B' : 'Group-C'));
+                        } else {
+                            s.assignedGroup = s.group;
+                        }
+                    });
 
                     const mSnap = await get(ref(db, `evaluation_system/marks/${currentExam.id}`));
                     liveMarks = mSnap.exists() ? mSnap.val() : {};
@@ -837,6 +860,7 @@
                         }
                         if (overrides[sId]) assigned = overrides[sId];
                         st.computedGroup = assigned || "Group A";
+                        st.assignedGroup = st.computedGroup;
                     });
 
                     const examSubs = currentExam.subjects || {};
@@ -890,11 +914,7 @@
                     }
 
                     targetStudents.forEach(s => {
-                        let grpKey = sub.stream;
-                        if (sub.stream === 'Science') {
-                            const sRank = Number(s.overallRank !== undefined && s.overallRank !== null ? s.overallRank : s.sl);
-                            grpKey = s.subGroup || (sRank <= 55 ? 'Group-A' : (sRank <= 105 ? 'Group-B' : 'Group-C'));
-                        }
+                        let grpKey = s.assignedGroup || sub.stream;
                         if (!breakdown[grpKey]) breakdown[grpKey] = { target: 0, done: 0 };
                         breakdown[grpKey].target++;
 
@@ -914,7 +934,7 @@
                     });
 
                     targetStudents.forEach(s => {
-                        const grpKey = s.computedGroup || "Group A";
+                        const grpKey = s.assignedGroup || "Group A";
                         if (!breakdown[grpKey]) breakdown[grpKey] = { target: 0, done: 0 };
                         breakdown[grpKey].target++;
 
@@ -966,6 +986,10 @@
             let list = activeSubjectsList.filter(s => {
                 if (currentFilter === 'All') return true;
                 if (currentFilter === 'Due') return s.entered < s.target;
+                if (['Group-A', 'Group-B', 'Group-C'].includes(currentFilter)) {
+                    return s.stream === 'Science' && s.breakdown[currentFilter] !== undefined;
+                }
+                if (s.breakdown && s.breakdown[currentFilter] !== undefined) return true;
                 return s.stream === currentFilter;
             });
 
@@ -992,9 +1016,10 @@
                         stCls = 'partial'; shortIcon = '⏳';
                     }
 
+                    const isCurrentGroup = (currentFilter === gKey);
                     const shortLabel = gKey.replace('Group-', '');
                     breakdownHTML += `
-                        <span class="grp-pill ${stCls}">
+                        <span class="grp-pill ${stCls}" style="${isCurrentGroup ? 'outline: 2px solid var(--primary); font-weight:800;' : ''}">
                             ${shortLabel}: ${b.done}/${b.target} ${shortIcon}
                         </span>
                     `;
@@ -1066,7 +1091,7 @@
             });
         };
 
-        // 7. SUPER ADMIN LIVE TABULATION PRINT ENGINE (Dual Mode: Legacy & New CPSCL)
+        // 7. SMART LIVE TABULATION PRINT ENGINE (Prints currently selected Group or All Combined)
         window.printLiveTabulationSheet = function () {
             if (!currentExam) return;
 
@@ -1082,24 +1107,22 @@
             tbody.innerHTML = '';
             thead.innerHTML = '';
 
+            const isGroupFilter = ['Group-A', 'Group-B', 'Group-C', 'Group A', 'Group B', 'Humanities', 'B.Studies'].includes(currentFilter);
+
             if (isLegacyExam) {
-                // (A) LEGACY MODE: Full 12-Subject Tabulation (From cpscl_result_engine.js)
-                subTitle.innerText = "Performance Evaluation Statement (Full Tabulation)";
-
-                // Filter students matching stream
-                let targetStudents = allStudents.filter(s => s.group === 'Science');
-                if (currentFilter !== 'All' && currentFilter !== 'Due') {
-                    targetStudents = allStudents.filter(s => s.group === currentFilter);
-                }
-                if (targetStudents.length === 0) targetStudents = allStudents;
-
-                // Pick active stream subjects
-                let streamKey = 'Science';
-                if (targetStudents[0] && targetStudents[0].group === 'Humanities') streamKey = 'Humanities';
-                else if (targetStudents[0] && targetStudents[0].group === 'B.Studies') streamKey = 'B.Studies';
-
+                // (A) LEGACY ENGINE (Exact Match with cpscl_result_engine.js)
+                const streamKey = (currentFilter === 'Humanities') ? 'Humanities' : ((currentFilter === 'B.Studies') ? 'B.Studies' : 'Science');
                 const subjects = LEGACY_MASTER_SUBJECTS.filter(s => s.stream === streamKey);
                 const fullMarksTotal = subjects.length * (currentExam.max || 15);
+
+                const groupLabel = isGroupFilter ? ` (${currentFilter})` : ' (All Students)';
+                subTitle.innerText = `Performance Evaluation Statement (Full Tabulation)${groupLabel}`;
+
+                let targetStudents = allStudents.filter(s => {
+                    if (isGroupFilter) return s.assignedGroup === currentFilter;
+                    return s.group === 'Science'; // Default All
+                });
+                if (targetStudents.length === 0) targetStudents = allStudents;
 
                 // Table Header
                 let thHtml = `<tr>
@@ -1107,7 +1130,7 @@
                     <th style="width: 85px;">Std ID</th>
                     <th style="text-align: left; padding-left: 6px;">Student Name</th>
                     <th style="width: 45px;">Roll</th>
-                    <th style="width: 40px;">Sec</th>
+                    <th style="width: 45px;">Group</th>
                 `;
                 subjects.forEach(sb => {
                     const label = sb.key === 'HM_AG' ? 'HM/AG' : (sb.key === 'AG_HE' ? 'AG/HE' : sb.key);
@@ -1139,7 +1162,7 @@
                         <td style="font-weight:700;">${s.id}</td>
                         <td class="name-col">${s.name}</td>
                         <td>${s.roll || '-'}</td>
-                        <td>${s.section || ''}</td>
+                        <td>${s.assignedGroup || '-'}</td>
                     `;
                     subjects.forEach(sb => {
                         tdHtml += `<td>${s.scores[sb.key]}</td>`;
@@ -1150,13 +1173,19 @@
                 });
 
             } else {
-                // (B) NEW CPSCL ERP MODE: Live Tabulation (From live_tabulation_manager.js)
-                subTitle.innerText = `${currentExam.class || 'CPSCL'} - Live Tabulation Sheet`;
+                // (B) NEW CPSCL ERP ENGINE (Exact Match with live_tabulation_manager.js)
+                const groupLabel = isGroupFilter ? ` (${currentFilter})` : ' (All Groups)';
+                subTitle.innerText = `${currentExam.class || 'CPSCL'} - Live Tabulation Sheet${groupLabel}`;
 
                 const examSubs = currentExam.subjects || {};
                 const subKeys = Object.keys(examSubs);
                 let fullMarksTotal = 0;
                 subKeys.forEach(k => fullMarksTotal += (parseInt(examSubs[k]) || 30));
+
+                let targetStudents = allStudents.filter(s => {
+                    if (isGroupFilter) return s.assignedGroup === currentFilter;
+                    return true;
+                });
 
                 // Table Header
                 let thHtml = `<tr>
@@ -1173,7 +1202,7 @@
                 thead.innerHTML = thHtml;
 
                 // Compute student totals and sort by Merit
-                let computedRows = allStudents.map((s, idx) => {
+                let computedRows = targetStudents.map((s, idx) => {
                     const sId = s.std_id || s.id;
                     let total = 0;
                     let scores = {};
@@ -1196,7 +1225,7 @@
                         <td style="font-weight:700;">${s.sId}</td>
                         <td class="name-col">${s.student_name || s.name}</td>
                         <td>${s.roll}</td>
-                        <td>${s.computedGroup || '-'}</td>
+                        <td>${s.assignedGroup || '-'}</td>
                     `;
                     subKeys.forEach(k => {
                         tdHtml += `<td>${s.scores[k]}</td>`;
@@ -1318,15 +1347,13 @@
             if (isLegacyExam) {
                 list = allStudents.filter(s => {
                     if (activeSelectedSub.stream === 'Science') {
-                        const sRank = Number(s.overallRank !== undefined && s.overallRank !== null ? s.overallRank : s.sl);
-                        const subGrp = s.subGroup || (sRank <= 55 ? 'Group-A' : (sRank <= 105 ? 'Group-B' : 'Group-C'));
-                        return s.group === 'Science' && (subGrp === targetGroup);
+                        return s.group === 'Science' && (s.assignedGroup === targetGroup);
                     }
                     return s.group === activeSelectedSub.stream;
                 });
                 list.sort((a, b) => (Number(a.overallRank || a.sl) || 9999) - (Number(b.overallRank || b.sl) || 9999));
             } else {
-                list = allStudents.filter(s => s.computedGroup === targetGroup);
+                list = allStudents.filter(s => s.assignedGroup === targetGroup);
                 list.sort((a, b) => (parseInt(a.roll_no || a.roll) || 0) - (parseInt(b.roll_no || b.roll) || 0));
             }
 
