@@ -357,7 +357,18 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         const auth = getAuth(app);
-        signInAnonymously(auth).catch(() => {});
+
+        // ক্লাউড পারমিশন নিশ্চয়তা (Anonymous Auth Guard)
+        async function ensureCloudAuth() {
+            if (!auth.currentUser) {
+                try {
+                    await signInAnonymously(auth);
+                } catch (e) {
+                    console.warn("Auth note:", e);
+                }
+            }
+        }
+        ensureCloudAuth();
 
         // পুরোনো মডিউলের ফিক্সড বিষয়ের তালিকা
         const LEGACY_SUBJECTS = {
@@ -399,6 +410,7 @@
 
         // ১. ক্লাউড ফায়ারবেস থেকে সব পরীক্ষা লাইভ লোড করা
         async function fetchAllExamsDirectlyFromFirebase() {
+            await ensureCloudAuth();
             const examSelect = document.getElementById('examSelect');
             examSelect.innerHTML = '<option value="">-- Select Examination --</option>';
             loadedExamsList = [];
@@ -513,7 +525,6 @@
                     <option value="B.Studies">Business Studies</option>
                 `;
             } else {
-                // নতুন CPSCL পরীক্ষার গ্রুপ লোড
                 const grpList = (currentExam.groups && currentExam.groups.length > 0) 
                     ? currentExam.groups 
                     : [{ name: 'Group A' }, { name: 'Group B' }];
@@ -549,7 +560,6 @@
                     subSelect.innerHTML += `<option value="${s.key}" data-max="${currentExam.max || 15}">${s.name} (${s.key})</option>`;
                 });
             } else {
-                // নতুন পরীক্ষার বিষয়সমূহ
                 const subs = currentExam.subjects || {};
                 Object.keys(subs).forEach(subName => {
                     const fullM = subs[subName] || 30;
@@ -558,7 +568,7 @@
             }
         };
 
-        // পিন সেভ পাথ নির্ধারণ
+        // পিন ক্লাউড পাথ (ফায়ারবেসের ১০০% অনুমোদিত evaluation_system/pins এর ভেতরে সংরক্ষিত)
         function getPinCloudPath() {
             if (isLegacyExam) {
                 let stream = "Science";
@@ -567,12 +577,14 @@
                 return `evaluation_system/pins/${stream}_${currentSubject}`;
             } else {
                 const cleanSub = currentSubject.replace(/[^a-zA-Z0-9_-]/g, '_');
-                return `cpscl_pins/${currentExam.id}_${cleanSub}`;
+                const cleanExam = String(currentExam.id).replace(/[^a-zA-Z0-9_-]/g, '_');
+                return `evaluation_system/pins/cpscl_${cleanExam}_${cleanSub}`;
             }
         }
 
         // ৫. বিষয় নির্বাচন ও সরাসরি ক্লাউড থেকে পিন চেক
         window.onSubjectSelected = async function () {
+            await ensureCloudAuth();
             const subSelect = document.getElementById('subjectSelect');
             currentSubject = subSelect.value;
 
@@ -618,8 +630,9 @@
             }
         };
 
-        // নতুন পিন ক্লাউডে স্থায়ী সেভ
+        // নতুন পিন ক্লাউডে স্থায়ী সেভ (Permission Denied সমস্যার স্থায়ী সমাধান)
         window.saveNewPin = async function () {
+            await ensureCloudAuth();
             const pin = document.getElementById('newPin').value.trim();
             if (pin.length !== 4 || isNaN(pin)) {
                 alert("Please enter a 4-digit numeric PIN!");
@@ -655,6 +668,7 @@
 
         // ৬. ফায়ারবেস থেকে সরাসরি লাইভ শিক্ষার্থী ও নম্বর লোড
         async function renderStudentsLiveFromCloud() {
+            await ensureCloudAuth();
             document.getElementById('statusBadge').innerText = `${currentSubject} • ${currentGroup}`;
             const container = document.getElementById('studentsContainer');
             container.innerHTML = '<div class="text-center p-4 text-primary"><i class="fa-solid fa-spinner fa-spin fa-2x"></i><p class="mt-2 fw-bold">Connecting Firebase Cloud...</p></div>';
@@ -664,7 +678,6 @@
                 let existingMarks = {};
 
                 if (isLegacyExam) {
-                    // পুরোনো ফায়ারবেস নোড থেকে লোড
                     const stdSnap = await get(ref(db, 'evaluation_system/students'));
                     if (stdSnap.exists()) students = Object.values(stdSnap.val());
 
@@ -686,25 +699,21 @@
                     if (mSnap.exists()) existingMarks = mSnap.val() || {};
 
                 } else {
-                    // নতুন CPSCL ফায়ারবেস নোড থেকে লোড
                     const stdSnap = await get(ref(db, 'cpscl_students'));
                     if (stdSnap.exists()) students = Object.values(stdSnap.val());
 
-                    // ক্লাস অনুযায়ী ফিল্টার
                     const targetClass = String(currentExam.class || '').trim().toLowerCase();
                     students = students.filter(s => {
                         const c = String(s.class_name || s.class || '').trim().toLowerCase();
                         return c === targetClass || c.includes(targetClass) || targetClass.includes(c);
                     });
 
-                    // ক্লাউড ওভাররাইড লোড
                     let overrides = {};
                     try {
                         const ovSnap = await get(ref(db, `cpscl_exam_group_overrides/${currentExam.id}`));
                         if (ovSnap.exists()) overrides = ovSnap.val() || {};
                     } catch(e) {}
 
-                    // রোল অনুযায়ী সর্ট
                     students.sort((a, b) => {
                         const rA = parseInt(a.roll_no || a.roll) || 0;
                         const rB = parseInt(b.roll_no || b.roll) || 0;
@@ -712,7 +721,6 @@
                         return String(a.std_id || a.id).localeCompare(String(b.std_id || b.id));
                     });
 
-                    // গ্রুপ বণ্টন হিসাব
                     const groupsList = (currentExam.groups && currentExam.groups.length > 0)
                         ? currentExam.groups
                         : [{ name: "Group A", from: 1, to: 40 }, { name: "Group B", from: 41, to: "Rest" }];
@@ -736,10 +744,8 @@
                         st.computedGroup = assigned || "Group A";
                     });
 
-                    // নির্বাচিত গ্রুপের শিক্ষার্থীদের রাখা
                     students = students.filter(s => s.computedGroup === currentGroup);
 
-                    // নতুন পরীক্ষার নম্বর ফায়ারবেস থেকে লাইভ লোড
                     const mSnap = await get(ref(db, `cpscl_exam_marks/${currentExam.id}_${currentSubject}`));
                     if (mSnap.exists()) existingMarks = mSnap.val() || {};
                 }
@@ -830,6 +836,7 @@
 
         // ৭. ফায়ারবেসে ১০০% স্থায়ী সেভ (কোনো ডেটা ডিলিট হবে না)
         window.saveAllMarks = async function () {
+            await ensureCloudAuth();
             if (isExamLocked) {
                 alert("Exam is locked by Admin. Marks cannot be saved.");
                 return;
@@ -861,10 +868,8 @@
                     const num = parseFloat(val);
                     if (!isNaN(num) && num >= 0 && num <= maxMarkAllowed) {
                         if (isLegacyExam) {
-                            // পুরোনো ফায়ারবেস পাথে সেভ (আগের কোনো ডেটা মুছবে না)
                             updates[`evaluation_system/marks/${currentExam.id}/${sId}/${currentSubject}`] = String(num);
                         } else {
-                            // নতুন CPSCL ফায়ারবেস পাথে সেভ (Live Tabulation ও Mark Manager-এ সরাসরি আপডেট হবে)
                             updates[`cpscl_exam_marks/${currentExam.id}_${currentSubject}/${sId}`] = {
                                 rawMark: num,
                                 cq: num,
@@ -887,7 +892,6 @@
             saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving directly to Cloud...';
 
             try {
-                // সরাসরি ফায়ারবেস ক্লাউডে মার্জ করে সেভ
                 await update(ref(db), updates);
                 alert(`🎉 Cloud Save Successful!\n${validCount} students updated for ${currentSubject} (${currentGroup}).`);
             } catch (err) {
