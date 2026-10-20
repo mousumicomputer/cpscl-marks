@@ -4,15 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>CPSCL - Marks Entry Portal</title>
-    <!-- Fonts & Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Tiro+Bangla&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     
     <style>
         :root {
-            --primary: #1e40af;
-            --bg-body: #f8fafc;
+            --primary: #059669;
+            --primary-dark: #047857;
+            --primary-light: #ecfdf5;
+            --primary-border: #a7f3d0;
+            --bg-body: #f4fbf7;
         }
 
         * {
@@ -29,14 +31,24 @@
         body {
             background-color: var(--bg-body);
             padding-bottom: 95px;
+            color: #0f172a;
         }
 
+        .icon-svg {
+            width: 15px;
+            height: 15px;
+            fill: currentColor;
+            display: inline-block;
+            vertical-align: -2px;
+        }
+
+        /* হালকা সবুজ কর্পোরেট হেডার */
         .app-header {
-            background: linear-gradient(135deg, #0f172a, #1e40af);
+            background: linear-gradient(135deg, #064e3b, #059669);
             color: white;
-            padding: 16px 14px 12px 14px;
-            border-radius: 0 0 20px 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            padding: 16px 14px 14px 14px;
+            border-radius: 0 0 24px 24px;
+            box-shadow: 0 4px 15px rgba(5, 150, 105, 0.15);
             text-align: center;
         }
 
@@ -47,14 +59,14 @@
             background: #ffffff;
             border-radius: 50%;
             padding: 4px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
             margin-bottom: 6px;
         }
 
         .exam-badge {
             display: inline-block;
-            background: rgba(255, 255, 255, 0.18);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.35);
             border-radius: 20px;
             padding: 3px 14px;
             font-size: 0.78rem;
@@ -64,17 +76,17 @@
 
         .card-custom {
             background: #ffffff;
-            border: 1.5px solid #e2e8f0;
-            border-radius: 16px;
+            border: 1.5px solid #d1fae5;
+            border-radius: 18px;
             padding: 14px;
             margin-bottom: 10px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+            box-shadow: 0 2px 6px rgba(5, 150, 105, 0.03);
         }
 
         .student-row-card {
             background: #ffffff;
             border: 1.5px solid #e2e8f0;
-            border-radius: 12px;
+            border-radius: 14px;
             padding: 9px 12px;
             margin-bottom: 8px;
             display: flex;
@@ -86,21 +98,22 @@
 
         .student-row-card:focus-within {
             border-color: var(--primary);
-            background-color: #eff6ff;
+            background-color: #f0fdf4;
+            box-shadow: 0 0 0 2px rgba(5, 150, 105, 0.1);
         }
 
         .student-row-card.hidden { display: none !important; }
 
         .sl-badge {
-            background-color: #eff6ff;
-            color: var(--primary);
+            background-color: var(--primary-light);
+            color: var(--primary-dark);
             font-weight: 800;
             padding: 3px 8px;
             border-radius: 8px;
             font-size: 0.82rem;
             min-width: 38px;
             text-align: center;
-            border: 1px solid #bfdbfe;
+            border: 1px solid var(--primary-border);
         }
 
         .student-title {
@@ -126,7 +139,7 @@
             text-align: center;
             font-size: 1.25rem;
             font-weight: 800;
-            color: #1e40af;
+            color: var(--primary-dark);
             outline: none;
             background: #ffffff;
             flex-shrink: 0;
@@ -134,8 +147,8 @@
         }
 
         .mark-input:focus {
-            border-color: #2563eb;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.18);
         }
 
         .mark-input.input-error {
@@ -156,7 +169,7 @@
             font-size: 1.5rem;
             text-align: center;
             font-weight: bold;
-            border-radius: 12px;
+            border-radius: 14px;
             border: 2px solid var(--primary);
         }
 
@@ -165,7 +178,7 @@
             bottom: 0;
             left: 0;
             right: 0;
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.96);
             backdrop-filter: blur(8px);
             padding: 10px 16px;
             box-shadow: 0 -3px 12px rgba(0,0,0,0.06);
@@ -173,7 +186,7 @@
         }
 
         .save-btn {
-            background-color: #16a34a;
+            background-color: var(--primary);
             color: white;
             border: none;
             border-radius: 25px;
@@ -182,13 +195,17 @@
             font-size: 0.95rem;
             width: 100%;
             max-width: 480px;
-            box-shadow: 0 3px 10px rgba(22, 163, 74, 0.3);
+            box-shadow: 0 3px 10px rgba(5, 150, 105, 0.25);
             display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
+            transition: all 0.2s;
         }
-
+        .save-btn:active {
+            background-color: var(--primary-dark);
+            transform: scale(0.98);
+        }
         .save-btn:disabled {
             background-color: #94a3b8;
             box-shadow: none;
@@ -199,13 +216,12 @@
             position: relative;
             margin-bottom: 8px;
         }
-        .search-wrap i {
+        .search-wrap .search-icon {
             position: absolute;
             left: 12px;
             top: 50%;
             transform: translateY(-50%);
             color: #94a3b8;
-            font-size: 0.85rem;
         }
         .search-inp {
             width: 100%;
@@ -239,6 +255,20 @@
             text-align: center;
             margin-bottom: 10px;
         }
+
+        .btn-soft-pill {
+            background: var(--primary-light);
+            color: var(--primary-dark);
+            border: 1px solid var(--primary-border);
+            border-radius: 50px;
+            padding: 3px 12px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
     </style>
 </head>
 <body>
@@ -247,22 +277,26 @@
     <div class="app-header mb-3">
         <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg-795xmOcuKYH8wjija8JrA-qVjfOp_4KieeZ1pOQJaqX2uXsqGLMo09AXsGGsfGjH9LpK5fPlUNGbebFguiAzPC_YvbRXcHePj7cORQd6GMxDUg-LCeXtmNkccGI2K4Hv73PJqJkGX0Ju9N4knQuqKOAImqB6qy_WWFXpKeIaQhRgk7YbLqBLpCmL0cio/s1600/%E0%A6%95%E0%A7%8D%E0%A6%AF%E0%A6%AA%E0%A6%BE%E0%A6%A8%E0%A7%8D%E0%A6%9F%E0%A6%A8%E0%A6%AE%E0%A7%87%E0%A6%A8%E0%A7%8D%E0%A6%9F_%E0%A6%AA%E0%A6%BE%E0%A6%AC%E0%A6%B2%E0%A6%BF%E0%A6%95_%E0%A6%B8%E0%A7%8D%E0%A6%9F%E0%A7%81%E0%A6%B2_%E0%A6%93_%E0%A6%95%E0%A6%B2%E0%A7%87%E0%A6%9C_%E0%A6%B2%E0%A6%BE%E0%A6%B2%E0%A6%AE%E0%A6%A8%E0%A6%BF%E0%A6%B0%E0%A6%B9%E0%A6%BE%E0%A6%9F%E0%A7%87%E0%A6%B0_%E0%A6%B2%E0%A7%8B%E0%A6%97%E0%A7%8B.png" alt="CPSCL Logo" class="school-logo">
         <h6 class="mb-0 fw-bold" style="font-size: 0.95rem;">Cantonment Public School & College Lalmonirhat</h6>
-        <div class="exam-badge" id="liveExamName"><i class="fa-solid fa-spinner fa-spin"></i> Connecting Cloud...</div>
+        <div class="exam-badge" id="liveExamName">Connecting Cloud...</div>
     </div>
 
     <div class="container" style="max-width: 480px;">
 
         <!-- লক অ্যালার্ট -->
         <div id="examLockedAlert" class="locked-alert" style="display:none;">
-            <i class="fa-solid fa-lock"></i> Entry Closed by Admin
+            <svg class="icon-svg me-1" viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+            Entry Closed by Admin
         </div>
 
         <!-- পরীক্ষা, গ্রুপ ও সাবজেক্ট সিলেকশন কার্ড -->
         <div class="card-custom">
             <!-- ১. পরীক্ষা নির্বাচন ড্রপডাউন -->
             <div class="mb-2">
-                <label class="form-label small fw-bold text-muted mb-1"><i class="fa-solid fa-graduation-cap text-primary"></i> Select Examination</label>
-                <select class="form-select form-select-sm fw-bold" id="examSelect" onchange="onExamChanged()" style="border: 1.5px solid #2563eb; color: #1e40af; border-radius: 8px;">
+                <label class="form-label small fw-bold text-muted mb-1 d-flex align-items-center gap-1">
+                    <svg class="icon-svg" style="fill: var(--primary);" viewBox="0 0 24 24"><path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/></svg>
+                    Select Examination
+                </label>
+                <select class="form-select form-select-sm fw-bold" id="examSelect" onchange="onExamChanged()" style="border: 1.5px solid var(--primary); color: var(--primary-dark); border-radius: 8px;">
                     <option value="">-- Loading Exams from Cloud --</option>
                 </select>
             </div>
@@ -286,41 +320,52 @@
         <!-- পিন কার্ড -->
         <div id="pinCard" class="card-custom text-center p-4" style="display: none;">
             <div id="setPinView" style="display: none;">
-                <div class="mb-2"><i class="fa-solid fa-key text-warning" style="font-size: 2.2rem;"></i></div>
+                <div class="mb-2">
+                    <svg class="icon-svg" style="width: 38px; height: 38px; fill: #d97706;" viewBox="0 0 24 24"><path d="M12.65 10C11.83 7.67 9.61 6 7 6c-3.31 0-6 2.69-6 6s2.69 6 6 6c2.61 0 4.83-1.67 5.65-4H17v4h4v-4h2v-4H12.65zM7 14c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/></svg>
+                </div>
                 <h6 class="fw-bold text-dark mb-1">Set 4-Digit Secret PIN</h6>
                 <p class="small text-muted mb-3">No PIN set for this subject. Enter a 4-digit PIN:</p>
                 <input type="password" id="newPin" class="form-control pin-box mx-auto mb-3" maxlength="4" placeholder="••••" inputmode="numeric">
-                <button type="button" class="btn btn-primary w-100 rounded-pill fw-bold" onclick="saveNewPin()">Save PIN & Open</button>
+                <button type="button" class="btn btn-success w-100 rounded-pill fw-bold" style="background: var(--primary); border: none;" onclick="saveNewPin()">Save PIN & Open</button>
             </div>
 
             <div id="enterPinView" style="display: none;">
-                <div class="mb-2"><i class="fa-solid fa-lock text-primary" style="font-size: 2.2rem;"></i></div>
+                <div class="mb-2">
+                    <svg class="icon-svg" style="width: 38px; height: 38px; fill: var(--primary);" viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+                </div>
                 <h6 class="fw-bold text-dark mb-1">Subject PIN Protected</h6>
                 <p class="small text-muted mb-3">Enter the 4-digit PIN for this subject:</p>
                 <input type="password" id="inputPin" class="form-control pin-box mx-auto mb-2" maxlength="4" placeholder="••••" inputmode="numeric">
                 <div id="pinError" class="text-danger small mb-2 fw-bold" style="display: none;">Incorrect PIN! Try again.</div>
-                <button type="button" class="btn btn-primary w-100 rounded-pill fw-bold" onclick="verifyPin()">Unlock Entry</button>
+                <button type="button" class="btn btn-success w-100 rounded-pill fw-bold" style="background: var(--primary); border: none;" onclick="verifyPin()">Unlock Entry</button>
             </div>
         </div>
 
         <!-- নম্বর এন্ট্রি সেকশন -->
         <div id="entrySection" style="display: none;">
             <div class="rule-note d-flex align-items-center justify-content-between">
-                <div><i class="fa-solid fa-circle-info"></i> Absent/Zero = <strong>0</strong> | Full Mark: <strong id="maxMarkDisplay">15</strong></div>
-                <button type="button" class="btn btn-sm btn-outline-danger py-0 px-2 fw-bold" onclick="clearScreenMarks()" id="clearAllBtn" style="font-size:0.75rem;">
-                    <i class="fa-solid fa-rotate-left"></i> Reset Fields
+                <div>
+                    <svg class="icon-svg me-1" style="fill: #92400e;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                    Absent/Zero = <strong>0</strong> | Full Mark: <strong id="maxMarkDisplay">30</strong>
+                </div>
+                <button type="button" class="btn btn-sm btn-outline-danger py-0 px-2 fw-bold d-inline-flex align-items-center gap-1" onclick="clearScreenMarks()" id="clearAllBtn" style="font-size:0.75rem;">
+                    <svg class="icon-svg" viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+                    Reset
                 </button>
             </div>
 
             <div class="search-wrap">
-                <i class="fa-solid fa-magnifying-glass"></i>
+                <span class="search-icon">
+                    <svg class="icon-svg" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                </span>
                 <input type="text" id="studentSearchInp" class="search-inp" placeholder="Search ID, Name or Roll..." oninput="filterStudentsOnTheFly()">
             </div>
 
             <div class="d-flex justify-content-between align-items-center mb-2 px-1">
-                <span class="badge rounded-pill bg-primary px-3 py-2" id="statusBadge">Active</span>
-                <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3" onclick="lockCurrentSubject()">
-                    <i class="fa-solid fa-lock"></i> Lock
+                <span class="badge rounded-pill px-3 py-2" id="statusBadge" style="background: var(--primary-light); color: var(--primary-dark); border: 1px solid var(--primary-border);">Active</span>
+                <button type="button" class="btn-soft-pill" onclick="lockCurrentSubject()">
+                    <svg class="icon-svg" viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+                    Lock
                 </button>
             </div>
 
@@ -329,7 +374,8 @@
 
                 <div class="fixed-bottom-bar text-center">
                     <button type="submit" class="save-btn" id="saveBtnEl">
-                        <i class="fa-solid fa-cloud-arrow-up"></i> Save Marks
+                        <svg class="icon-svg" style="fill:white;" viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/></svg>
+                        Save Marks
                     </button>
                 </div>
             </form>
@@ -357,18 +403,7 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         const auth = getAuth(app);
-
-        // ক্লাউড পারমিশন নিশ্চয়তা (Anonymous Auth Guard)
-        async function ensureCloudAuth() {
-            if (!auth.currentUser) {
-                try {
-                    await signInAnonymously(auth);
-                } catch (e) {
-                    console.warn("Auth note:", e);
-                }
-            }
-        }
-        ensureCloudAuth();
+        signInAnonymously(auth).catch(() => {});
 
         // পুরোনো মডিউলের ফিক্সড বিষয়ের তালিকা
         const LEGACY_SUBJECTS = {
@@ -410,13 +445,12 @@
 
         // ১. ক্লাউড ফায়ারবেস থেকে সব পরীক্ষা লাইভ লোড করা
         async function fetchAllExamsDirectlyFromFirebase() {
-            await ensureCloudAuth();
             const examSelect = document.getElementById('examSelect');
             examSelect.innerHTML = '<option value="">-- Select Examination --</option>';
             loadedExamsList = [];
 
             try {
-                // (ক) পুরোনো সিস্টেমের পরীক্ষা লোড
+                // পুরোনো সিস্টেমের পরীক্ষা লোড
                 const legActiveSnap = await get(ref(db, 'evaluation_system/active_exam_id'));
                 let legacyActiveId = legActiveSnap.exists() ? legActiveSnap.val() : "exam_fn02_2026";
 
@@ -445,7 +479,7 @@
                     });
                 }
 
-                // (খ) নতুন CPSCL ERP-এর পরীক্ষা লাইভ লোড
+                // নতুন CPSCL ERP-এর পরীক্ষা লাইভ লোড
                 const newSnap = await get(ref(db, 'cpscl_exams'));
                 if (newSnap.exists()) {
                     const newExams = newSnap.val();
@@ -568,7 +602,7 @@
             }
         };
 
-        // পিন ক্লাউড পাথ (ফায়ারবেসের ১০০% অনুমোদিত evaluation_system/pins এর ভেতরে সংরক্ষিত)
+        // পিন ক্লাউড পাথ (evaluation_system/pins এর অধীনে সংরক্ষিত)
         function getPinCloudPath() {
             if (isLegacyExam) {
                 let stream = "Science";
@@ -582,9 +616,8 @@
             }
         }
 
-        // ৫. বিষয় নির্বাচন ও সরাসরি ক্লাউড থেকে পিন চেক
+        // ৫. বিষয় নির্বাচন ও পিন চেক
         window.onSubjectSelected = async function () {
-            await ensureCloudAuth();
             const subSelect = document.getElementById('subjectSelect');
             currentSubject = subSelect.value;
 
@@ -630,9 +663,8 @@
             }
         };
 
-        // নতুন পিন ক্লাউডে স্থায়ী সেভ (Permission Denied সমস্যার স্থায়ী সমাধান)
+        // পিন সেভ
         window.saveNewPin = async function () {
-            await ensureCloudAuth();
             const pin = document.getElementById('newPin').value.trim();
             if (pin.length !== 4 || isNaN(pin)) {
                 alert("Please enter a 4-digit numeric PIN!");
@@ -668,10 +700,9 @@
 
         // ৬. ফায়ারবেস থেকে সরাসরি লাইভ শিক্ষার্থী ও নম্বর লোড
         async function renderStudentsLiveFromCloud() {
-            await ensureCloudAuth();
             document.getElementById('statusBadge').innerText = `${currentSubject} • ${currentGroup}`;
             const container = document.getElementById('studentsContainer');
-            container.innerHTML = '<div class="text-center p-4 text-primary"><i class="fa-solid fa-spinner fa-spin fa-2x"></i><p class="mt-2 fw-bold">Connecting Firebase Cloud...</p></div>';
+            container.innerHTML = '<div class="text-center p-4 text-success"><p class="mt-2 fw-bold">Connecting Firebase Cloud...</p></div>';
 
             try {
                 let students = [];
@@ -808,7 +839,7 @@
             }
         }
 
-        // ইনপুট ভ্যালিডেশন ও Enter কীতে পরের ছাত্রে জাম্প
+        // ইনপুট ভ্যালিডেশন
         function bindInputValidation() {
             const inputs = Array.from(document.querySelectorAll('.mark-input'));
             inputs.forEach((inp, idx) => {
@@ -834,9 +865,8 @@
             });
         }
 
-        // ৭. ফায়ারবেসে ১০০% স্থায়ী সেভ (কোনো ডেটা ডিলিট হবে না)
+        // ফায়ারবেসে ১০০% স্থায়ী সেভ
         window.saveAllMarks = async function () {
-            await ensureCloudAuth();
             if (isExamLocked) {
                 alert("Exam is locked by Admin. Marks cannot be saved.");
                 return;
@@ -889,7 +919,7 @@
             }
 
             saveBtn.disabled = true;
-            saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving directly to Cloud...';
+            saveBtn.innerHTML = 'Saving directly to Cloud...';
 
             try {
                 await update(ref(db), updates);
@@ -898,7 +928,9 @@
                 alert("Cloud save failed: " + err.message);
             } finally {
                 saveBtn.disabled = false;
-                saveBtn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> Save Marks';
+                saveBtn.innerHTML = `
+                    <svg class="icon-svg" style="fill:white;" viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/></svg> Save Marks
+                `;
             }
         };
 
