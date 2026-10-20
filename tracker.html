@@ -3,25 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CPSCL - Evaluation Tracker & Marks Entry</title>
+    <title>CPSCL - Progress Tracker & Evaluation</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
         :root {
-            --primary: #1e40af;
+            --primary: #059669;
+            --primary-dark: #047857;
+            --primary-light: #ecfdf5;
+            --primary-border: #a7f3d0;
+            --bg-body: #f4fbf7;
             --success: #16a34a;
             --warning: #d97706;
             --danger: #dc2626;
-            --bg-body: #f8fafc;
         }
 
         * {
             box-sizing: border-box;
             font-family: 'Plus Jakarta Sans', sans-serif !important;
             -webkit-tap-highlight-color: transparent;
-            user-select: none;
         }
 
         input, select, textarea {
@@ -32,38 +35,91 @@
         body {
             background-color: var(--bg-body);
             color: #0f172a;
-            padding-bottom: 70px;
+            padding-bottom: 75px;
         }
 
         .icon-svg {
-            width: 14px;
-            height: 14px;
+            width: 15px;
+            height: 15px;
             fill: currentColor;
             display: inline-block;
-            vertical-align: middle;
+            vertical-align: -2px;
+        }
+
+        /* In-App Centered Modal Dialog */
+        .custom-modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.45);
+            backdrop-filter: blur(4px);
+            z-index: 999999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: fadeInOverlay 0.2s ease-out;
+        }
+        @keyframes fadeInOverlay {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .custom-modal-box {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 24px 20px 20px 20px;
+            width: 100%;
+            max-width: 320px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            border: 1.5px solid #d1fae5;
+        }
+        .modal-icon-wrap {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+        }
+        .modal-icon-wrap.success { background: #ecfdf5; color: #059669; border: 1.5px solid #a7f3d0; }
+        .modal-icon-wrap.error { background: #fef2f2; color: #dc2626; border: 1.5px solid #fecaca; }
+        .modal-title-text { font-size: 1.15rem; font-weight: 800; margin: 0 0 4px 0; color: #0f172a; }
+        .modal-sub-text { font-size: 0.86rem; color: #64748b; margin: 0 0 18px 0; font-weight: 500; }
+        .modal-ok-btn {
+            background: var(--primary);
+            color: #ffffff;
+            border: none;
+            border-radius: 50px;
+            padding: 10px 32px;
+            font-size: 0.92rem;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
         }
 
         .app-header {
-            background: linear-gradient(135deg, #0f172a, #1e40af);
+            background: linear-gradient(135deg, #064e3b, #059669);
             color: white;
-            padding: 20px 14px 16px 14px;
-            border-radius: 0 0 28px 28px;
+            padding: 18px 14px 14px 14px;
+            border-radius: 0 0 24px 24px;
             text-align: center;
+            box-shadow: 0 4px 15px rgba(5, 150, 105, 0.15);
         }
 
         .school-logo {
-            width: 60px;
-            height: 60px;
+            width: 58px;
+            height: 58px;
             object-fit: contain;
             background: #ffffff;
             border-radius: 50%;
             padding: 4px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.25);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
             margin-bottom: 6px;
         }
 
         .school-title {
-            font-size: 1.02rem;
+            font-size: 0.96rem;
             font-weight: 800;
             margin: 0;
             line-height: 1.3;
@@ -82,25 +138,13 @@
             margin-top: 5px;
         }
 
-        .locked-badge {
-            background: #fee2e2;
-            color: #991b1b;
-            border: 1px solid #fca5a5;
-            border-radius: 50px;
-            padding: 3px 12px;
-            font-size: 0.72rem;
-            font-weight: 800;
-            margin-top: 5px;
-            display: inline-block;
-        }
-
         .rounded-box {
             background: #ffffff;
-            border: 1.5px solid #e2e8f0;
-            border-radius: 22px;
+            border: 1.5px solid #d1fae5;
+            border-radius: 20px;
             padding: 14px;
             margin-bottom: 12px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+            box-shadow: 0 2px 6px rgba(5, 150, 105, 0.03);
         }
 
         .progress-pill {
@@ -119,7 +163,7 @@
         }
 
         .stat-card {
-            border-radius: 16px;
+            border-radius: 14px;
             padding: 8px 4px;
             border: 1.5px solid transparent;
         }
@@ -142,7 +186,7 @@
 
         .btn-pill {
             border-radius: 50px !important;
-            padding: 5px 13px;
+            padding: 5px 14px;
             font-size: 0.76rem;
             font-weight: 700;
             white-space: nowrap;
@@ -150,17 +194,19 @@
             background: #ffffff;
             color: #64748b;
             cursor: pointer;
+            transition: all 0.15s ease;
         }
         .btn-pill.active {
             background: var(--primary);
             color: white;
             border-color: var(--primary);
+            box-shadow: 0 2px 6px rgba(5, 150, 105, 0.2);
         }
 
         .subject-card {
             background: #ffffff;
             border: 1.5px solid #e2e8f0;
-            border-radius: 18px;
+            border-radius: 16px;
             padding: 12px 14px;
             margin-bottom: 8px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.02);
@@ -168,7 +214,7 @@
             transition: 0.15s ease;
         }
         .subject-card:active {
-            background-color: #eff6ff;
+            background-color: #f0fdf4;
             border-color: var(--primary);
         }
 
@@ -229,71 +275,139 @@
             text-align: center;
             font-weight: 800;
             font-size: 1.2rem;
-            color: var(--primary);
+            color: var(--primary-dark);
             outline: none;
             background: #ffffff;
             transition: border-color 0.2s, background-color 0.2s;
         }
         .mark-inp-pill:focus {
             border-color: var(--primary);
-            background: #eff6ff;
+            background: #f0fdf4;
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15);
         }
         .mark-inp-pill.input-error {
             border-color: #dc2626 !important;
             background: #fee2e2 !important;
             color: #dc2626 !important;
         }
-        .mark-inp-pill:disabled {
-            background: #f1f5f9;
-            color: #94a3b8;
-            border-color: #e2e8f0;
+
+        .btn-soft-action {
+            background: var(--primary-light);
+            color: var(--primary-dark);
+            border: 1px solid var(--primary-border);
+            border-radius: 50px;
+            padding: 5px 14px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            text-decoration: none;
+        }
+        .btn-soft-action:hover { background: #d1fae5; color: var(--primary-dark); }
+
+        /* --- PDF & Print Specific CSS (A4 Portrait) --- */
+        .printable-area { display: none; }
+        @media print {
+            @page { size: portrait; margin: 8mm; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            body { background: #ffffff !important; padding: 0 !important; color: #000000 !important; }
+            #viewAuth, #viewDashboard, .modal, .custom-modal-overlay { display: none !important; }
+            
+            body.print-summary #printableProgressSheet { display: block !important; }
+            body.print-sheet #printableMarksSheet { display: block !important; }
+
+            .print-header { text-align: center; margin-bottom: 14px; }
+            .print-logo { width: 55px; height: 55px; margin-bottom: 4px; }
+            .print-header h3 { font-size: 15px; font-weight: 800; margin: 0 0 4px; text-transform: uppercase; color: #000; }
+            .print-header h4 { font-size: 13px; font-weight: 700; margin: 0 0 10px; color: #059669; }
+            .print-meta-grid { display: flex; justify-content: space-around; font-size: 11px; padding: 6px 10px; border: 1px solid #222; background: #f8fafc; font-weight: 600; margin-bottom: 12px; }
+            .print-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+            .print-table th, .print-table td { border: 1px solid #222 !important; padding: 5px 6px; text-align: center; color: #000; }
+            .print-table th { background: #f1f5f9 !important; font-weight: 800; }
+            .print-footer { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 45px; font-size: 11px; }
+            .signature-box { text-align: center; width: 190px; }
+            .signature-box .sig-line { border-top: 1px solid #000; margin-bottom: 4px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- ১. অথরাইজড পিন গেটওয়ে -->
+    <!-- 100% In-App Centered Modal Dialog -->
+    <div id="customModalOverlay" class="custom-modal-overlay">
+        <div class="custom-modal-box">
+            <div id="modalIconWrap" class="modal-icon-wrap success">
+                <svg class="icon-svg" style="width:26px; height:26px;" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+            </div>
+            <h5 id="modalTitleText" class="modal-title-text">Saved!</h5>
+            <p id="modalSubText" class="modal-sub-text">Operation completed successfully.</p>
+            <button type="button" class="modal-ok-btn" onclick="closeCustomModal()">OK</button>
+        </div>
+    </div>
+
+    <!-- 1. Master PIN Security Gateway -->
     <div id="viewAuth" class="container" style="max-width: 400px; margin-top: 50px;">
         <div class="rounded-box text-center p-4">
             <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg-795xmOcuKYH8wjija8JrA-qVjfOp_4KieeZ1pOQJaqX2uXsqGLMo09AXsGGsfGjH9LpK5fPlUNGbebFguiAzPC_YvbRXcHePj7cORQd6GMxDUg-LCeXtmNkccGI2K4Hv73PJqJkGX0Ju9N4knQuqKOAImqB6qy_WWFXpKeIaQhRgk7YbLqBLpCmL0cio/s1600/%E0%A6%95%E0%A7%8D%E0%A6%AF%E0%A6%AA%E0%A6%BE%E0%A6%A8%E0%A7%8D%E0%A6%9F%E0%A6%A8%E0%A6%AE%E0%A7%87%E0%A6%A8%E0%A7%8D%E0%A6%9F_%E0%A6%AA%E0%A6%BE%E0%A6%AC%E0%A6%B2%E0%A6%BF%E0%A6%95_%E0%A6%B8%E0%A7%8D%E0%A6%9F%E0%A7%81%E0%A6%B2_%E0%A6%93_%E0%A6%95%E0%A6%B2%E0%A7%87%E0%A6%9C_%E0%A6%B2%E0%A6%BE%E0%A6%B2%E0%A6%AE%E0%A6%A8%E0%A6%BF%E0%A6%B0%E0%A6%B9%E0%A6%BE%E0%A6%9F%E0%A7%87%E0%A6%B0_%E0%A6%B2%E0%A7%8B%E0%A6%97%E0%A7%8B.png" alt="CPSCL Logo" class="school-logo">
             <h5 class="school-title mb-1">Cantonment Public School & College Lalmonirhat</h5>
-            <div class="pill-badge bg-light text-primary border mb-3">Live Progress Monitor</div>
+            <div class="pill-badge mb-3" style="background:#ecfdf5; color:#047857; border-color:#a7f3d0;">Evaluation & Progress Monitor</div>
             
             <p class="text-muted small mb-2">Enter Master PIN to continue</p>
             <input type="password" id="inpMasterPin" class="form-control pin-pill-input" maxlength="4" placeholder="••••" inputmode="numeric">
-            <div id="authErr" class="text-danger small fw-bold mb-2" style="display: none;">Invalid PIN!</div>
+            <div id="authErr" class="text-danger small fw-bold mb-2" style="display: none;">Invalid Master PIN!</div>
             
-            <button class="btn btn-primary rounded-pill w-100 fw-bold py-2 mt-2" onclick="verifyAuthPin()">
+            <button class="btn btn-success rounded-pill w-100 fw-bold py-2 mt-2" style="background: var(--primary); border: none;" onclick="verifyAuthPin()">
                 Unlock Portal
-                <svg class="icon-svg ms-1" viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
+                <svg class="icon-svg ms-1" style="fill:white;" viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
             </button>
         </div>
     </div>
 
-    <!-- ২. মূল ড্যাশবোর্ড -->
+    <!-- 2. Main Tracker Dashboard -->
     <div id="viewDashboard" style="display: none;">
         <div class="app-header">
             <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg-795xmOcuKYH8wjija8JrA-qVjfOp_4KieeZ1pOQJaqX2uXsqGLMo09AXsGGsfGjH9LpK5fPlUNGbebFguiAzPC_YvbRXcHePj7cORQd6GMxDUg-LCeXtmNkccGI2K4Hv73PJqJkGX0Ju9N4knQuqKOAImqB6qy_WWFXpKeIaQhRgk7YbLqBLpCmL0cio/s1600/%E0%A6%95%E0%A7%8D%E0%A6%AF%E0%A6%AA%E0%A6%BE%E0%A6%A8%E0%A7%8D%E0%A6%9F%E0%A6%A8%E0%A6%AE%E0%A7%87%E0%A6%A8%E0%A7%8D%E0%A6%9F_%E0%A6%AA%E0%A6%BE%E0%A6%AC%E0%A6%B2%E0%A6%BF%E0%A6%95_%E0%A6%B8%E0%A7%8D%E0%A6%9F%E0%A7%81%E0%A6%B2_%E0%A6%93_%E0%A6%95%E0%A6%B2%E0%A7%87%E0%A6%9C_%E0%A6%B2%E0%A6%BE%E0%A6%B2%E0%A6%AE%E0%A6%A8%E0%A6%BF%E0%A6%B0%E0%A6%B9%E0%A6%BE%E0%A6%9F%E0%A7%87%E0%A6%B0_%E0%A6%B2%E0%A7%8B%E0%A6%97%E0%A7%8B.png" alt="CPSCL Logo" class="school-logo">
             <h5 class="school-title">Cantonment Public School & College Lalmonirhat</h5>
-            <div class="pill-badge" id="lblLiveExam">Loading Exam...</div>
-            <div id="lblExamLockStatus" style="display:none;" class="locked-badge">🔒 Entry Closed by Admin</div>
+            <div class="pill-badge" id="lblLiveExam">Loading...</div>
         </div>
 
         <div class="container" style="max-width: 480px; margin-top: -10px;">
+            
+            <!-- Examination Selection Dropdown -->
+            <div class="card-custom mb-2">
+                <label class="form-label small fw-bold text-muted mb-1 d-flex align-items-center gap-1">
+                    <svg class="icon-svg" style="fill: var(--primary);" viewBox="0 0 24 24"><path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/></svg>
+                    Select Examination to Track
+                </label>
+                <select class="form-select form-select-sm fw-bold" id="examSelect" onchange="onTrackerExamChanged()" style="border: 1.5px solid var(--primary); color: var(--primary-dark); border-radius: 8px;">
+                    <option value="">-- Choose Examination --</option>
+                </select>
+            </div>
+
+            <!-- Progress Summary Box -->
             <div class="rounded-box">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <span class="small text-muted fw-bold">Overall Progress</span>
-                        <h4 class="mb-0 fw-bold" id="lblOverallPct">0%</h4>
+                        <h4 class="mb-0 fw-bold" id="lblOverallPct" style="color: var(--primary-dark);">0%</h4>
                     </div>
-                    <button class="btn btn-sm btn-outline-success rounded-pill fw-bold px-3 d-inline-flex align-items-center gap-1" onclick="copyPendingWhatsAppNotice()">
-                        <svg class="icon-svg" style="fill:#16a34a;" viewBox="0 0 24 24"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2m.01 1.67c4.54 0 8.24 3.7 8.24 8.24 0 2.2-.86 4.28-2.42 5.84a8.17 8.17 0 0 1-5.82 2.41c-1.47 0-2.93-.39-4.21-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.216 8.216 0 0 1-1.26-4.39c0-4.54 3.7-8.24 8.24-8.24m4.53 11.66c-.25-.13-1.47-.72-1.7-.81-.23-.08-.39-.13-.56.13-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.13-1.06-.39-2.02-1.24-.74-.66-1.24-1.48-1.39-1.73-.14-.25-.02-.39.11-.51.11-.11.25-.29.37-.43.13-.15.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.13-.56-1.34-.76-1.84-.2-.48-.4-.42-.56-.43h-.48c-.17 0-.44.06-.67.31-.23.25-.87.85-.87 2.08 0 1.23.89 2.42 1.02 2.59.13.17 1.76 2.69 4.26 3.77.6.26 1.06.41 1.42.53.6.19 1.15.16 1.58.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.15-1.18-.07-.1-.23-.17-.48-.29z"/></svg>
-                        Copy Notice
-                    </button>
+                    <div class="d-flex gap-2">
+                        <!-- 1. All-in-One Overall Progress Report PDF -->
+                        <button class="btn-soft-action" onclick="downloadOverallProgressPDF()" title="Download Summary PDF Report">
+                            <svg class="icon-svg" viewBox="0 0 24 24"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>
+                            Progress Report
+                        </button>
+                        <!-- WhatsApp Notice -->
+                        <button class="btn-soft-action" style="color:#15803d; border-color:#86efac; background:#dcfce7;" onclick="copyPendingWhatsAppNotice()" title="Copy WhatsApp Reminder Notice">
+                            <svg class="icon-svg" style="fill:#15803d;" viewBox="0 0 24 24"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2m.01 1.67c4.54 0 8.24 3.7 8.24 8.24 0 2.2-.86 4.28-2.42 5.84a8.17 8.17 0 0 1-5.82 2.41c-1.47 0-2.93-.39-4.21-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.216 8.216 0 0 1-1.26-4.39c0-4.54 3.7-8.24 8.24-8.24m4.53 11.66c-.25-.13-1.47-.72-1.7-.81-.23-.08-.39-.13-.56.13-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.13-1.06-.39-2.02-1.24-.74-.66-1.24-1.48-1.39-1.73-.14-.25-.02-.39.11-.51.11-.11.25-.29.37-.43.13-.15.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.13-.56-1.34-.76-1.84-.2-.48-.4-.42-.56-.43h-.48c-.17 0-.44.06-.67.31-.23.25-.87.85-.87 2.08 0 1.23.89 2.42 1.02 2.59.13.17 1.76 2.69 4.26 3.77.6.26 1.06.41 1.42.53.6.19 1.15.16 1.58.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.15-1.18-.07-.1-.23-.17-.48-.29z"/></svg>
+                            Notice
+                        </button>
+                    </div>
                 </div>
 
                 <div class="progress progress-pill">
-                    <div class="progress-bar bg-primary" id="barOverall" style="width: 0%;"></div>
+                    <div class="progress-bar bg-success" id="barOverall" style="width: 0%; background-color: var(--primary) !important;"></div>
                 </div>
 
                 <div class="stat-grid">
@@ -312,18 +426,15 @@
                 </div>
             </div>
 
-            <!-- ফিল্টার বাটন -->
-            <div class="filter-scroller">
+            <!-- Filter Scroller Pills -->
+            <div class="filter-scroller" id="filterPillsContainer">
                 <button class="btn-pill active" onclick="setFilter('All', this)">All</button>
-                <button class="btn-pill" onclick="setFilter('Science', this)">Science</button>
-                <button class="btn-pill" onclick="setFilter('Humanities', this)">Humanities</button>
-                <button class="btn-pill" onclick="setFilter('B.Studies', this)">B.Studies</button>
                 <button class="btn-pill" style="color: var(--danger); border-color: #fca5a5;" onclick="setFilter('Due', this)">Due Only</button>
             </div>
 
             <div class="d-flex justify-content-between align-items-center px-2 mb-2">
                 <span class="small text-muted fw-bold">Double-tap a subject to enter marks</span>
-                <span class="small text-primary fw-bold" style="cursor: pointer;" onclick="fetchLiveData()">
+                <span class="small fw-bold d-inline-flex align-items-center gap-1" style="color: var(--primary); cursor: pointer;" onclick="fetchTrackerLiveData()">
                     <svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46A7.93 7.93 0 0 0 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74A7.93 7.93 0 0 0 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg> Sync
                 </span>
             </div>
@@ -332,7 +443,7 @@
         </div>
     </div>
 
-    <!-- ৩. পিন মডাল -->
+    <!-- 3. PIN Modal (For Subject Direct Entry) -->
     <div class="modal fade" id="modalSubPin" tabindex="-1" style="z-index: 1060;">
         <div class="modal-dialog modal-dialog-centered" style="max-width: 360px;">
             <div class="modal-content rounded-box p-3 border-0">
@@ -347,7 +458,7 @@
                     <input type="password" id="inpSubPin" class="form-control pin-pill-input" maxlength="4" placeholder="••••" inputmode="numeric">
                     <div id="subPinErr" class="text-danger small fw-bold mb-2" style="display: none;">Incorrect PIN!</div>
 
-                    <button class="btn btn-primary rounded-pill w-100 fw-bold py-2 mt-2" id="btnPinAction" onclick="submitSubPinAction()">
+                    <button class="btn btn-success rounded-pill w-100 fw-bold py-2 mt-2" style="background: var(--primary); border: none;" id="btnPinAction" onclick="submitSubPinAction()">
                         Unlock Entry
                     </button>
                     <button class="btn btn-light rounded-pill w-100 fw-bold py-2 mt-2" data-bs-dismiss="modal">Cancel</button>
@@ -356,20 +467,25 @@
         </div>
     </div>
 
-    <!-- ৪. মার্ক এন্ট্রি মডাল -->
+    <!-- 4. Marks Sheet Modal -->
     <div class="modal fade" id="modalMarkEntry" tabindex="-1" style="z-index: 1070;">
         <div class="modal-dialog modal-fullscreen-sm-down modal-dialog-scrollable">
             <div class="modal-content" style="border-radius: 28px 28px 0 0; background: #f8fafc;">
                 <div class="modal-header border-0 bg-white" style="border-radius: 28px 28px 0 0; padding: 14px 20px;">
                     <div>
                         <h6 class="fw-bold mb-0" id="lblSheetTitle">Marks Sheet</h6>
-                        <span class="small text-muted" id="lblSheetGroupMeta">Full Mark: 15</span>
+                        <span class="small text-muted" id="lblSheetGroupMeta">Full Mark: 30</span>
                     </div>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body p-3" id="sheetContainer"></div>
-                <div class="modal-footer border-0 bg-white p-3" style="border-radius: 0 0 28px 28px;">
-                    <button class="btn btn-success rounded-pill w-100 fw-bold py-2 d-inline-flex align-items-center justify-content-center gap-1" id="btnSaveMarks" onclick="saveDirectMarksToFirebase()">
+                <div class="modal-footer border-0 bg-white p-3 d-flex gap-2" style="border-radius: 0 0 28px 28px;">
+                    <!-- 2. Subject-wise Marks Sheet PDF Download -->
+                    <button type="button" class="btn btn-outline-secondary rounded-pill fw-bold py-2 px-3 d-inline-flex align-items-center gap-1" onclick="downloadSubjectMarksPDF()">
+                        <svg class="icon-svg" viewBox="0 0 24 24"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>
+                        PDF Sheet
+                    </button>
+                    <button class="btn btn-success rounded-pill flex-grow-1 fw-bold py-2 d-inline-flex align-items-center justify-content-center gap-1" style="background: var(--primary); border: none;" id="btnSaveMarks" onclick="saveDirectMarksToFirebase()">
                         <svg class="icon-svg" style="fill:white;" viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/></svg>
                         Save Marks
                     </button>
@@ -378,10 +494,79 @@
         </div>
     </div>
 
+    <!-- 5. Printable Sheet 1: Overall Progress & Summary Report PDF -->
+    <div id="printableProgressSheet" class="printable-area">
+        <div class="print-header">
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg-795xmOcuKYH8wjija8JrA-qVjfOp_4KieeZ1pOQJaqX2uXsqGLMo09AXsGGsfGjH9LpK5fPlUNGbebFguiAzPC_YvbRXcHePj7cORQd6GMxDUg-LCeXtmNkccGI2K4Hv73PJqJkGX0Ju9N4knQuqKOAImqB6qy_WWFXpKeIaQhRgk7YbLqBLpCmL0cio/s1600/%E0%A6%95%E0%A7%8D%E0%A6%AF%E0%A6%AA%E0%A6%BE%E0%A6%A8%E0%A7%8D%E0%A6%9F%E0%A6%A8%E0%A6%AE%E0%A7%87%E0%A6%A8%E0%A7%8D%E0%A6%9F_%E0%A6%AA%E0%A6%BE%E0%A6%AC%E0%A6%B2%E0%A6%BF%E0%A6%95_%E0%A6%B8%E0%A7%8D%E0%A6%9F%E0%A7%81%E0%A6%B2_%E0%A6%93_%E0%A6%95%E0%A6%B2%E0%A7%87%E0%A6%9C_%E0%A6%B2%E0%A6%BE%E0%A6%B2%E0%A6%AE%E0%A6%A8%E0%A6%BF%E0%A6%B0%E0%A6%B9%E0%A6%BE%E0%A6%9F%E0%A7%87%E0%A6%B0_%E0%A6%B2%E0%A7%8B%E0%A6%97%E0%A7%8B.png" class="print-logo" alt="Logo">
+            <h3>CANTONMENT PUBLIC SCHOOL AND COLLEGE LALMONIRHAT</h3>
+            <h4 id="printSummaryExamTitle">Examination Evaluation & Progress Report</h4>
+            <div class="print-meta-grid">
+                <div><strong>Class:</strong> <span id="printSummaryClass">-</span></div>
+                <div><strong>Overall Completion:</strong> <span id="printSummaryPct">0%</span></div>
+                <div><strong>Report Date:</strong> <span id="printSummaryDate">-</span></div>
+            </div>
+        </div>
+        <table class="print-table">
+            <thead>
+                <tr>
+                    <th style="width: 8%;">SL</th>
+                    <th style="text-align: left; padding-left: 10px;">Subject Name</th>
+                    <th style="width: 18%;">Group / Stream</th>
+                    <th style="width: 14%;">Target</th>
+                    <th style="width: 14%;">Submitted</th>
+                    <th style="width: 14%;">Remaining</th>
+                    <th style="width: 14%;">Status</th>
+                </tr>
+            </thead>
+            <tbody id="printSummaryTableBody"></tbody>
+        </table>
+        <div class="print-footer">
+            <div>Printed On: <span id="printSummaryGeneratedTime"></span></div>
+            <div class="signature-box">
+                <div class="sig-line"></div>
+                <strong>Exam Controller / Principal</strong>
+            </div>
+        </div>
+    </div>
+
+    <!-- 6. Printable Sheet 2: Single Subject Marks Sheet PDF -->
+    <div id="printableMarksSheet" class="printable-area">
+        <div class="print-header">
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg-795xmOcuKYH8wjija8JrA-qVjfOp_4KieeZ1pOQJaqX2uXsqGLMo09AXsGGsfGjH9LpK5fPlUNGbebFguiAzPC_YvbRXcHePj7cORQd6GMxDUg-LCeXtmNkccGI2K4Hv73PJqJkGX0Ju9N4knQuqKOAImqB6qy_WWFXpKeIaQhRgk7YbLqBLpCmL0cio/s1600/%E0%A6%95%E0%A7%8D%E0%A6%AF%E0%A6%AA%E0%A6%BE%E0%A6%A8%E0%A7%8D%E0%A6%9F%E0%A6%A8%E0%A6%AE%E0%A7%87%E0%A6%A8%E0%A7%8D%E0%A6%9F_%E0%A6%AA%E0%A6%BE%E0%A6%AC%E0%A6%B2%E0%A6%BF%E0%A6%95_%E0%A6%B8%E0%A7%8D%E0%A6%9F%E0%A7%81%E0%A6%B2_%E0%A6%93_%E0%A6%95%E0%A6%B2%E0%A7%87%E0%A6%9C_%E0%A6%B2%E0%A6%BE%E0%A6%B2%E0%A6%AE%E0%A6%A8%E0%A6%BF%E0%A6%B0%E0%A6%B9%E0%A6%BE%E0%A6%9F%E0%A7%87%E0%A6%B0_%E0%A6%B2%E0%A7%8B%E0%A6%97%E0%A7%8B.png" class="print-logo" alt="Logo">
+            <h3>CANTONMENT PUBLIC SCHOOL AND COLLEGE LALMONIRHAT</h3>
+            <h4 id="printSheetExamTitle">Official Marks Sheet</h4>
+            <div class="print-meta-grid">
+                <div><strong>Class:</strong> <span id="printSheetClassVal">-</span></div>
+                <div><strong>Group:</strong> <span id="printSheetGroupVal">-</span></div>
+                <div><strong>Subject:</strong> <span id="printSheetSubjectVal">-</span></div>
+                <div><strong>Full Marks:</strong> <span id="printSheetFullMarkVal">-</span></div>
+            </div>
+        </div>
+        <table class="print-table">
+            <thead>
+                <tr>
+                    <th style="width: 8%;">SL</th>
+                    <th style="width: 14%;">Roll No</th>
+                    <th style="width: 20%;">Student ID</th>
+                    <th style="text-align: left; padding-left: 10px;">Student Name</th>
+                    <th style="width: 18%;">Obtained Marks</th>
+                </tr>
+            </thead>
+            <tbody id="printSheetTableBody"></tbody>
+        </table>
+        <div class="print-footer">
+            <div>Printed On: <span id="printSheetDateVal"></span></div>
+            <div class="signature-box">
+                <div class="sig-line"></div>
+                <strong>Subject Teacher's Signature</strong>
+            </div>
+        </div>
+    </div>
+
     <!-- Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Firebase SDK v10 -->
+    <!-- Firebase SDK v10 (Realtime Cloud Sync) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, get, set, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
@@ -394,7 +579,8 @@
             projectId: "mousumi-computer",
             storageBucket: "mousumi-computer.firebasestorage.app",
             messagingSenderId: "104820462623",
-            appId: "1:104820462623:web:e3abae9533cc841463712a"
+            appId: "1:104820462623:web:e3abae9533cc841463712a",
+            measurementId: "G-EPYJ70W97Z"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -402,37 +588,45 @@
         const auth = getAuth(app);
         signInAnonymously(auth).catch(() => {});
 
-        // SHA-256 Hashing Helper with non-HTTPS Fallback
-        async function hashPin(pin) {
-            if (window.crypto && crypto.subtle) {
-                try {
-                    const encoder = new TextEncoder();
-                    const data = encoder.encode(pin);
-                    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-                    return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
-                } catch (e) {
-                    return pin === "9988" ? MASTER_PIN_HASH : "invalid";
-                }
+        // Centered In-App Modal Dialog Handler
+        function showInAppModal(title, sub, type = 'success') {
+            const overlay = document.getElementById('customModalOverlay');
+            const iconWrap = document.getElementById('modalIconWrap');
+            const titleEl = document.getElementById('modalTitleText');
+            const subEl = document.getElementById('modalSubText');
+            if (!overlay) return;
+
+            iconWrap.className = `modal-icon-wrap ${type}`;
+            if (type === 'success') {
+                iconWrap.innerHTML = `<svg class="icon-svg" style="width:26px; height:26px;" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>`;
+            } else {
+                iconWrap.innerHTML = `<svg class="icon-svg" style="width:26px; height:26px;" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>`;
             }
-            return pin === "9988" ? MASTER_PIN_HASH : "invalid";
+            titleEl.innerText = title;
+            subEl.innerText = sub;
+            overlay.style.display = 'flex';
         }
 
-        const MASTER_PIN_HASH = "80f1b51829e1eb13f8c857774c106fa4923e1e24749f7e8a936a281878d6b88e";
-        let activeExamId = "exam_fn02_2026";
-        let activeExamMax = 15;
-        let isExamLocked = false;
-        let activeExamSubjects = null;
+        window.closeCustomModal = function () {
+            const overlay = document.getElementById('customModalOverlay');
+            if (overlay) overlay.style.display = 'none';
+        };
+
+        const MASTER_PIN = "9988";
+        let loadedExamsList = [];
+        let currentExam = null;
+        let isLegacyExam = false;
 
         let allStudents = [];
         let liveMarks = {};
         let allPins = {};
 
         let currentFilter = 'All';
+        let activeSubjectsList = [];
         let activeSelectedSub = null;
         let isCreatingNewPin = false;
 
-        // সম্পূর্ণ বিষয়ের মাস্টার তালিকা
-        const ALL_MASTER_SUBJECTS = [
+        const LEGACY_MASTER_SUBJECTS = [
             // Science (12)
             { stream: 'Science', key: 'B1', name: 'Bangla 1st' },
             { stream: 'Science', key: 'B2', name: 'Bangla 2nd' },
@@ -476,27 +670,17 @@
             { stream: 'B.Studies', key: 'ICT', name: 'ICT' }
         ];
 
-        let activeSubjectsList = ALL_MASTER_SUBJECTS;
-
-        window.verifyAuthPin = async function () {
+        // 1. Verify Master PIN Gateway
+        window.verifyAuthPin = function () {
             const inp = document.getElementById('inpMasterPin');
             const val = inp ? inp.value.trim() : '';
             const errEl = document.getElementById('authErr');
 
-            if (val === "9988") {
+            if (val === MASTER_PIN) {
                 if (errEl) errEl.style.display = 'none';
                 document.getElementById('viewAuth').style.display = 'none';
                 document.getElementById('viewDashboard').style.display = 'block';
-                window.fetchLiveData();
-                return;
-            }
-
-            const hashed = await hashPin(val);
-            if (hashed === MASTER_PIN_HASH) {
-                if (errEl) errEl.style.display = 'none';
-                document.getElementById('viewAuth').style.display = 'none';
-                document.getElementById('viewDashboard').style.display = 'block';
-                window.fetchLiveData();
+                fetchAllActiveTrackerExams();
             } else {
                 if (errEl) errEl.style.display = 'block';
                 if (inp) inp.value = '';
@@ -510,78 +694,276 @@
             });
         }
 
-        window.fetchLiveData = async function () {
+        // 2. Fetch Active Exams Only (Excludes Closed/Locked Tests)
+        async function fetchAllActiveTrackerExams() {
+            const examSelect = document.getElementById('examSelect');
+            examSelect.innerHTML = '<option value="">-- Choose Examination --</option>';
+            loadedExamsList = [];
+
             try {
-                const actSnap = await get(ref(db, 'evaluation_system/active_exam_id'));
-                if (actSnap.exists()) activeExamId = actSnap.val();
+                // (A) Check Active Legacy Exam ID
+                const legActiveSnap = await get(ref(db, 'evaluation_system/active_exam_id'));
+                let legacyActiveId = legActiveSnap.exists() ? legActiveSnap.val() : "exam_fn02_2026";
 
-                const exSnap = await get(ref(db, `evaluation_system/exams/${activeExamId}`));
-                if (exSnap.exists()) {
-                    const exData = exSnap.val();
-                    document.getElementById('lblLiveExam').innerText = `${exData.title} (${exData.date || ''})`;
-                    activeExamMax = parseFloat(exData.max) || 15;
-                    isExamLocked = exData.isLocked === true;
+                const legSnap = await get(ref(db, 'evaluation_system/exams'));
+                if (legSnap.exists()) {
+                    const legExams = legSnap.val();
+                    Object.keys(legExams).forEach(k => {
+                        const ex = legExams[k];
+                        const isClosed = (ex.isLocked === true) || (ex.status === 'Closed') || (k !== legacyActiveId && ex.isLocked);
+                        if (!isClosed) {
+                            loadedExamsList.push({
+                                type: 'legacy',
+                                id: k,
+                                name: ex.title || k,
+                                date: ex.date || '',
+                                max: parseFloat(ex.max) || 15,
+                                activeSubjects: ex.activeSubjects || null
+                            });
+                        }
+                    });
+                }
 
-                    const lockStatusEl = document.getElementById('lblExamLockStatus');
-                    if (lockStatusEl) {
-                        lockStatusEl.style.display = isExamLocked ? 'inline-block' : 'none';
-                    }
-
-                    if (exData.activeSubjects && Array.isArray(exData.activeSubjects)) {
-                        activeExamSubjects = exData.activeSubjects;
-                        activeSubjectsList = ALL_MASTER_SUBJECTS.filter(s => activeExamSubjects.includes(s.key));
-                    } else {
-                        activeSubjectsList = ALL_MASTER_SUBJECTS;
+                if (loadedExamsList.length === 0 && legacyActiveId) {
+                    const actSnap = await get(ref(db, `evaluation_system/exams/${legacyActiveId}`));
+                    if (actSnap.exists() && actSnap.val().isLocked !== true) {
+                        const d = actSnap.val();
+                        loadedExamsList.push({
+                            type: 'legacy',
+                            id: legacyActiveId,
+                            name: d.title || 'Ongoing Assessment',
+                            max: parseFloat(d.max) || 15
+                        });
                     }
                 }
 
-                const stdSnap = await get(ref(db, 'evaluation_system/students'));
-                allStudents = stdSnap.exists() ? Object.values(stdSnap.val()) : [];
+                // (B) Load Active CPSCL ERP Exams
+                const newSnap = await get(ref(db, 'cpscl_exams'));
+                if (newSnap.exists()) {
+                    const newExams = newSnap.val();
+                    const examArr = Array.isArray(newExams) ? newExams : Object.values(newExams);
+                    examArr.forEach(ex => {
+                        if (ex.status !== 'Locked' && ex.status !== 'Closed') {
+                            loadedExamsList.push({
+                                type: 'cpscl',
+                                id: ex.id,
+                                name: `${ex.name} (${ex.class || 'CPSCL'})`,
+                                class: ex.class || '',
+                                date: ex.date || '',
+                                subjects: ex.subjects || {},
+                                groups: ex.groups || []
+                            });
+                        }
+                    });
+                }
 
+                loadedExamsList.forEach((ex, idx) => {
+                    const opt = document.createElement('option');
+                    opt.value = idx;
+                    opt.innerText = ex.name;
+                    examSelect.appendChild(opt);
+                });
+
+                if (loadedExamsList.length > 0) {
+                    examSelect.value = 0;
+                    window.onTrackerExamChanged();
+                } else {
+                    document.getElementById('lblLiveExam').innerText = "No Active Exams";
+                }
+
+            } catch (err) {
+                console.error("Exam load error:", err);
+            }
+        }
+
+        // 3. Exam Changed Handler
+        window.onTrackerExamChanged = function () {
+            const examSelect = document.getElementById('examSelect');
+            const selectedIdx = examSelect.value;
+            if (selectedIdx === "") return;
+
+            currentExam = loadedExamsList[parseInt(selectedIdx)];
+            isLegacyExam = (currentExam.type === 'legacy');
+            document.getElementById('lblLiveExam').innerText = currentExam.name;
+
+            renderFilterPills();
+            fetchTrackerLiveData();
+        };
+
+        function renderFilterPills() {
+            const container = document.getElementById('filterPillsContainer');
+            if (!container) return;
+
+            let html = `<button class="btn-pill active" onclick="setFilter('All', this)">All</button>`;
+            if (isLegacyExam) {
+                html += `
+                    <button class="btn-pill" onclick="setFilter('Science', this)">Science</button>
+                    <button class="btn-pill" onclick="setFilter('Humanities', this)">Humanities</button>
+                    <button class="btn-pill" onclick="setFilter('B.Studies', this)">B.Studies</button>
+                `;
+            }
+            html += `<button class="btn-pill" style="color: var(--danger); border-color: #fca5a5;" onclick="setFilter('Due', this)">Due Only</button>`;
+            container.innerHTML = html;
+            currentFilter = 'All';
+        }
+
+        // 4. Fetch Live Progress Data from Cloud
+        window.fetchTrackerLiveData = async function () {
+            if (!currentExam) return;
+
+            try {
                 const pinSnap = await get(ref(db, 'evaluation_system/pins'));
                 allPins = pinSnap.exists() ? pinSnap.val() : {};
 
-                const mSnap = await get(ref(db, `evaluation_system/marks/${activeExamId}`));
-                liveMarks = mSnap.exists() ? mSnap.val() : {};
+                if (isLegacyExam) {
+                    const stdSnap = await get(ref(db, 'evaluation_system/students'));
+                    allStudents = stdSnap.exists() ? Object.values(stdSnap.val()) : [];
+
+                    const mSnap = await get(ref(db, `evaluation_system/marks/${currentExam.id}`));
+                    liveMarks = mSnap.exists() ? mSnap.val() : {};
+
+                    if (currentExam.activeSubjects && Array.isArray(currentExam.activeSubjects)) {
+                        activeSubjectsList = LEGACY_MASTER_SUBJECTS.filter(s => currentExam.activeSubjects.includes(s.key));
+                    } else {
+                        activeSubjectsList = LEGACY_MASTER_SUBJECTS;
+                    }
+                } else {
+                    const stdSnap = await get(ref(db, 'cpscl_students'));
+                    let rawStudents = stdSnap.exists() ? Object.values(stdSnap.val()) : [];
+
+                    const targetClass = String(currentExam.class || '').trim().toLowerCase();
+                    allStudents = rawStudents.filter(s => {
+                        const c = String(s.class_name || s.class || '').trim().toLowerCase();
+                        return c === targetClass || c.includes(targetClass) || targetClass.includes(c);
+                    });
+
+                    // Cloud overrides check
+                    let overrides = {};
+                    try {
+                        const ovSnap = await get(ref(db, `cpscl_exam_group_overrides/${currentExam.id}`));
+                        if (ovSnap.exists()) overrides = ovSnap.val() || {};
+                    } catch(e) {}
+
+                    // Compute dynamic groups
+                    const groupsList = (currentExam.groups && currentExam.groups.length > 0)
+                        ? currentExam.groups
+                        : [{ name: "Group A", from: 1, to: 40 }, { name: "Group B", from: 41, to: "Rest" }];
+
+                    allStudents.sort((a, b) => {
+                        const rA = parseInt(a.roll_no || a.roll) || 0;
+                        const rB = parseInt(b.roll_no || b.roll) || 0;
+                        if (rA && rB) return rA - rB;
+                        return String(a.std_id || a.id).localeCompare(String(b.std_id || b.id));
+                    });
+
+                    allStudents.forEach((st, idx) => {
+                        const sId = String(st.std_id || st.id || '').trim();
+                        const sRoll = st.roll_no || st.roll || '';
+                        const effectiveNum = (sRoll && !isNaN(parseInt(sRoll))) ? parseInt(sRoll) : (idx + 1);
+
+                        let assigned = groupsList[0].name;
+                        for (let g of groupsList) {
+                            const fromNum = parseInt(g.from) || 1;
+                            const toNum = (g.to && String(g.to).toLowerCase() === 'rest') ? 999999 : (parseInt(g.to) || 999999);
+                            if (effectiveNum >= fromNum && effectiveNum <= toNum) {
+                                assigned = g.name;
+                                break;
+                            }
+                        }
+                        if (overrides[sId]) assigned = overrides[sId];
+                        st.computedGroup = assigned || "Group A";
+                    });
+
+                    // Build subjects list for CPSCL
+                    const examSubs = currentExam.subjects || {};
+                    activeSubjectsList = [];
+                    liveMarks = {};
+
+                    for (let subName of Object.keys(examSubs)) {
+                        activeSubjectsList.push({
+                            key: subName,
+                            name: subName,
+                            stream: currentExam.class || 'CPSCL',
+                            max: examSubs[subName] || 30
+                        });
+
+                        const mSnap = await get(ref(db, `cpscl_exam_marks/${currentExam.id}_${subName}`));
+                        if (mSnap.exists()) {
+                            const subMarkObj = mSnap.val();
+                            Object.keys(subMarkObj).forEach(stId => {
+                                if (!liveMarks[stId]) liveMarks[stId] = {};
+                                const rec = subMarkObj[stId];
+                                liveMarks[stId][subName] = (typeof rec === 'object') ? (rec.rawMark !== null && rec.rawMark !== undefined ? rec.rawMark : rec.cq) : rec;
+                            });
+                        }
+                    }
+                }
 
                 renderDashboardMetrics();
+
             } catch (e) {
                 console.error("Tracker sync error:", e);
             }
         };
 
+        // 5. Render Dashboard Metrics
         function renderDashboardMetrics() {
             let totalTarget = 0, totalEntered = 0;
             let cDone = 0, cWait = 0, cDue = 0;
 
             activeSubjectsList.forEach(sub => {
-                const targetStudents = allStudents.filter(s => s.group === sub.stream);
-                const subTarget = targetStudents.length;
-
+                let targetStudents = [];
                 let breakdown = {};
-                if (sub.stream === 'Science') {
-                    breakdown['Group-A'] = { target: 0, done: 0 };
-                    breakdown['Group-B'] = { target: 0, done: 0 };
-                    breakdown['Group-C'] = { target: 0, done: 0 };
+
+                if (isLegacyExam) {
+                    targetStudents = allStudents.filter(s => s.group === sub.stream);
+                    if (sub.stream === 'Science') {
+                        breakdown['Group-A'] = { target: 0, done: 0 };
+                        breakdown['Group-B'] = { target: 0, done: 0 };
+                        breakdown['Group-C'] = { target: 0, done: 0 };
+                    } else {
+                        breakdown[sub.stream] = { target: 0, done: 0 };
+                    }
+
+                    targetStudents.forEach(s => {
+                        let grpKey = sub.stream;
+                        if (sub.stream === 'Science') {
+                            const sRank = Number(s.overallRank !== undefined && s.overallRank !== null ? s.overallRank : s.sl);
+                            grpKey = s.subGroup || (sRank <= 55 ? 'Group-A' : (sRank <= 105 ? 'Group-B' : 'Group-C'));
+                        }
+                        if (!breakdown[grpKey]) breakdown[grpKey] = { target: 0, done: 0 };
+                        breakdown[grpKey].target++;
+
+                        if (liveMarks[s.id] && liveMarks[s.id][sub.key] !== undefined && liveMarks[s.id][sub.key] !== '') {
+                            breakdown[grpKey].done++;
+                        }
+                    });
+
                 } else {
-                    breakdown[sub.stream] = { target: 0, done: 0 };
+                    targetStudents = allStudents;
+                    const grpList = (currentExam.groups && currentExam.groups.length > 0) 
+                        ? currentExam.groups 
+                        : [{ name: 'Group A' }, { name: 'Group B' }];
+
+                    grpList.forEach(g => {
+                        breakdown[g.name] = { target: 0, done: 0 };
+                    });
+
+                    targetStudents.forEach(s => {
+                        const grpKey = s.computedGroup || "Group A";
+                        if (!breakdown[grpKey]) breakdown[grpKey] = { target: 0, done: 0 };
+                        breakdown[grpKey].target++;
+
+                        const sId = s.std_id || s.id;
+                        if (liveMarks[sId] && liveMarks[sId][sub.key] !== undefined && liveMarks[sId][sub.key] !== '') {
+                            breakdown[grpKey].done++;
+                        }
+                    });
                 }
 
+                let subTarget = targetStudents.length;
                 let subEntered = 0;
-                targetStudents.forEach(s => {
-                    let grpKey = sub.stream;
-                    if (sub.stream === 'Science') {
-                        const sRank = Number(s.overallRank !== undefined && s.overallRank !== null ? s.overallRank : s.sl);
-                        grpKey = s.subGroup || (sRank <= 55 ? 'Group-A' : (sRank <= 105 ? 'Group-B' : 'Group-C'));
-                    }
-                    if (!breakdown[grpKey]) breakdown[grpKey] = { target: 0, done: 0 };
-                    
-                    breakdown[grpKey].target++;
-                    if (liveMarks[s.id] && liveMarks[s.id][sub.key] !== undefined && liveMarks[s.id][sub.key] !== '') {
-                        breakdown[grpKey].done++;
-                        subEntered++;
-                    }
-                });
+                Object.values(breakdown).forEach(b => subEntered += b.done);
 
                 sub.target = subTarget;
                 sub.entered = subEntered;
@@ -657,7 +1039,6 @@
                 const card = document.createElement('div');
                 card.className = 'subject-card';
 
-                // ডাবল ট্যাপে এন্ট্রি খোলা
                 let lastTap = 0;
                 card.addEventListener('click', () => {
                     const currentTime = Date.now();
@@ -673,7 +1054,7 @@
                 card.innerHTML = `
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <div class="fw-bold" style="font-size:0.88rem; color:#0f172a;">${sub.name} (${sub.key})</div>
+                            <div class="fw-bold" style="font-size:0.88rem; color:#0f172a;">${sub.name}</div>
                             <div class="text-muted" style="font-size:0.72rem;">${sub.stream} • Total: <b>${sub.entered}/${sub.target}</b></div>
                         </div>
                         <span class="chip-status ${badgeClass}">${badgeText}</span>
@@ -686,6 +1067,83 @@
             });
         }
 
+        // 6. WhatsApp Reminder Notice Generator
+        window.copyPendingWhatsAppNotice = function () {
+            if (!currentExam) return;
+
+            let msg = `*Notice: Pending Mark Submission*\n`;
+            msg += `Exam: *${currentExam.name}*\n\n`;
+            let foundDue = false;
+
+            activeSubjectsList.forEach(sub => {
+                let dueGrps = [];
+                Object.keys(sub.breakdown).forEach(gKey => {
+                    const b = sub.breakdown[gKey];
+                    if (b.done < b.target) {
+                        dueGrps.push(`${gKey} (${b.target - b.done} remaining)`);
+                    }
+                });
+
+                if (dueGrps.length > 0) {
+                    foundDue = true;
+                    msg += `• *${sub.name}*: ${dueGrps.join(', ')}\n`;
+                }
+            });
+
+            if (!foundDue) {
+                showInAppModal("Notice", "All subjects are 100% completed!", "success");
+                return;
+            }
+
+            msg += `\nPlease complete and save the pending marks as soon as possible.`;
+
+            navigator.clipboard.writeText(msg).then(() => {
+                showInAppModal("Notice Copied!", "WhatsApp notice copied to clipboard.", "success");
+            });
+        };
+
+        // 7. Overall Progress & Summary Report PDF Generator (All-in-One Report)
+        window.downloadOverallProgressPDF = function () {
+            if (!currentExam) return;
+
+            document.getElementById('printSummaryExamTitle').innerText = `${currentExam.name} - Evaluation Progress`;
+            document.getElementById('printSummaryClass').innerText = currentExam.class || 'All Streams';
+            document.getElementById('printSummaryPct').innerText = document.getElementById('lblOverallPct').innerText;
+            document.getElementById('printSummaryDate').innerText = new Date().toLocaleDateString('en-GB');
+            document.getElementById('printSummaryGeneratedTime').innerText = new Date().toLocaleString('en-GB');
+
+            const tbody = document.getElementById('printSummaryTableBody');
+            tbody.innerHTML = '';
+
+            let sl = 1;
+            activeSubjectsList.forEach(sub => {
+                Object.keys(sub.breakdown).forEach(gKey => {
+                    const b = sub.breakdown[gKey];
+                    const remaining = b.target - b.done;
+                    let stText = 'Due';
+                    if (b.target > 0 && b.done === b.target) stText = 'Done';
+                    else if (b.done > 0) stText = 'Partial';
+
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${sl++}</td>
+                        <td style="text-align: left; padding-left: 10px;"><strong>${sub.name}</strong></td>
+                        <td>${gKey}</td>
+                        <td>${b.target}</td>
+                        <td style="font-weight: 700; color: #059669;">${b.done}</td>
+                        <td style="color: ${remaining > 0 ? '#dc2626' : '#64748b'};">${remaining}</td>
+                        <td><strong>${stText}</strong></td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            });
+
+            document.body.className = 'print-summary';
+            window.print();
+            window.onafterprint = () => { document.body.className = ''; };
+        };
+
+        // 8. Subject Entry & Single Marks Sheet PDF Feature
         window.triggerSubjectEntry = function (subKey, stream) {
             const sub = activeSubjectsList.find(s => s.key === subKey && s.stream === stream);
             if (!sub) return;
@@ -699,12 +1157,23 @@
             const selGrp = document.getElementById('selEntryGroup');
             selGrp.innerHTML = '';
 
-            if (sub.stream === 'Science') {
+            if (isLegacyExam && sub.stream === 'Science') {
                 grpBox.style.display = 'block';
                 ['Group-A', 'Group-B', 'Group-C'].forEach(g => {
                     const opt = document.createElement('option');
                     opt.value = g;
                     opt.innerText = `Science (${g})`;
+                    selGrp.appendChild(opt);
+                });
+            } else if (!isLegacyExam) {
+                grpBox.style.display = 'block';
+                const grpList = (currentExam.groups && currentExam.groups.length > 0) 
+                    ? currentExam.groups 
+                    : [{ name: 'Group A' }, { name: 'Group B' }];
+                grpList.forEach(g => {
+                    const opt = document.createElement('option');
+                    opt.value = g.name;
+                    opt.innerText = g.name;
                     selGrp.appendChild(opt);
                 });
             } else {
@@ -715,9 +1184,12 @@
                 selGrp.appendChild(opt);
             }
 
-            const cleanStream = sub.stream === 'B.Studies' ? 'BStudies' : sub.stream;
-            const pinKey = `${cleanStream}_${sub.key}`;
-            const existingPin = allPins[pinKey] || allPins[sub.key];
+            const cleanSub = sub.key.replace(/[^a-zA-Z0-9_-]/g, '_');
+            const pinPath = isLegacyExam 
+                ? `${sub.stream === 'B.Studies' ? 'BStudies' : sub.stream}_${sub.key}`
+                : `cpscl_${String(currentExam.id).replace(/[^a-zA-Z0-9_-]/g, '_')}_${cleanSub}`;
+
+            const existingPin = allPins[pinPath] || allPins[sub.key];
 
             if (!existingPin) {
                 isCreatingNewPin = true;
@@ -736,12 +1208,15 @@
         window.submitSubPinAction = async function () {
             const entered = document.getElementById('inpSubPin').value.trim();
             if (entered.length !== 4 || isNaN(entered)) {
-                alert("Please enter a 4-digit numeric PIN!");
+                showInAppModal("Notice", "Please enter a 4-digit numeric PIN.", "error");
                 return;
             }
 
-            const cleanStream = activeSelectedSub.stream === 'B.Studies' ? 'BStudies' : activeSelectedSub.stream;
-            const pinKey = `${cleanStream}_${activeSelectedSub.key}`;
+            const cleanSub = activeSelectedSub.key.replace(/[^a-zA-Z0-9_-]/g, '_');
+            const pinKey = isLegacyExam 
+                ? `${activeSelectedSub.stream === 'B.Studies' ? 'BStudies' : activeSelectedSub.stream}_${activeSelectedSub.key}`
+                : `cpscl_${String(currentExam.id).replace(/[^a-zA-Z0-9_-]/g, '_')}_${cleanSub}`;
+
             const pinModalEl = document.getElementById('modalSubPin');
             const pinModal = bootstrap.Modal.getInstance(pinModalEl);
 
@@ -752,7 +1227,8 @@
                 openMarkEntrySheet();
             } else {
                 const correctPin = String(allPins[pinKey] || allPins[activeSelectedSub.key] || '').trim();
-                if (entered === correctPin) {
+                // Master PIN also acts as Master Key
+                if (entered === correctPin || entered === MASTER_PIN) {
                     if (pinModal) pinModal.hide();
                     openMarkEntrySheet();
                 } else {
@@ -764,79 +1240,73 @@
 
         function openMarkEntrySheet() {
             const targetGroup = document.getElementById('selEntryGroup').value;
+            const fullM = activeSelectedSub.max || currentExam.max || 30;
             document.getElementById('lblSheetTitle').innerText = `${activeSelectedSub.name} - ${targetGroup}`;
-            document.getElementById('lblSheetGroupMeta').innerText = `Full Mark: ${activeExamMax} ${isExamLocked ? '• (Locked by Admin)' : ''}`;
-
-            const saveBtn = document.getElementById('btnSaveMarks');
-            if (saveBtn) {
-                saveBtn.disabled = isExamLocked;
-                saveBtn.innerText = isExamLocked ? "Entry Closed by Admin" : "Save Marks";
-            }
+            document.getElementById('lblSheetGroupMeta').innerText = `Full Mark: ${fullM}`;
 
             const container = document.getElementById('sheetContainer');
             container.innerHTML = '';
 
-            let list = allStudents.filter(s => {
-                if (activeSelectedSub.stream === 'Science') {
-                    const sRank = Number(s.overallRank !== undefined && s.overallRank !== null ? s.overallRank : s.sl);
-                    const subGrp = s.subGroup || (sRank <= 55 ? 'Group-A' : (sRank <= 105 ? 'Group-B' : 'Group-C'));
-                    return s.group === 'Science' && (subGrp === targetGroup);
-                }
-                return s.group === activeSelectedSub.stream;
-            });
-
-            // মেধা ক্রমিক অনুযায়ী সর্ট
-            list.sort((a, b) => {
-                const rankA = (a.overallRank !== undefined && a.overallRank !== null) ? Number(a.overallRank) : (Number(a.sl) || 9999);
-                const rankB = (b.overallRank !== undefined && b.overallRank !== null) ? Number(b.overallRank) : (Number(b.sl) || 9999);
-                return rankA - rankB;
-            });
+            let list = [];
+            if (isLegacyExam) {
+                list = allStudents.filter(s => {
+                    if (activeSelectedSub.stream === 'Science') {
+                        const sRank = Number(s.overallRank !== undefined && s.overallRank !== null ? s.overallRank : s.sl);
+                        const subGrp = s.subGroup || (sRank <= 55 ? 'Group-A' : (sRank <= 105 ? 'Group-B' : 'Group-C'));
+                        return s.group === 'Science' && (subGrp === targetGroup);
+                    }
+                    return s.group === activeSelectedSub.stream;
+                });
+                list.sort((a, b) => (Number(a.overallRank || a.sl) || 9999) - (Number(b.overallRank || b.sl) || 9999));
+            } else {
+                list = allStudents.filter(s => s.computedGroup === targetGroup);
+                list.sort((a, b) => (parseInt(a.roll_no || a.roll) || 0) - (parseInt(b.roll_no || b.roll) || 0));
+            }
 
             if (list.length === 0) {
                 container.innerHTML = `<div class="text-center p-3 text-danger fw-bold">No students found in ${targetGroup}!</div>`;
             } else {
-                list.forEach(s => {
-                    const prev = (liveMarks[s.id] && liveMarks[s.id][activeSelectedSub.key] !== undefined) ? liveMarks[s.id][activeSelectedSub.key] : '';
-                    const meritRank = (s.overallRank !== undefined && s.overallRank !== null && s.overallRank !== '') ? s.overallRank : (s.sl || '-');
+                list.forEach((s, idx) => {
+                    const sId = s.std_id || s.id;
+                    const prev = (liveMarks[sId] && liveMarks[sId][activeSelectedSub.key] !== undefined) ? liveMarks[sId][activeSelectedSub.key] : '';
+                    const roll = s.roll_no || s.roll || (idx + 1);
 
                     const row = document.createElement('div');
                     row.className = 'rounded-box d-flex align-items-center justify-content-between p-2 mb-2';
                     row.innerHTML = `
                         <div class="d-flex align-items-center gap-2 ps-1">
-                            <span class="badge rounded-pill bg-light text-primary fw-bold">#${meritRank}</span>
+                            <span class="badge rounded-pill bg-light text-success fw-bold" style="color:var(--primary-dark)!important;">#${roll}</span>
                             <div>
-                                <div class="fw-bold small mb-0">${s.name}</div>
-                                <span class="text-muted" style="font-size:0.72rem;">Roll: ${s.roll} ${s.section ? '• Sec: ' + s.section : ''}</span>
+                                <div class="fw-bold small mb-0">${s.student_name || s.name}</div>
+                                <span class="text-muted" style="font-size:0.72rem;">ID: ${sId} • Roll: ${roll}</span>
                             </div>
                         </div>
                         <input type="text" 
                                inputmode="decimal" 
                                class="mark-inp-pill mark-field" 
-                               data-id="${s.id}" 
+                               data-id="${sId}" 
                                value="${prev}" 
-                               placeholder="-"
-                               ${isExamLocked ? 'disabled' : ''}>
+                               placeholder="-">
                     `;
                     container.appendChild(row);
                 });
             }
 
-            bindValidation();
+            bindValidation(fullM);
             const sheetModal = new bootstrap.Modal(document.getElementById('modalMarkEntry'));
             sheetModal.show();
         }
 
-        function bindValidation() {
+        function bindValidation(fullM) {
             const inputs = Array.from(document.querySelectorAll('.mark-field'));
             inputs.forEach((inp, idx) => {
                 inp.addEventListener('input', function () {
                     this.value = this.value.replace(/[^0-9.]/g, '');
-                    if ((this.value.match(/\./g) || []).length > 1) {
-                        this.value = this.value.slice(0, -1);
-                    }
+                    if ((this.value.match(/\./g) || []).length > 1) this.value = this.value.slice(0, -1);
                     const num = parseFloat(this.value);
-                    if (!isNaN(num) && (num > activeExamMax || num < 0)) {
+                    if (!isNaN(num) && (num > fullM || num < 0)) {
                         this.classList.add('input-error');
+                        showInAppModal("Attention!", `Mark cannot exceed ${fullM}.`, "error");
                     } else {
                         this.classList.remove('input-error');
                     }
@@ -851,38 +1321,31 @@
             });
         }
 
-        // নিরাপদ মার্কস সেভ (নিরাপত্তা গার্ড সহ)
+        // Save Subject Marks Direct from Tracker Modal
         window.saveDirectMarksToFirebase = async function () {
-            if (isExamLocked) {
-                alert("Exam is locked by Admin. Marks cannot be modified!");
-                return;
-            }
-
             const inputs = document.querySelectorAll('.mark-field');
-            let hasErrors = false;
-            inputs.forEach(inp => {
-                const num = parseFloat(inp.value.trim());
-                if (!isNaN(num) && (num > activeExamMax || num < 0)) hasErrors = true;
-            });
-
-            if (hasErrors) {
-                alert(`Some marks exceed the full mark (${activeExamMax}). Please fix highlighted inputs.`);
-                return;
-            }
-
-            const btn = document.getElementById('btnSaveMarks');
+            const fullM = activeSelectedSub.max || currentExam.max || 30;
             const updates = {};
             let count = 0;
 
             inputs.forEach(inp => {
                 const sId = inp.getAttribute('data-id');
                 const val = inp.value.trim();
-                const path = `evaluation_system/marks/${activeExamId}/${sId}/${activeSelectedSub.key}`;
 
                 if (val !== '') {
                     const num = parseFloat(val);
-                    if (!isNaN(num) && num >= 0 && num <= activeExamMax) {
-                        updates[path] = String(num);
+                    if (!isNaN(num) && num >= 0 && num <= fullM) {
+                        if (isLegacyExam) {
+                            updates[`evaluation_system/marks/${currentExam.id}/${sId}/${activeSelectedSub.key}`] = String(num);
+                        } else {
+                            updates[`cpscl_exam_marks/${currentExam.id}_${activeSelectedSub.key}/${sId}`] = {
+                                rawMark: num,
+                                cq: num,
+                                mcq: 0,
+                                practical: 0,
+                                updatedAt: new Date().toISOString()
+                            };
+                        }
                         if (!liveMarks[sId]) liveMarks[sId] = {};
                         liveMarks[sId][activeSelectedSub.key] = String(num);
                         count++;
@@ -890,24 +1353,21 @@
                 }
             });
 
-            // নিরাপত্তা গার্ড: ফাঁকা অবস্থায় সেভ চাপলে আটকাবে
             if (Object.keys(updates).length === 0) {
-                alert("কোনো নতুন বা পরিবর্তিত নম্বর পাওয়া যায়নি। দয়া করে নম্বর বসিয়ে সেভ করুন।");
+                showInAppModal("Notice", "No marks found to save.", "error");
                 return;
             }
 
+            const btn = document.getElementById('btnSaveMarks');
             btn.disabled = true;
             btn.innerText = "Saving...";
 
             try {
                 await update(ref(db), updates);
-                alert(`Marks saved successfully for ${count} students!`);
-                const sheetModalEl = document.getElementById('modalMarkEntry');
-                const sheetModal = bootstrap.Modal.getInstance(sheetModalEl);
-                if (sheetModal) sheetModal.hide();
+                showInAppModal("Saved!", "Marks updated successfully.", "success");
                 renderDashboardMetrics();
             } catch (err) {
-                alert("Error saving: " + err.message);
+                showInAppModal("Notice", "Failed to save marks.", "error");
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = `
@@ -916,35 +1376,54 @@
             }
         };
 
-        window.copyPendingWhatsAppNotice = function () {
-            let msg = `*Notice: Pending Mark Submission*\n`;
-            let foundDue = false;
+        // 9. Download Single Subject Marks Sheet PDF
+        window.downloadSubjectMarksPDF = function () {
+            const inputs = document.querySelectorAll('.mark-field');
+            const tbody = document.getElementById('printSheetTableBody');
+            if (!tbody) return;
 
-            activeSubjectsList.forEach(sub => {
-                let dueGrps = [];
-                Object.keys(sub.breakdown).forEach(gKey => {
-                    const b = sub.breakdown[gKey];
-                    if (b.done < b.target) {
-                        dueGrps.push(`${gKey.replace('Group-', '')} (${b.target - b.done} due)`);
-                    }
-                });
+            const targetGroup = document.getElementById('selEntryGroup').value;
+            const fullM = activeSelectedSub.max || currentExam.max || 30;
 
-                if (dueGrps.length > 0) {
-                    foundDue = true;
-                    msg += `• *${sub.name}* [${sub.stream}]: ${dueGrps.join(', ')}\n`;
-                }
+            document.getElementById('printSheetExamTitle').innerText = `${currentExam.name} - Official Marks Sheet`;
+            document.getElementById('printSheetClassVal').innerText = currentExam.class || targetGroup;
+            document.getElementById('printSheetGroupVal').innerText = targetGroup;
+            document.getElementById('printSheetSubjectVal').innerText = activeSelectedSub.name;
+            document.getElementById('printSheetFullMarkVal').innerText = fullM;
+            document.getElementById('printSheetDateVal').innerText = new Date().toLocaleDateString('en-GB');
+
+            tbody.innerHTML = '';
+            let count = 0;
+
+            inputs.forEach((inp, idx) => {
+                const row = inp.closest('.rounded-box');
+                if (!row) return;
+
+                const roll = row.querySelector('.badge') ? row.querySelector('.badge').innerText.replace('#','') : (idx + 1);
+                const title = row.querySelector('.fw-bold.small') ? row.querySelector('.fw-bold.small').innerText : '';
+                const sId = inp.getAttribute('data-id') || '-';
+                const mark = inp.value.trim() !== '' ? inp.value.trim() : '-';
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${idx + 1}</td>
+                    <td>${roll}</td>
+                    <td><strong>${sId}</strong></td>
+                    <td style="text-align: left; padding-left: 10px;">${title}</td>
+                    <td style="font-weight: 800;">${mark}</td>
+                `;
+                tbody.appendChild(tr);
+                count++;
             });
 
-            if (!foundDue) {
-                alert("All active subjects complete!");
+            if (count === 0) {
+                showInAppModal("Notice", "No students loaded to generate PDF.", "error");
                 return;
             }
 
-            msg += `\nPlease submit the marks as soon as possible.`;
-
-            navigator.clipboard.writeText(msg).then(() => {
-                alert("Notice copied to clipboard!");
-            });
+            document.body.className = 'print-sheet';
+            window.print();
+            window.onafterprint = () => { document.body.className = ''; };
         };
     </script>
 </body>
