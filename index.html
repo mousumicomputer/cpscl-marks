@@ -42,7 +42,7 @@
             vertical-align: -2px;
         }
 
-        /* --- In-App Centered Modal Dialog (No Browser Alert) --- */
+        /* --- 100% In-App Centered Modal Dialog (Zero Browser Popups) --- */
         .custom-modal-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -122,6 +122,33 @@
         .modal-ok-btn:active {
             background: var(--primary-dark);
             transform: scale(0.98);
+        }
+        .modal-dual-btns {
+            display: flex;
+            gap: 10px;
+        }
+        .modal-cancel-btn {
+            background: #f1f5f9;
+            color: #475569;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 50px;
+            padding: 10px;
+            font-size: 0.90rem;
+            font-weight: 700;
+            cursor: pointer;
+            flex: 1;
+        }
+        .modal-confirm-btn {
+            background: #dc2626;
+            color: #ffffff;
+            border: none;
+            border-radius: 50px;
+            padding: 10px;
+            font-size: 0.90rem;
+            font-weight: 700;
+            cursor: pointer;
+            flex: 1;
+            box-shadow: 0 3px 10px rgba(220, 38, 38, 0.2);
         }
 
         .app-header {
@@ -379,7 +406,7 @@
 </head>
 <body>
 
-    <!-- Centered Modal Dialog (No Browser Alert) -->
+    <!-- 100% In-App Centered Modal Dialog (No Native Browser Popup) -->
     <div id="customModalOverlay" class="custom-modal-overlay">
         <div class="custom-modal-box">
             <div id="modalIconWrap" class="modal-icon-wrap success">
@@ -387,7 +414,17 @@
             </div>
             <h5 id="modalTitleText" class="modal-title-text">Saved!</h5>
             <p id="modalSubText" class="modal-sub-text">Marks updated successfully.</p>
-            <button type="button" class="modal-ok-btn" onclick="closeCustomModal()">OK</button>
+            
+            <!-- Single OK Button Mode -->
+            <div id="modalSingleBtnWrap">
+                <button type="button" class="modal-ok-btn" onclick="closeCustomModal()">OK</button>
+            </div>
+
+            <!-- Dual Confirm/Cancel Mode (For Reset) -->
+            <div id="modalDualBtnWrap" class="modal-dual-btns" style="display: none;">
+                <button type="button" class="modal-cancel-btn" onclick="closeCustomModal()">Cancel</button>
+                <button type="button" class="modal-confirm-btn" id="modalConfirmActionBtn">Reset</button>
+            </div>
         </div>
     </div>
 
@@ -563,12 +600,14 @@
         const auth = getAuth(app);
         signInAnonymously(auth).catch(() => {});
 
-        // In-App Centered Modal Handler (No native alert, Pure Short English)
+        // 100% In-App Centered Modal Handler (NO Native Alert / Confirm)
         function showInAppModal(title, sub, type = 'success') {
             const overlay = document.getElementById('customModalOverlay');
             const iconWrap = document.getElementById('modalIconWrap');
             const titleEl = document.getElementById('modalTitleText');
             const subEl = document.getElementById('modalSubText');
+            const singleWrap = document.getElementById('modalSingleBtnWrap');
+            const dualWrap = document.getElementById('modalDualBtnWrap');
             if (!overlay) return;
 
             iconWrap.className = `modal-icon-wrap ${type}`;
@@ -579,6 +618,38 @@
             }
             titleEl.innerText = title;
             subEl.innerText = sub;
+
+            singleWrap.style.display = 'block';
+            dualWrap.style.display = 'none';
+
+            overlay.style.display = 'flex';
+        }
+
+        // In-App Confirmation Modal (Replaces browser confirm)
+        function showConfirmModal(title, sub, onConfirm) {
+            const overlay = document.getElementById('customModalOverlay');
+            const iconWrap = document.getElementById('modalIconWrap');
+            const titleEl = document.getElementById('modalTitleText');
+            const subEl = document.getElementById('modalSubText');
+            const singleWrap = document.getElementById('modalSingleBtnWrap');
+            const dualWrap = document.getElementById('modalDualBtnWrap');
+            const confirmBtn = document.getElementById('modalConfirmActionBtn');
+            if (!overlay) return;
+
+            iconWrap.className = 'modal-icon-wrap error';
+            iconWrap.innerHTML = `<svg class="icon-svg" style="width:26px; height:26px; fill:#dc2626;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>`;
+
+            titleEl.innerText = title;
+            subEl.innerText = sub;
+
+            singleWrap.style.display = 'none';
+            dualWrap.style.display = 'flex';
+
+            confirmBtn.onclick = function () {
+                closeCustomModal();
+                if (typeof onConfirm === 'function') onConfirm();
+            };
+
             overlay.style.display = 'flex';
         }
 
@@ -1186,14 +1257,17 @@
             });
         };
 
+        // 100% In-App Confirmation (Zero Browser Confirm Dialog)
         window.clearScreenMarks = function () {
             if (isExamLocked) return showInAppModal("Notice", "Entry closed by Admin.", "error");
-            if (confirm(`Do you want to reset the fields on screen for ${currentSubject}?`)) {
+            
+            showConfirmModal("Reset Fields?", `Clear all marks on screen for ${currentSubject}?`, () => {
                 document.querySelectorAll('.mark-input').forEach(inp => {
                     inp.value = '';
                     inp.classList.remove('input-error');
                 });
-            }
+                showInAppModal("Reset!", "Screen fields have been cleared.", "success");
+            });
         };
 
         window.lockCurrentSubject = function () {
