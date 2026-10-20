@@ -42,35 +42,86 @@
             vertical-align: -2px;
         }
 
-        /* Pure Text Floating Message (Zero Background, Zero Box) */
-        .pure-text-toast {
+        /* --- In-App Centered Modal Dialog (No Browser Alert) --- */
+        .custom-modal-overlay {
             position: fixed;
-            top: 26px;
-            left: 50%;
-            transform: translateX(-50%) translateY(-10px);
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.45);
+            backdrop-filter: blur(4px);
             z-index: 999999;
-            pointer-events: none;
-            opacity: 0;
-            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-            font-size: 1.25rem;
-            font-weight: 800;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: fadeInOverlay 0.2s ease-out;
+        }
+        @keyframes fadeInOverlay {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .custom-modal-box {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 24px 20px 20px 20px;
+            width: 100%;
+            max-width: 320px;
             text-align: center;
-            background: transparent !important;
-            border: none !important;
-            box-shadow: none !important;
-            white-space: nowrap;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            border: 1.5px solid #d1fae5;
+            animation: scaleInModal 0.22s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .pure-text-toast.show {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
+        @keyframes scaleInModal {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
         }
-        .pure-text-toast.success {
+        .modal-icon-wrap {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+        }
+        .modal-icon-wrap.success {
+            background: #ecfdf5;
             color: #059669;
-            text-shadow: 0 2px 8px rgba(255, 255, 255, 0.95), 0 0 2px #fff;
+            border: 1.5px solid #a7f3d0;
         }
-        .pure-text-toast.error {
+        .modal-icon-wrap.error {
+            background: #fef2f2;
             color: #dc2626;
-            text-shadow: 0 2px 8px rgba(255, 255, 255, 0.95), 0 0 2px #fff;
+            border: 1.5px solid #fecaca;
+        }
+        .modal-title-text {
+            font-size: 1.15rem;
+            font-weight: 800;
+            margin: 0 0 4px 0;
+            color: #0f172a;
+        }
+        .modal-sub-text {
+            font-size: 0.86rem;
+            color: #64748b;
+            margin: 0 0 18px 0;
+            font-weight: 500;
+            line-height: 1.35;
+        }
+        .modal-ok-btn {
+            background: var(--primary);
+            color: #ffffff;
+            border: none;
+            border-radius: 50px;
+            padding: 10px 32px;
+            font-size: 0.92rem;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            box-shadow: 0 3px 10px rgba(5, 150, 105, 0.2);
+            transition: all 0.15s;
+        }
+        .modal-ok-btn:active {
+            background: var(--primary-dark);
+            transform: scale(0.98);
         }
 
         .app-header {
@@ -291,20 +342,54 @@
             color: var(--primary-dark);
             border: 1px solid var(--primary-border);
             border-radius: 50px;
-            padding: 3px 12px;
+            padding: 4px 12px;
             font-size: 0.75rem;
             font-weight: 700;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
             gap: 5px;
+            transition: 0.15s ease;
+        }
+        .btn-soft-pill:hover {
+            background: #d1fae5;
+        }
+
+        /* --- PDF & Print Specific CSS (A4 Portrait) --- */
+        .printable-sheet { display: none; }
+        @media print {
+            @page { size: portrait; margin: 8mm; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            body { background: #ffffff !important; padding: 0 !important; color: #000000 !important; }
+            .app-header, .container, .fixed-bottom-bar, .custom-modal-overlay { display: none !important; }
+            .printable-sheet { display: block !important; }
+            .print-header { text-align: center; margin-bottom: 14px; }
+            .print-logo { width: 55px; height: 55px; margin-bottom: 4px; }
+            .print-header h3 { font-size: 15px; font-weight: 800; margin: 0 0 4px; text-transform: uppercase; color: #000; }
+            .print-header h4 { font-size: 13px; font-weight: 700; margin: 0 0 10px; color: #1e40af; }
+            .print-meta-grid { display: flex; justify-content: space-around; font-size: 11px; padding: 6px 10px; border: 1px solid #222; background: #f8fafc; font-weight: 600; margin-bottom: 12px; }
+            .print-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+            .print-table th, .print-table td { border: 1px solid #222 !important; padding: 5px 6px; text-align: center; color: #000; }
+            .print-table th { background: #f1f5f9 !important; font-weight: 800; }
+            .print-footer { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 45px; font-size: 11px; }
+            .signature-box { text-align: center; width: 190px; }
+            .signature-box .sig-line { border-top: 1px solid #000; margin-bottom: 4px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Pure Floating Text Message Container (Zero Background) -->
-    <div id="pureTextToast" class="pure-text-toast"></div>
+    <!-- Centered Modal Dialog (No Browser Alert) -->
+    <div id="customModalOverlay" class="custom-modal-overlay">
+        <div class="custom-modal-box">
+            <div id="modalIconWrap" class="modal-icon-wrap success">
+                <svg class="icon-svg" style="width:26px; height:26px;" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+            </div>
+            <h5 id="modalTitleText" class="modal-title-text">Saved!</h5>
+            <p id="modalSubText" class="modal-sub-text">Marks updated successfully.</p>
+            <button type="button" class="modal-ok-btn" onclick="closeCustomModal()">OK</button>
+        </div>
+    </div>
 
     <!-- Header -->
     <div class="app-header mb-3">
@@ -396,10 +481,16 @@
 
             <div class="d-flex justify-content-between align-items-center mb-2 px-1">
                 <span class="badge rounded-pill px-3 py-2" id="statusBadge" style="background: var(--primary-light); color: var(--primary-dark); border: 1px solid var(--primary-border);">Active</span>
-                <button type="button" class="btn-soft-pill" onclick="lockCurrentSubject()">
-                    <svg class="icon-svg" viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
-                    Lock
-                </button>
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn-soft-pill" onclick="downloadMarksPDF()" title="Download PDF or Print Marks Sheet">
+                        <svg class="icon-svg" viewBox="0 0 24 24"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>
+                        PDF Sheet
+                    </button>
+                    <button type="button" class="btn-soft-pill" onclick="lockCurrentSubject()">
+                        <svg class="icon-svg" viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+                        Lock
+                    </button>
+                </div>
             </div>
 
             <form id="marksForm" onsubmit="event.preventDefault(); saveAllMarks();">
@@ -416,7 +507,41 @@
 
     </div>
 
-    <!-- Firebase SDK v10 (Pure Realtime Persistence) -->
+    <!-- Printable Official Marks Sheet (Auto-fills on 'PDF Sheet' Click) -->
+    <div id="printableMarksSheet" class="printable-sheet">
+        <div class="print-header">
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg-795xmOcuKYH8wjija8JrA-qVjfOp_4KieeZ1pOQJaqX2uXsqGLMo09AXsGGsfGjH9LpK5fPlUNGbebFguiAzPC_YvbRXcHePj7cORQd6GMxDUg-LCeXtmNkccGI2K4Hv73PJqJkGX0Ju9N4knQuqKOAImqB6qy_WWFXpKeIaQhRgk7YbLqBLpCmL0cio/s1600/%E0%A6%95%E0%A7%8D%E0%A6%AF%E0%A6%AA%E0%A6%BE%E0%A6%A8%E0%A7%8D%E0%A6%9F%E0%A6%A8%E0%A6%AE%E0%A7%87%E0%A6%A8%E0%A7%8D%E0%A6%9F_%E0%A6%AA%E0%A6%BE%E0%A6%AC%E0%A6%B2%E0%A6%BF%E0%A6%95_%E0%A6%B8%E0%A7%8D%E0%A6%9F%E0%A7%81%E0%A6%B2_%E0%A6%93_%E0%A6%95%E0%A6%B2%E0%A7%87%E0%A6%9C_%E0%A6%B2%E0%A6%BE%E0%A6%B2%E0%A6%AE%E0%A6%A8%E0%A6%BF%E0%A6%B0%E0%A6%B9%E0%A6%BE%E0%A6%9F%E0%A7%87%E0%A6%B0_%E0%A6%B2%E0%A7%8B%E0%A6%97%E0%A7%8B.png" class="print-logo" alt="CPSCL Logo">
+            <h3>CANTONMENT PUBLIC SCHOOL AND COLLEGE LALMONIRHAT</h3>
+            <h4 id="printExamTitle">Examination Marks Sheet</h4>
+            <div class="print-meta-grid">
+                <div><strong>Class:</strong> <span id="printClassVal">-</span></div>
+                <div><strong>Group:</strong> <span id="printGroupVal">-</span></div>
+                <div><strong>Subject:</strong> <span id="printSubjectVal">-</span></div>
+                <div><strong>Full Marks:</strong> <span id="printFullMarkVal">-</span></div>
+            </div>
+        </div>
+        <table class="print-table">
+            <thead>
+                <tr>
+                    <th style="width: 8%;">SL</th>
+                    <th style="width: 14%;">Roll No</th>
+                    <th style="width: 20%;">Student ID</th>
+                    <th style="text-align: left; padding-left: 10px;">Student Name</th>
+                    <th style="width: 18%;">Obtained Marks</th>
+                </tr>
+            </thead>
+            <tbody id="printTableBody"></tbody>
+        </table>
+        <div class="print-footer">
+            <div>Printed Date: <span id="printDateVal"></span></div>
+            <div class="signature-box">
+                <div class="sig-line"></div>
+                <strong>Subject Teacher's Signature</strong>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK v10 (Realtime Cloud Connection) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, get, set, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
@@ -438,17 +563,29 @@
         const auth = getAuth(app);
         signInAnonymously(auth).catch(() => {});
 
-        // Pure Floating Text Trigger (Zero Box, Zero Background, Fadeout in 1.3s)
-        function showPureText(msg, type = 'success') {
-            const el = document.getElementById('pureTextToast');
-            if (!el) return;
-            el.className = `pure-text-toast show ${type}`;
-            el.innerHTML = msg;
-            if (window._pureTextTimer) clearTimeout(window._pureTextTimer);
-            window._pureTextTimer = setTimeout(() => {
-                el.classList.remove('show');
-            }, 1300);
+        // In-App Centered Modal Handler (No native alert, Pure Short English)
+        function showInAppModal(title, sub, type = 'success') {
+            const overlay = document.getElementById('customModalOverlay');
+            const iconWrap = document.getElementById('modalIconWrap');
+            const titleEl = document.getElementById('modalTitleText');
+            const subEl = document.getElementById('modalSubText');
+            if (!overlay) return;
+
+            iconWrap.className = `modal-icon-wrap ${type}`;
+            if (type === 'success') {
+                iconWrap.innerHTML = `<svg class="icon-svg" style="width:26px; height:26px;" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>`;
+            } else {
+                iconWrap.innerHTML = `<svg class="icon-svg" style="width:26px; height:26px;" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>`;
+            }
+            titleEl.innerText = title;
+            subEl.innerText = sub;
+            overlay.style.display = 'flex';
         }
+
+        window.closeCustomModal = function () {
+            const overlay = document.getElementById('customModalOverlay');
+            if (overlay) overlay.style.display = 'none';
+        };
 
         const LEGACY_SUBJECTS = {
             Science: [
@@ -487,14 +624,14 @@
         let isExamLocked = false;
         let storedPIN = null;
 
-        // 1. Fetch Active Exams Only (Excludes Closed Tests like Test-03)
+        // 1. Fetch Active Exams Only (Excludes Closed/Locked Tests)
         async function fetchAllActiveExams() {
             const examSelect = document.getElementById('examSelect');
             examSelect.innerHTML = '<option value="">-- Select Examination --</option>';
             loadedExamsList = [];
 
             try {
-                // (A) Legacy Active Exam check
+                // (A) Check Active Legacy Exam ID
                 const legActiveSnap = await get(ref(db, 'evaluation_system/active_exam_id'));
                 let legacyActiveId = legActiveSnap.exists() ? legActiveSnap.val() : "exam_fn02_2026";
 
@@ -503,7 +640,6 @@
                     const legExams = legSnap.val();
                     Object.keys(legExams).forEach(k => {
                         const ex = legExams[k];
-                        // Strictly filter out closed/locked exams
                         const isClosed = (ex.isLocked === true) || (ex.status === 'Closed') || (k !== legacyActiveId && ex.isLocked);
                         if (!isClosed) {
                             loadedExamsList.push({
@@ -721,7 +857,7 @@
         window.saveNewPin = async function () {
             const pin = document.getElementById('newPin').value.trim();
             if (pin.length !== 4 || isNaN(pin)) {
-                showPureText("✕ 4-digit numeric PIN required", "error");
+                showInAppModal("Notice", "Please enter a 4-digit numeric PIN.", "error");
                 return;
             }
 
@@ -732,7 +868,7 @@
                 document.getElementById('entrySection').style.display = 'block';
                 renderStudentsLive();
             } catch (e) {
-                showPureText("✕ Failed to save PIN", "error");
+                showInAppModal("Notice", "Failed to save PIN. Try again.", "error");
             }
         };
 
@@ -903,7 +1039,7 @@
                     const num = parseFloat(this.value);
                     if (!isNaN(num) && (num > maxMarkAllowed || num < 0)) {
                         this.classList.add('input-error');
-                        showPureText(`✕ Max mark is ${maxMarkAllowed}`, 'error');
+                        showInAppModal("Attention!", `Mark cannot exceed ${maxMarkAllowed}.`, "error");
                     } else {
                         this.classList.remove('input-error');
                     }
@@ -918,10 +1054,10 @@
             });
         }
 
-        // 7. Save Marks (Pure Text Alert: ✓ Saved)
+        // 7. Save Marks (Triggers Centered In-App Modal with OK Button)
         window.saveAllMarks = async function () {
             if (isExamLocked) {
-                showPureText("✕ Entry Closed by Admin", "error");
+                showInAppModal("Notice", "Entry closed by Admin.", "error");
                 return;
             }
 
@@ -935,7 +1071,7 @@
             });
 
             if (hasErrors) {
-                showPureText(`✕ Max mark is ${maxMarkAllowed}`, 'error');
+                showInAppModal("Attention!", `Some marks exceed full mark (${maxMarkAllowed}).`, "error");
                 return;
             }
 
@@ -967,7 +1103,7 @@
             });
 
             if (Object.keys(updates).length === 0) {
-                showPureText("✕ No marks entered", "error");
+                showInAppModal("Notice", "No marks found to save.", "error");
                 return;
             }
 
@@ -976,16 +1112,65 @@
 
             try {
                 await update(ref(db), updates);
-                // Pure Clean Text Notification (No background, zero popup)
-                showPureText("✓ Saved", "success");
+                showInAppModal("Saved!", "Marks updated successfully.", "success");
             } catch (err) {
-                showPureText("✕ Failed to save", "error");
+                showInAppModal("Notice", "Failed to save. Please check connection.", "error");
             } finally {
                 saveBtn.disabled = false;
                 saveBtn.innerHTML = `
                     <svg class="icon-svg" style="fill:white;" viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/></svg> Save Marks
                 `;
             }
+        };
+
+        // 8. Download / Print PDF Marks Sheet Feature
+        window.downloadMarksPDF = function () {
+            const inputs = document.querySelectorAll('.mark-input');
+            const tbody = document.getElementById('printTableBody');
+            if (!tbody) return;
+
+            tbody.innerHTML = '';
+            
+            document.getElementById('printExamTitle').innerText = currentExam ? currentExam.name : 'Marks Sheet';
+            document.getElementById('printClassVal').innerText = currentExam ? (currentExam.class || currentGroup) : '-';
+            document.getElementById('printGroupVal').innerText = currentGroup || '-';
+            document.getElementById('printSubjectVal').innerText = currentSubject || '-';
+            document.getElementById('printFullMarkVal').innerText = maxMarkAllowed || '-';
+            document.getElementById('printDateVal').innerText = new Date().toLocaleDateString('en-GB');
+
+            let count = 0;
+            inputs.forEach((inp, idx) => {
+                const card = inp.closest('.student-row-card');
+                if (!card) return;
+                const sl = card.querySelector('.sl-badge') ? card.querySelector('.sl-badge').innerText.replace('#','') : (idx + 1);
+                const title = card.querySelector('.student-title') ? card.querySelector('.student-title').innerText : '';
+                const subText = card.querySelector('.student-sub') ? card.querySelector('.student-sub').innerText : '';
+                const sId = inp.getAttribute('data-id') || '-';
+                const mark = inp.value.trim() !== '' ? inp.value.trim() : '-';
+
+                let roll = sl;
+                const matchRoll = subText.match(/Roll:\s*(\d+)/i);
+                if (matchRoll) roll = matchRoll[1];
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${idx + 1}</td>
+                    <td>${roll}</td>
+                    <td><strong>${sId}</strong></td>
+                    <td style="text-align: left; padding-left: 10px;">${title}</td>
+                    <td style="font-weight: 800;">${mark}</td>
+                `;
+                tbody.appendChild(tr);
+                count++;
+            });
+
+            if (count === 0) {
+                showInAppModal("Notice", "No students loaded to generate PDF.", "error");
+                return;
+            }
+
+            // Triggers Mobile Print / Save As PDF Dialog
+            window.print();
         };
 
         window.filterStudentsOnTheFly = function () {
@@ -1002,7 +1187,7 @@
         };
 
         window.clearScreenMarks = function () {
-            if (isExamLocked) return showPureText("✕ Entry Closed", "error");
+            if (isExamLocked) return showInAppModal("Notice", "Entry closed by Admin.", "error");
             if (confirm(`Do you want to reset the fields on screen for ${currentSubject}?`)) {
                 document.querySelectorAll('.mark-input').forEach(inp => {
                     inp.value = '';
