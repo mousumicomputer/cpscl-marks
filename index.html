@@ -42,6 +42,37 @@
             vertical-align: -2px;
         }
 
+        /* Pure Text Floating Message (Zero Background, Zero Box) */
+        .pure-text-toast {
+            position: fixed;
+            top: 26px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-10px);
+            z-index: 999999;
+            pointer-events: none;
+            opacity: 0;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            font-size: 1.25rem;
+            font-weight: 800;
+            text-align: center;
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            white-space: nowrap;
+        }
+        .pure-text-toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+        .pure-text-toast.success {
+            color: #059669;
+            text-shadow: 0 2px 8px rgba(255, 255, 255, 0.95), 0 0 2px #fff;
+        }
+        .pure-text-toast.error {
+            color: #dc2626;
+            text-shadow: 0 2px 8px rgba(255, 255, 255, 0.95), 0 0 2px #fff;
+        }
+
         .app-header {
             background: linear-gradient(135deg, #064e3b, #059669);
             color: white;
@@ -272,11 +303,14 @@
 </head>
 <body>
 
+    <!-- Pure Floating Text Message Container (Zero Background) -->
+    <div id="pureTextToast" class="pure-text-toast"></div>
+
     <!-- Header -->
     <div class="app-header mb-3">
         <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg-795xmOcuKYH8wjija8JrA-qVjfOp_4KieeZ1pOQJaqX2uXsqGLMo09AXsGGsfGjH9LpK5fPlUNGbebFguiAzPC_YvbRXcHePj7cORQd6GMxDUg-LCeXtmNkccGI2K4Hv73PJqJkGX0Ju9N4knQuqKOAImqB6qy_WWFXpKeIaQhRgk7YbLqBLpCmL0cio/s1600/%E0%A6%95%E0%A7%8D%E0%A6%AF%E0%A6%AA%E0%A6%BE%E0%A6%A8%E0%A7%8D%E0%A6%9F%E0%A6%A8%E0%A6%AE%E0%A7%87%E0%A6%A8%E0%A7%8D%E0%A6%9F_%E0%A6%AA%E0%A6%BE%E0%A6%AC%E0%A6%B2%E0%A6%BF%E0%A6%95_%E0%A6%B8%E0%A7%8D%E0%A6%9F%E0%A7%81%E0%A6%B2_%E0%A6%93_%E0%A6%95%E0%A6%B2%E0%A7%87%E0%A6%9C_%E0%A6%B2%E0%A6%BE%E0%A6%B2%E0%A6%AE%E0%A6%A8%E0%A6%BF%E0%A6%B0%E0%A6%B9%E0%A6%BE%E0%A6%9F%E0%A7%87%E0%A6%B0_%E0%A6%B2%E0%A7%8B%E0%A6%97%E0%A7%8B.png" alt="CPSCL Logo" class="school-logo">
         <h6 class="mb-0 fw-bold" style="font-size: 0.95rem;">Cantonment Public School & College Lalmonirhat</h6>
-        <div class="exam-badge" id="liveExamName">Loading Examination...</div>
+        <div class="exam-badge" id="liveExamName">Loading...</div>
     </div>
 
     <div class="container" style="max-width: 480px;">
@@ -404,6 +438,18 @@
         const auth = getAuth(app);
         signInAnonymously(auth).catch(() => {});
 
+        // Pure Floating Text Trigger (Zero Box, Zero Background, Fadeout in 1.3s)
+        function showPureText(msg, type = 'success') {
+            const el = document.getElementById('pureTextToast');
+            if (!el) return;
+            el.className = `pure-text-toast show ${type}`;
+            el.innerHTML = msg;
+            if (window._pureTextTimer) clearTimeout(window._pureTextTimer);
+            window._pureTextTimer = setTimeout(() => {
+                el.classList.remove('show');
+            }, 1300);
+        }
+
         const LEGACY_SUBJECTS = {
             Science: [
                 { key: 'B1', name: 'Bangla 1st' }, { key: 'B2', name: 'Bangla 2nd' },
@@ -441,14 +487,14 @@
         let isExamLocked = false;
         let storedPIN = null;
 
-        // 1. Fetch Active Exams Only (Excludes Closed/Locked Tests like Test-03)
+        // 1. Fetch Active Exams Only (Excludes Closed Tests like Test-03)
         async function fetchAllActiveExams() {
             const examSelect = document.getElementById('examSelect');
             examSelect.innerHTML = '<option value="">-- Select Examination --</option>';
             loadedExamsList = [];
 
             try {
-                // (A) Check Active Legacy Exam ID
+                // (A) Legacy Active Exam check
                 const legActiveSnap = await get(ref(db, 'evaluation_system/active_exam_id'));
                 let legacyActiveId = legActiveSnap.exists() ? legActiveSnap.val() : "exam_fn02_2026";
 
@@ -457,7 +503,7 @@
                     const legExams = legSnap.val();
                     Object.keys(legExams).forEach(k => {
                         const ex = legExams[k];
-                        // Only add if exam is NOT locked and matches active or ongoing status
+                        // Strictly filter out closed/locked exams
                         const isClosed = (ex.isLocked === true) || (ex.status === 'Closed') || (k !== legacyActiveId && ex.isLocked);
                         if (!isClosed) {
                             loadedExamsList.push({
@@ -473,7 +519,6 @@
                     });
                 }
 
-                // If no active legacy exam was picked up, fallback only to the active one
                 if (loadedExamsList.length === 0 && legacyActiveId) {
                     const actSnap = await get(ref(db, `evaluation_system/exams/${legacyActiveId}`));
                     if (actSnap.exists() && actSnap.val().isLocked !== true) {
@@ -494,7 +539,6 @@
                     const newExams = newSnap.val();
                     const examArr = Array.isArray(newExams) ? newExams : Object.values(newExams);
                     examArr.forEach(ex => {
-                        // Skip closed or locked exams
                         if (ex.status !== 'Locked' && ex.status !== 'Closed') {
                             loadedExamsList.push({
                                 type: 'cpscl',
@@ -510,7 +554,6 @@
                     });
                 }
 
-                // Populate Dropdown cleanly
                 loadedExamsList.forEach((ex, idx) => {
                     const opt = document.createElement('option');
                     opt.value = idx;
@@ -526,7 +569,6 @@
                 }
 
             } catch (err) {
-                console.error("Exam load error:", err);
                 examSelect.innerHTML = '<option value="">Failed to load examinations</option>';
             }
         }
@@ -679,7 +721,7 @@
         window.saveNewPin = async function () {
             const pin = document.getElementById('newPin').value.trim();
             if (pin.length !== 4 || isNaN(pin)) {
-                alert("Please enter a 4-digit numeric PIN!");
+                showPureText("✕ 4-digit numeric PIN required", "error");
                 return;
             }
 
@@ -690,7 +732,7 @@
                 document.getElementById('entrySection').style.display = 'block';
                 renderStudentsLive();
             } catch (e) {
-                alert("Failed to save PIN: " + e.message);
+                showPureText("✕ Failed to save PIN", "error");
             }
         };
 
@@ -861,6 +903,7 @@
                     const num = parseFloat(this.value);
                     if (!isNaN(num) && (num > maxMarkAllowed || num < 0)) {
                         this.classList.add('input-error');
+                        showPureText(`✕ Max mark is ${maxMarkAllowed}`, 'error');
                     } else {
                         this.classList.remove('input-error');
                     }
@@ -875,10 +918,10 @@
             });
         }
 
-        // 7. Save Marks (Permanent Persistence)
+        // 7. Save Marks (Pure Text Alert: ✓ Saved)
         window.saveAllMarks = async function () {
             if (isExamLocked) {
-                alert("Exam is locked by Admin. Marks cannot be saved.");
+                showPureText("✕ Entry Closed by Admin", "error");
                 return;
             }
 
@@ -892,7 +935,7 @@
             });
 
             if (hasErrors) {
-                alert(`Some marks exceed full mark (${maxMarkAllowed}). Please correct highlighted fields.`);
+                showPureText(`✕ Max mark is ${maxMarkAllowed}`, 'error');
                 return;
             }
 
@@ -924,7 +967,7 @@
             });
 
             if (Object.keys(updates).length === 0) {
-                alert("No new or changed marks found to save.");
+                showPureText("✕ No marks entered", "error");
                 return;
             }
 
@@ -933,9 +976,10 @@
 
             try {
                 await update(ref(db), updates);
-                alert(`🎉 Saved Successfully!\n${validCount} students updated for ${currentSubject} (${currentGroup}).`);
+                // Pure Clean Text Notification (No background, zero popup)
+                showPureText("✓ Saved", "success");
             } catch (err) {
-                alert("Failed to save marks. Please check your connection.");
+                showPureText("✕ Failed to save", "error");
             } finally {
                 saveBtn.disabled = false;
                 saveBtn.innerHTML = `
@@ -958,7 +1002,7 @@
         };
 
         window.clearScreenMarks = function () {
-            if (isExamLocked) return alert("Exam is locked by Admin.");
+            if (isExamLocked) return showPureText("✕ Entry Closed", "error");
             if (confirm(`Do you want to reset the fields on screen for ${currentSubject}?`)) {
                 document.querySelectorAll('.mark-input').forEach(inp => {
                     inp.value = '';
