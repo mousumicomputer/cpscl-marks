@@ -420,7 +420,7 @@
                 <button type="button" class="modal-ok-btn" onclick="closeCustomModal()">OK</button>
             </div>
 
-            <!-- Dual Confirm/Cancel Mode (For Reset) -->
+            <!-- Dual Confirm/Cancel Mode (For Permanent Reset) -->
             <div id="modalDualBtnWrap" class="modal-dual-btns" style="display: none;">
                 <button type="button" class="modal-cancel-btn" onclick="closeCustomModal()">Cancel</button>
                 <button type="button" class="modal-confirm-btn" id="modalConfirmActionBtn">Reset</button>
@@ -1240,7 +1240,6 @@
                 return;
             }
 
-            // Triggers Mobile Print / Save As PDF Dialog
             window.print();
         };
 
@@ -1257,17 +1256,51 @@
             });
         };
 
-        // 100% In-App Confirmation (Zero Browser Confirm Dialog)
+        // 9. Permanent Cloud Reset (Zero Impact on other subjects / groups)
         window.clearScreenMarks = function () {
             if (isExamLocked) return showInAppModal("Notice", "Entry closed by Admin.", "error");
-            
-            showConfirmModal("Reset Fields?", `Clear all marks on screen for ${currentSubject}?`, () => {
-                document.querySelectorAll('.mark-input').forEach(inp => {
-                    inp.value = '';
-                    inp.classList.remove('input-error');
-                });
-                showInAppModal("Reset!", "Screen fields have been cleared.", "success");
-            });
+
+            const inputs = document.querySelectorAll('.mark-input');
+            if (inputs.length === 0) return;
+
+            showConfirmModal(
+                `Reset ${currentSubject}?`,
+                `Permanently delete ${currentSubject} (${currentGroup}) marks from Cloud?`,
+                async () => {
+                    const updates = {};
+                    let count = 0;
+
+                    inputs.forEach(inp => {
+                        const sId = inp.getAttribute('data-id');
+                        if (sId) {
+                            if (isLegacyExam) {
+                                // Strictly nullifies ONLY the current subject key
+                                updates[`evaluation_system/marks/${currentExam.id}/${sId}/${currentSubject}`] = null;
+                            } else {
+                                // Strictly nullifies ONLY the student entry in the current subject node
+                                updates[`cpscl_exam_marks/${currentExam.id}_${currentSubject}/${sId}`] = null;
+                            }
+                            count++;
+                        }
+                    });
+
+                    try {
+                        if (Object.keys(updates).length > 0) {
+                            await update(ref(db), updates);
+                        }
+
+                        // Wipe fields on screen
+                        inputs.forEach(inp => {
+                            inp.value = '';
+                            inp.classList.remove('input-error');
+                        });
+
+                        showInAppModal("Reset Complete!", `${currentSubject} marks permanently cleared.`, "success");
+                    } catch (err) {
+                        showInAppModal("Notice", "Failed to reset marks. Check connection.", "error");
+                    }
+                }
+            );
         };
 
         window.lockCurrentSubject = function () {
