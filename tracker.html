@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CPSCL - Progress Tracker & Evaluation</title>
+    <title>CPSCL - Progress Tracker & Live Evaluation</title>
     
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
@@ -46,7 +46,7 @@
             vertical-align: -2px;
         }
 
-        /* In-App Centered Modal Dialog */
+        /* 100% In-App Centered Modal Dialog (No Native Browser Alert) */
         .custom-modal-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -145,6 +145,22 @@
             padding: 14px;
             margin-bottom: 12px;
             box-shadow: 0 2px 6px rgba(5, 150, 105, 0.03);
+        }
+
+        /* Fix for Exam Select dropdown - Full Text Visible */
+        .exam-select-box {
+            width: 100%;
+            min-height: 42px;
+            border: 1.5px solid var(--primary);
+            color: var(--primary-dark);
+            border-radius: 10px;
+            font-size: 0.88rem;
+            font-weight: 700;
+            padding: 6px 12px;
+            outline: none;
+            background: #ffffff;
+            white-space: normal;
+            word-wrap: break-word;
         }
 
         .progress-pill {
@@ -285,50 +301,51 @@
             background: #f0fdf4;
             box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15);
         }
-        .mark-inp-pill.input-error {
-            border-color: #dc2626 !important;
-            background: #fee2e2 !important;
-            color: #dc2626 !important;
-        }
 
-        .btn-soft-action {
-            background: var(--primary-light);
-            color: var(--primary-dark);
-            border: 1px solid var(--primary-border);
+        /* Sleek Button for Print & Notice */
+        .btn-icon-action {
+            height: 36px;
+            padding: 0 14px;
             border-radius: 50px;
-            padding: 5px 14px;
-            font-size: 0.78rem;
+            font-size: 0.82rem;
             font-weight: 700;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            gap: 5px;
+            justify-content: center;
+            gap: 6px;
+            border: 1.5px solid var(--primary-border);
+            background: var(--primary-light);
+            color: var(--primary-dark);
+            transition: all 0.15s ease;
             text-decoration: none;
         }
-        .btn-soft-action:hover { background: #d1fae5; color: var(--primary-dark); }
+        .btn-icon-action:hover { background: #d1fae5; color: var(--primary-dark); }
 
-        /* --- PDF & Print Specific CSS (A4 Portrait) --- */
+        /* --- PRINT & PDF ENGINE (Exact match with web software) --- */
         .printable-area { display: none; }
         @media print {
-            @page { size: portrait; margin: 8mm; }
+            @page { size: A4 portrait; margin: 8mm 6mm; }
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
             body { background: #ffffff !important; padding: 0 !important; color: #000000 !important; }
             #viewAuth, #viewDashboard, .modal, .custom-modal-overlay { display: none !important; }
             
-            body.print-summary #printableProgressSheet { display: block !important; }
-            body.print-sheet #printableMarksSheet { display: block !important; }
+            #printableTabulationSheet { display: block !important; }
 
-            .print-header { text-align: center; margin-bottom: 14px; }
-            .print-logo { width: 55px; height: 55px; margin-bottom: 4px; }
-            .print-header h3 { font-size: 15px; font-weight: 800; margin: 0 0 4px; text-transform: uppercase; color: #000; }
-            .print-header h4 { font-size: 13px; font-weight: 700; margin: 0 0 10px; color: #059669; }
-            .print-meta-grid { display: flex; justify-content: space-around; font-size: 11px; padding: 6px 10px; border: 1px solid #222; background: #f8fafc; font-weight: 600; margin-bottom: 12px; }
-            .print-table { width: 100%; border-collapse: collapse; font-size: 11px; }
-            .print-table th, .print-table td { border: 1px solid #222 !important; padding: 5px 6px; text-align: center; color: #000; }
-            .print-table th { background: #f1f5f9 !important; font-weight: 800; }
-            .print-footer { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 45px; font-size: 11px; }
-            .signature-box { text-align: center; width: 190px; }
-            .signature-box .sig-line { border-top: 1px solid #000; margin-bottom: 4px; }
+            .print-header { text-align: center; margin-bottom: 10px; }
+            .print-header h2 { font-size: 16px; font-weight: 800; margin: 0 0 3px; text-transform: uppercase; color: #000; }
+            .print-header h3 { font-size: 12px; font-weight: 700; margin: 2px 0; color: #1e40af; }
+            .print-header p { font-size: 11px; margin: 2px 0 0; color: #333; }
+
+            .tab-table { width: 100%; border-collapse: collapse; font-size: 10.5px; margin-top: 8px; }
+            .tab-table th, .tab-table td { border: 1px solid #111 !important; padding: 4px 3px; text-align: center; color: #000; }
+            .tab-table th { background: #fbe7d9 !important; font-weight: 700; }
+            .tab-table td.name-col { text-align: left; padding-left: 6px; white-space: nowrap; font-weight: 600; }
+            .tab-table td.total-col { font-weight: 800; background: #fdfaf6; }
+
+            .print-signatures { margin-top: 55px; display: flex; justify-content: space-between; padding: 0 25px; font-size: 11px; font-weight: 700; }
+            .sig-item { text-align: center; width: 140px; }
+            .sig-item .sig-line { border-top: 1px solid #000; margin-bottom: 4px; }
         }
     </style>
 </head>
@@ -374,18 +391,18 @@
 
         <div class="container" style="max-width: 480px; margin-top: -10px;">
             
-            <!-- Examination Selection Dropdown -->
+            <!-- Examination Selection Dropdown (Responsive & Non-overflowing) -->
             <div class="card-custom mb-2">
                 <label class="form-label small fw-bold text-muted mb-1 d-flex align-items-center gap-1">
                     <svg class="icon-svg" style="fill: var(--primary);" viewBox="0 0 24 24"><path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/></svg>
-                    Select Examination to Track
+                    Select Examination
                 </label>
-                <select class="form-select form-select-sm fw-bold" id="examSelect" onchange="onTrackerExamChanged()" style="border: 1.5px solid var(--primary); color: var(--primary-dark); border-radius: 8px;">
+                <select class="exam-select-box" id="examSelect" onchange="onTrackerExamChanged()">
                     <option value="">-- Choose Examination --</option>
                 </select>
             </div>
 
-            <!-- Progress Summary Box -->
+            <!-- Progress Summary Box with Sleek Print & Notice Buttons -->
             <div class="rounded-box">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
@@ -393,13 +410,13 @@
                         <h4 class="mb-0 fw-bold" id="lblOverallPct" style="color: var(--primary-dark);">0%</h4>
                     </div>
                     <div class="d-flex gap-2">
-                        <!-- 1. All-in-One Overall Progress Report PDF -->
-                        <button class="btn-soft-action" onclick="downloadOverallProgressPDF()" title="Download Summary PDF Report">
+                        <!-- Sleek Print Button (Downloads Super Admin Live Tabulation PDF) -->
+                        <button class="btn-icon-action" onclick="printLiveTabulationSheet()" title="Print / Download Live Tabulation PDF">
                             <svg class="icon-svg" viewBox="0 0 24 24"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>
-                            Progress Report
+                            Print
                         </button>
-                        <!-- WhatsApp Notice -->
-                        <button class="btn-soft-action" style="color:#15803d; border-color:#86efac; background:#dcfce7;" onclick="copyPendingWhatsAppNotice()" title="Copy WhatsApp Reminder Notice">
+                        <!-- WhatsApp Notice Button -->
+                        <button class="btn-icon-action" style="color:#15803d; border-color:#86efac; background:#dcfce7;" onclick="copyPendingWhatsAppNotice()" title="Copy WhatsApp Reminder Notice">
                             <svg class="icon-svg" style="fill:#15803d;" viewBox="0 0 24 24"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2m.01 1.67c4.54 0 8.24 3.7 8.24 8.24 0 2.2-.86 4.28-2.42 5.84a8.17 8.17 0 0 1-5.82 2.41c-1.47 0-2.93-.39-4.21-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.216 8.216 0 0 1-1.26-4.39c0-4.54 3.7-8.24 8.24-8.24m4.53 11.66c-.25-.13-1.47-.72-1.7-.81-.23-.08-.39-.13-.56.13-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.13-1.06-.39-2.02-1.24-.74-.66-1.24-1.48-1.39-1.73-.14-.25-.02-.39.11-.51.11-.11.25-.29.37-.43.13-.15.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.13-.56-1.34-.76-1.84-.2-.48-.4-.42-.56-.43h-.48c-.17 0-.44.06-.67.31-.23.25-.87.85-.87 2.08 0 1.23.89 2.42 1.02 2.59.13.17 1.76 2.69 4.26 3.77.6.26 1.06.41 1.42.53.6.19 1.15.16 1.58.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.15-1.18-.07-.1-.23-.17-.48-.29z"/></svg>
                             Notice
                         </button>
@@ -443,7 +460,7 @@
         </div>
     </div>
 
-    <!-- 3. PIN Modal (For Subject Direct Entry) -->
+    <!-- 3. Subject PIN Modal -->
     <div class="modal fade" id="modalSubPin" tabindex="-1" style="z-index: 1060;">
         <div class="modal-dialog modal-dialog-centered" style="max-width: 360px;">
             <div class="modal-content rounded-box p-3 border-0">
@@ -467,7 +484,7 @@
         </div>
     </div>
 
-    <!-- 4. Marks Sheet Modal -->
+    <!-- 4. Subject Mark Entry Modal -->
     <div class="modal fade" id="modalMarkEntry" tabindex="-1" style="z-index: 1070;">
         <div class="modal-dialog modal-fullscreen-sm-down modal-dialog-scrollable">
             <div class="modal-content" style="border-radius: 28px 28px 0 0; background: #f8fafc;">
@@ -479,13 +496,8 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body p-3" id="sheetContainer"></div>
-                <div class="modal-footer border-0 bg-white p-3 d-flex gap-2" style="border-radius: 0 0 28px 28px;">
-                    <!-- 2. Subject-wise Marks Sheet PDF Download -->
-                    <button type="button" class="btn btn-outline-secondary rounded-pill fw-bold py-2 px-3 d-inline-flex align-items-center gap-1" onclick="downloadSubjectMarksPDF()">
-                        <svg class="icon-svg" viewBox="0 0 24 24"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>
-                        PDF Sheet
-                    </button>
-                    <button class="btn btn-success rounded-pill flex-grow-1 fw-bold py-2 d-inline-flex align-items-center justify-content-center gap-1" style="background: var(--primary); border: none;" id="btnSaveMarks" onclick="saveDirectMarksToFirebase()">
+                <div class="modal-footer border-0 bg-white p-3" style="border-radius: 0 0 28px 28px;">
+                    <button class="btn btn-success rounded-pill w-100 fw-bold py-2 d-inline-flex align-items-center justify-content-center gap-1" style="background: var(--primary); border: none;" id="btnSaveMarks" onclick="saveDirectMarksToFirebase()">
                         <svg class="icon-svg" style="fill:white;" viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/></svg>
                         Save Marks
                     </button>
@@ -494,71 +506,29 @@
         </div>
     </div>
 
-    <!-- 5. Printable Sheet 1: Overall Progress & Summary Report PDF -->
-    <div id="printableProgressSheet" class="printable-area">
+    <!-- 5. Printable Live Tabulation Sheet (Exact Match with Web Software) -->
+    <div id="printableTabulationSheet" class="printable-area">
         <div class="print-header">
-            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg-795xmOcuKYH8wjija8JrA-qVjfOp_4KieeZ1pOQJaqX2uXsqGLMo09AXsGGsfGjH9LpK5fPlUNGbebFguiAzPC_YvbRXcHePj7cORQd6GMxDUg-LCeXtmNkccGI2K4Hv73PJqJkGX0Ju9N4knQuqKOAImqB6qy_WWFXpKeIaQhRgk7YbLqBLpCmL0cio/s1600/%E0%A6%95%E0%A7%8D%E0%A6%AF%E0%A6%AA%E0%A6%BE%E0%A6%A8%E0%A7%8D%E0%A6%9F%E0%A6%A8%E0%A6%AE%E0%A7%87%E0%A6%A8%E0%A7%8D%E0%A6%9F_%E0%A6%AA%E0%A6%BE%E0%A6%AC%E0%A6%B2%E0%A6%BF%E0%A6%95_%E0%A6%B8%E0%A7%8D%E0%A6%9F%E0%A7%81%E0%A6%B2_%E0%A6%93_%E0%A6%95%E0%A6%B2%E0%A7%87%E0%A6%9C_%E0%A6%B2%E0%A6%BE%E0%A6%B2%E0%A6%AE%E0%A6%A8%E0%A6%BF%E0%A6%B0%E0%A6%B9%E0%A6%BE%E0%A6%9F%E0%A7%87%E0%A6%B0_%E0%A6%B2%E0%A7%8B%E0%A6%97%E0%A7%8B.png" class="print-logo" alt="Logo">
-            <h3>CANTONMENT PUBLIC SCHOOL AND COLLEGE LALMONIRHAT</h3>
-            <h4 id="printSummaryExamTitle">Examination Evaluation & Progress Report</h4>
-            <div class="print-meta-grid">
-                <div><strong>Class:</strong> <span id="printSummaryClass">-</span></div>
-                <div><strong>Overall Completion:</strong> <span id="printSummaryPct">0%</span></div>
-                <div><strong>Report Date:</strong> <span id="printSummaryDate">-</span></div>
-            </div>
+            <h2>CANTONMENT PUBLIC SCHOOL AND COLLEGE LALMONIRHAT</h2>
+            <h3 id="printTabSubTitle">Performance Evaluation Statement (Full Tabulation)</h3>
+            <p><span id="printTabExamName">---</span> • Date: <span id="printTabDate">---</span></p>
         </div>
-        <table class="print-table">
-            <thead>
-                <tr>
-                    <th style="width: 8%;">SL</th>
-                    <th style="text-align: left; padding-left: 10px;">Subject Name</th>
-                    <th style="width: 18%;">Group / Stream</th>
-                    <th style="width: 14%;">Target</th>
-                    <th style="width: 14%;">Submitted</th>
-                    <th style="width: 14%;">Remaining</th>
-                    <th style="width: 14%;">Status</th>
-                </tr>
-            </thead>
-            <tbody id="printSummaryTableBody"></tbody>
+        <table class="tab-table">
+            <thead id="printTabThead"></thead>
+            <tbody id="printTabTbody"></tbody>
         </table>
-        <div class="print-footer">
-            <div>Printed On: <span id="printSummaryGeneratedTime"></span></div>
-            <div class="signature-box">
+        <div class="print-signatures">
+            <div class="sig-item">
                 <div class="sig-line"></div>
-                <strong>Exam Controller / Principal</strong>
+                Course Coordinator
             </div>
-        </div>
-    </div>
-
-    <!-- 6. Printable Sheet 2: Single Subject Marks Sheet PDF -->
-    <div id="printableMarksSheet" class="printable-area">
-        <div class="print-header">
-            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg-795xmOcuKYH8wjija8JrA-qVjfOp_4KieeZ1pOQJaqX2uXsqGLMo09AXsGGsfGjH9LpK5fPlUNGbebFguiAzPC_YvbRXcHePj7cORQd6GMxDUg-LCeXtmNkccGI2K4Hv73PJqJkGX0Ju9N4knQuqKOAImqB6qy_WWFXpKeIaQhRgk7YbLqBLpCmL0cio/s1600/%E0%A6%95%E0%A7%8D%E0%A6%AF%E0%A6%AA%E0%A6%BE%E0%A6%A8%E0%A7%8D%E0%A6%9F%E0%A6%A8%E0%A6%AE%E0%A7%87%E0%A6%A8%E0%A7%8D%E0%A6%9F_%E0%A6%AA%E0%A6%BE%E0%A6%AC%E0%A6%B2%E0%A6%BF%E0%A6%95_%E0%A6%B8%E0%A7%8D%E0%A6%9F%E0%A7%81%E0%A6%B2_%E0%A6%93_%E0%A6%95%E0%A6%B2%E0%A7%87%E0%A6%9C_%E0%A6%B2%E0%A6%BE%E0%A6%B2%E0%A6%AE%E0%A6%A8%E0%A6%BF%E0%A6%B0%E0%A6%B9%E0%A6%BE%E0%A6%9F%E0%A7%87%E0%A6%B0_%E0%A6%B2%E0%A7%8B%E0%A6%97%E0%A7%8B.png" class="print-logo" alt="Logo">
-            <h3>CANTONMENT PUBLIC SCHOOL AND COLLEGE LALMONIRHAT</h3>
-            <h4 id="printSheetExamTitle">Official Marks Sheet</h4>
-            <div class="print-meta-grid">
-                <div><strong>Class:</strong> <span id="printSheetClassVal">-</span></div>
-                <div><strong>Group:</strong> <span id="printSheetGroupVal">-</span></div>
-                <div><strong>Subject:</strong> <span id="printSheetSubjectVal">-</span></div>
-                <div><strong>Full Marks:</strong> <span id="printSheetFullMarkVal">-</span></div>
-            </div>
-        </div>
-        <table class="print-table">
-            <thead>
-                <tr>
-                    <th style="width: 8%;">SL</th>
-                    <th style="width: 14%;">Roll No</th>
-                    <th style="width: 20%;">Student ID</th>
-                    <th style="text-align: left; padding-left: 10px;">Student Name</th>
-                    <th style="width: 18%;">Obtained Marks</th>
-                </tr>
-            </thead>
-            <tbody id="printSheetTableBody"></tbody>
-        </table>
-        <div class="print-footer">
-            <div>Printed On: <span id="printSheetDateVal"></span></div>
-            <div class="signature-box">
+            <div class="sig-item">
                 <div class="sig-line"></div>
-                <strong>Subject Teacher's Signature</strong>
+                Vice Principal
+            </div>
+            <div class="sig-item">
+                <div class="sig-line"></div>
+                Principal
             </div>
         </div>
     </div>
@@ -566,7 +536,7 @@
     <!-- Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Firebase SDK v10 (Realtime Cloud Sync) -->
+    <!-- Firebase SDK v10 (Realtime Cloud Connection) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, get, set, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
@@ -588,7 +558,6 @@
         const auth = getAuth(app);
         signInAnonymously(auth).catch(() => {});
 
-        // Centered In-App Modal Dialog Handler
         function showInAppModal(title, sub, type = 'success') {
             const overlay = document.getElementById('customModalOverlay');
             const iconWrap = document.getElementById('modalIconWrap');
@@ -626,8 +595,8 @@
         let activeSelectedSub = null;
         let isCreatingNewPin = false;
 
+        // 12 Master Subjects for Legacy Mode (From cpscl_result_engine.js)
         const LEGACY_MASTER_SUBJECTS = [
-            // Science (12)
             { stream: 'Science', key: 'B1', name: 'Bangla 1st' },
             { stream: 'Science', key: 'B2', name: 'Bangla 2nd' },
             { stream: 'Science', key: 'E1', name: 'English 1st' },
@@ -641,7 +610,6 @@
             { stream: 'Science', key: 'Reli', name: 'Religion' },
             { stream: 'Science', key: 'ICT', name: 'ICT' },
             
-            // Humanities (12)
             { stream: 'Humanities', key: 'B1', name: 'Bangla 1st' },
             { stream: 'Humanities', key: 'B2', name: 'Bangla 2nd' },
             { stream: 'Humanities', key: 'E1', name: 'English 1st' },
@@ -655,7 +623,6 @@
             { stream: 'Humanities', key: 'Reli', name: 'Religion' },
             { stream: 'Humanities', key: 'ICT', name: 'ICT' },
             
-            // Business Studies (12)
             { stream: 'B.Studies', key: 'B1', name: 'Bangla 1st' },
             { stream: 'B.Studies', key: 'B2', name: 'Bangla 2nd' },
             { stream: 'B.Studies', key: 'E1', name: 'English 1st' },
@@ -694,7 +661,7 @@
             });
         }
 
-        // 2. Fetch Active Exams Only (Excludes Closed/Locked Tests)
+        // 2. Fetch Active Exams Only (Excludes Closed Tests like Test-03)
         async function fetchAllActiveTrackerExams() {
             const examSelect = document.getElementById('examSelect');
             examSelect.innerHTML = '<option value="">-- Choose Examination --</option>';
@@ -807,7 +774,7 @@
             currentFilter = 'All';
         }
 
-        // 4. Fetch Live Progress Data from Cloud
+        // 4. Fetch Live Data from Firebase
         window.fetchTrackerLiveData = async function () {
             if (!currentExam) return;
 
@@ -837,14 +804,12 @@
                         return c === targetClass || c.includes(targetClass) || targetClass.includes(c);
                     });
 
-                    // Cloud overrides check
                     let overrides = {};
                     try {
                         const ovSnap = await get(ref(db, `cpscl_exam_group_overrides/${currentExam.id}`));
                         if (ovSnap.exists()) overrides = ovSnap.val() || {};
                     } catch(e) {}
 
-                    // Compute dynamic groups
                     const groupsList = (currentExam.groups && currentExam.groups.length > 0)
                         ? currentExam.groups
                         : [{ name: "Group A", from: 1, to: 40 }, { name: "Group B", from: 41, to: "Rest" }];
@@ -874,7 +839,6 @@
                         st.computedGroup = assigned || "Group A";
                     });
 
-                    // Build subjects list for CPSCL
                     const examSubs = currentExam.subjects || {};
                     activeSubjectsList = [];
                     liveMarks = {};
@@ -906,7 +870,7 @@
             }
         };
 
-        // 5. Render Dashboard Metrics
+        // 5. Render Progress Metrics
         function renderDashboardMetrics() {
             let totalTarget = 0, totalEntered = 0;
             let cDone = 0, cWait = 0, cDue = 0;
@@ -1067,7 +1031,7 @@
             });
         }
 
-        // 6. WhatsApp Reminder Notice Generator
+        // 6. WhatsApp Notice Reminder
         window.copyPendingWhatsAppNotice = function () {
             if (!currentExam) return;
 
@@ -1102,48 +1066,152 @@
             });
         };
 
-        // 7. Overall Progress & Summary Report PDF Generator (All-in-One Report)
-        window.downloadOverallProgressPDF = function () {
+        // 7. SUPER ADMIN LIVE TABULATION PRINT ENGINE (Dual Mode: Legacy & New CPSCL)
+        window.printLiveTabulationSheet = function () {
             if (!currentExam) return;
 
-            document.getElementById('printSummaryExamTitle').innerText = `${currentExam.name} - Evaluation Progress`;
-            document.getElementById('printSummaryClass').innerText = currentExam.class || 'All Streams';
-            document.getElementById('printSummaryPct').innerText = document.getElementById('lblOverallPct').innerText;
-            document.getElementById('printSummaryDate').innerText = new Date().toLocaleDateString('en-GB');
-            document.getElementById('printSummaryGeneratedTime').innerText = new Date().toLocaleString('en-GB');
+            const thead = document.getElementById('printTabThead');
+            const tbody = document.getElementById('printTabTbody');
+            const examTitle = document.getElementById('printTabExamName');
+            const examDate = document.getElementById('printTabDate');
+            const subTitle = document.getElementById('printTabSubTitle');
 
-            const tbody = document.getElementById('printSummaryTableBody');
+            examTitle.innerText = currentExam.name;
+            examDate.innerText = currentExam.date || new Date().toLocaleDateString('en-GB');
+
             tbody.innerHTML = '';
+            thead.innerHTML = '';
 
-            let sl = 1;
-            activeSubjectsList.forEach(sub => {
-                Object.keys(sub.breakdown).forEach(gKey => {
-                    const b = sub.breakdown[gKey];
-                    const remaining = b.target - b.done;
-                    let stText = 'Due';
-                    if (b.target > 0 && b.done === b.target) stText = 'Done';
-                    else if (b.done > 0) stText = 'Partial';
+            if (isLegacyExam) {
+                // (A) LEGACY MODE: Full 12-Subject Tabulation (From cpscl_result_engine.js)
+                subTitle.innerText = "Performance Evaluation Statement (Full Tabulation)";
 
+                // Filter students matching stream
+                let targetStudents = allStudents.filter(s => s.group === 'Science');
+                if (currentFilter !== 'All' && currentFilter !== 'Due') {
+                    targetStudents = allStudents.filter(s => s.group === currentFilter);
+                }
+                if (targetStudents.length === 0) targetStudents = allStudents;
+
+                // Pick active stream subjects
+                let streamKey = 'Science';
+                if (targetStudents[0] && targetStudents[0].group === 'Humanities') streamKey = 'Humanities';
+                else if (targetStudents[0] && targetStudents[0].group === 'B.Studies') streamKey = 'B.Studies';
+
+                const subjects = LEGACY_MASTER_SUBJECTS.filter(s => s.stream === streamKey);
+                const fullMarksTotal = subjects.length * (currentExam.max || 15);
+
+                // Table Header
+                let thHtml = `<tr>
+                    <th style="width: 35px;">SL</th>
+                    <th style="width: 85px;">Std ID</th>
+                    <th style="text-align: left; padding-left: 6px;">Student Name</th>
+                    <th style="width: 45px;">Roll</th>
+                    <th style="width: 40px;">Sec</th>
+                `;
+                subjects.forEach(sb => {
+                    const label = sb.key === 'HM_AG' ? 'HM/AG' : (sb.key === 'AG_HE' ? 'AG/HE' : sb.key);
+                    thHtml += `<th>${label}</th>`;
+                });
+                thHtml += `<th style="width: 60px;">Total<br>(${fullMarksTotal})</th></tr>`;
+                thead.innerHTML = thHtml;
+
+                // Compute student totals and sort by Merit
+                let computedRows = targetStudents.map(s => {
+                    let total = 0;
+                    let scores = {};
+                    subjects.forEach(sb => {
+                        const m = (liveMarks[s.id] && liveMarks[s.id][sb.key] !== undefined) ? liveMarks[s.id][sb.key] : '';
+                        const v = parseFloat(m);
+                        if (!isNaN(v)) total += v;
+                        scores[sb.key] = (m !== '') ? m : '0';
+                    });
+                    return { ...s, total, scores };
+                });
+
+                computedRows.sort((a, b) => b.total - a.total);
+
+                // Table Body
+                computedRows.forEach((s, idx) => {
                     const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td>${sl++}</td>
-                        <td style="text-align: left; padding-left: 10px;"><strong>${sub.name}</strong></td>
-                        <td>${gKey}</td>
-                        <td>${b.target}</td>
-                        <td style="font-weight: 700; color: #059669;">${b.done}</td>
-                        <td style="color: ${remaining > 0 ? '#dc2626' : '#64748b'};">${remaining}</td>
-                        <td><strong>${stText}</strong></td>
+                    let tdHtml = `
+                        <td>${idx + 1}</td>
+                        <td style="font-weight:700;">${s.id}</td>
+                        <td class="name-col">${s.name}</td>
+                        <td>${s.roll || '-'}</td>
+                        <td>${s.section || ''}</td>
                     `;
+                    subjects.forEach(sb => {
+                        tdHtml += `<td>${s.scores[sb.key]}</td>`;
+                    });
+                    tdHtml += `<td class="total-col">${s.total}</td>`;
+                    tr.innerHTML = tdHtml;
                     tbody.appendChild(tr);
                 });
-            });
 
-            document.body.className = 'print-summary';
+            } else {
+                // (B) NEW CPSCL ERP MODE: Live Tabulation (From live_tabulation_manager.js)
+                subTitle.innerText = `${currentExam.class || 'CPSCL'} - Live Tabulation Sheet`;
+
+                const examSubs = currentExam.subjects || {};
+                const subKeys = Object.keys(examSubs);
+                let fullMarksTotal = 0;
+                subKeys.forEach(k => fullMarksTotal += (parseInt(examSubs[k]) || 30));
+
+                // Table Header
+                let thHtml = `<tr>
+                    <th style="width: 40px;">Merit</th>
+                    <th style="width: 90px;">Student ID</th>
+                    <th style="text-align: left; padding-left: 6px;">Student Name</th>
+                    <th style="width: 50px;">Roll</th>
+                    <th style="width: 70px;">Group</th>
+                `;
+                subKeys.forEach(k => {
+                    thHtml += `<th>${k}<br><small>(${examSubs[k] || 30})</small></th>`;
+                });
+                thHtml += `<th style="width: 65px;">Total<br><small>(${fullMarksTotal})</small></th></tr>`;
+                thead.innerHTML = thHtml;
+
+                // Compute student totals and sort by Merit
+                let computedRows = allStudents.map((s, idx) => {
+                    const sId = s.std_id || s.id;
+                    let total = 0;
+                    let scores = {};
+                    subKeys.forEach(k => {
+                        const m = (liveMarks[sId] && liveMarks[sId][k] !== undefined) ? liveMarks[sId][k] : '';
+                        const v = parseFloat(m);
+                        if (!isNaN(v)) total += v;
+                        scores[k] = (m !== '') ? m : '-';
+                    });
+                    return { ...s, sId, roll: s.roll_no || s.roll || (idx + 1), total, scores };
+                });
+
+                computedRows.sort((a, b) => b.total - a.total);
+
+                // Table Body
+                computedRows.forEach((s, idx) => {
+                    const tr = document.createElement('tr');
+                    let tdHtml = `
+                        <td>${idx + 1}</td>
+                        <td style="font-weight:700;">${s.sId}</td>
+                        <td class="name-col">${s.student_name || s.name}</td>
+                        <td>${s.roll}</td>
+                        <td>${s.computedGroup || '-'}</td>
+                    `;
+                    subKeys.forEach(k => {
+                        tdHtml += `<td>${s.scores[k]}</td>`;
+                    });
+                    tdHtml += `<td class="total-col">${s.total}</td>`;
+                    tr.innerHTML = tdHtml;
+                    tbody.appendChild(tr);
+                });
+            }
+
+            // Triggers Native Print / Save As PDF Dialog
             window.print();
-            window.onafterprint = () => { document.body.className = ''; };
         };
 
-        // 8. Subject Entry & Single Marks Sheet PDF Feature
+        // 8. Subject Entry & Direct Mark Input from Tracker
         window.triggerSubjectEntry = function (subKey, stream) {
             const sub = activeSubjectsList.find(s => s.key === subKey && s.stream === stream);
             if (!sub) return;
@@ -1227,7 +1295,6 @@
                 openMarkEntrySheet();
             } else {
                 const correctPin = String(allPins[pinKey] || allPins[activeSelectedSub.key] || '').trim();
-                // Master PIN also acts as Master Key
                 if (entered === correctPin || entered === MASTER_PIN) {
                     if (pinModal) pinModal.hide();
                     openMarkEntrySheet();
@@ -1321,7 +1388,6 @@
             });
         }
 
-        // Save Subject Marks Direct from Tracker Modal
         window.saveDirectMarksToFirebase = async function () {
             const inputs = document.querySelectorAll('.mark-field');
             const fullM = activeSelectedSub.max || currentExam.max || 30;
@@ -1374,56 +1440,6 @@
                     <svg class="icon-svg" style="fill:white;" viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/></svg> Save Marks
                 `;
             }
-        };
-
-        // 9. Download Single Subject Marks Sheet PDF
-        window.downloadSubjectMarksPDF = function () {
-            const inputs = document.querySelectorAll('.mark-field');
-            const tbody = document.getElementById('printSheetTableBody');
-            if (!tbody) return;
-
-            const targetGroup = document.getElementById('selEntryGroup').value;
-            const fullM = activeSelectedSub.max || currentExam.max || 30;
-
-            document.getElementById('printSheetExamTitle').innerText = `${currentExam.name} - Official Marks Sheet`;
-            document.getElementById('printSheetClassVal').innerText = currentExam.class || targetGroup;
-            document.getElementById('printSheetGroupVal').innerText = targetGroup;
-            document.getElementById('printSheetSubjectVal').innerText = activeSelectedSub.name;
-            document.getElementById('printSheetFullMarkVal').innerText = fullM;
-            document.getElementById('printSheetDateVal').innerText = new Date().toLocaleDateString('en-GB');
-
-            tbody.innerHTML = '';
-            let count = 0;
-
-            inputs.forEach((inp, idx) => {
-                const row = inp.closest('.rounded-box');
-                if (!row) return;
-
-                const roll = row.querySelector('.badge') ? row.querySelector('.badge').innerText.replace('#','') : (idx + 1);
-                const title = row.querySelector('.fw-bold.small') ? row.querySelector('.fw-bold.small').innerText : '';
-                const sId = inp.getAttribute('data-id') || '-';
-                const mark = inp.value.trim() !== '' ? inp.value.trim() : '-';
-
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${idx + 1}</td>
-                    <td>${roll}</td>
-                    <td><strong>${sId}</strong></td>
-                    <td style="text-align: left; padding-left: 10px;">${title}</td>
-                    <td style="font-weight: 800;">${mark}</td>
-                `;
-                tbody.appendChild(tr);
-                count++;
-            });
-
-            if (count === 0) {
-                showInAppModal("Notice", "No students loaded to generate PDF.", "error");
-                return;
-            }
-
-            document.body.className = 'print-sheet';
-            window.print();
-            window.onafterprint = () => { document.body.className = ''; };
         };
     </script>
 </body>
