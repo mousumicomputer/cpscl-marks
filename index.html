@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CPSCL - Marks Entry</title>
+    <title>CPSCL - Marks Entry Portal</title>
     <!-- Fonts & Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Tiro+Bangla&display=swap" rel="stylesheet">
@@ -41,8 +41,8 @@
         }
 
         .school-logo {
-            width: 60px;
-            height: 60px;
+            width: 58px;
+            height: 58px;
             object-fit: contain;
             background: #ffffff;
             border-radius: 50%;
@@ -56,17 +56,17 @@
             background: rgba(255, 255, 255, 0.18);
             border: 1px solid rgba(255, 255, 255, 0.3);
             border-radius: 20px;
-            padding: 2px 12px;
+            padding: 3px 14px;
             font-size: 0.78rem;
             font-weight: 700;
-            margin-top: 3px;
+            margin-top: 4px;
         }
 
         .card-custom {
             background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 14px;
-            padding: 12px 14px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 14px;
             margin-bottom: 10px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.02);
         }
@@ -95,11 +95,12 @@
             background-color: #eff6ff;
             color: var(--primary);
             font-weight: 800;
-            padding: 3px 7px;
+            padding: 3px 8px;
             border-radius: 8px;
             font-size: 0.82rem;
             min-width: 38px;
             text-align: center;
+            border: 1px solid #bfdbfe;
         }
 
         .student-title {
@@ -118,7 +119,7 @@
         }
 
         .mark-input {
-            width: 70px;
+            width: 72px;
             height: 42px;
             border-radius: 10px;
             border: 1.5px solid #cbd5e1;
@@ -182,6 +183,10 @@
             width: 100%;
             max-width: 480px;
             box-shadow: 0 3px 10px rgba(22, 163, 74, 0.3);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
         .save-btn:disabled {
@@ -238,10 +243,11 @@
 </head>
 <body>
 
+    <!-- হেডার -->
     <div class="app-header mb-3">
         <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg-795xmOcuKYH8wjija8JrA-qVjfOp_4KieeZ1pOQJaqX2uXsqGLMo09AXsGGsfGjH9LpK5fPlUNGbebFguiAzPC_YvbRXcHePj7cORQd6GMxDUg-LCeXtmNkccGI2K4Hv73PJqJkGX0Ju9N4knQuqKOAImqB6qy_WWFXpKeIaQhRgk7YbLqBLpCmL0cio/s1600/%E0%A6%95%E0%A7%8D%E0%A6%AF%E0%A6%AA%E0%A6%BE%E0%A6%A8%E0%A7%8D%E0%A6%9F%E0%A6%A8%E0%A6%AE%E0%A7%87%E0%A6%A8%E0%A7%8D%E0%A6%9F_%E0%A6%AA%E0%A6%BE%E0%A6%AC%E0%A6%B2%E0%A6%BF%E0%A6%95_%E0%A6%B8%E0%A7%8D%E0%A6%9F%E0%A7%81%E0%A6%B2_%E0%A6%93_%E0%A6%95%E0%A6%B2%E0%A7%87%E0%A6%9C_%E0%A6%B2%E0%A6%BE%E0%A6%B2%E0%A6%AE%E0%A6%A8%E0%A6%BF%E0%A6%B0%E0%A6%B9%E0%A6%BE%E0%A6%9F%E0%A7%87%E0%A6%B0_%E0%A6%B2%E0%A7%8B%E0%A6%97%E0%A7%8B.png" alt="CPSCL Logo" class="school-logo">
         <h6 class="mb-0 fw-bold" style="font-size: 0.95rem;">Cantonment Public School & College Lalmonirhat</h6>
-        <div class="exam-badge" id="liveExamName">Loading Active Exam...</div>
+        <div class="exam-badge" id="liveExamName"><i class="fa-solid fa-spinner fa-spin"></i> Connecting Cloud...</div>
     </div>
 
     <div class="container" style="max-width: 480px;">
@@ -251,18 +257,21 @@
             <i class="fa-solid fa-lock"></i> Entry Closed by Admin
         </div>
 
-        <!-- গ্রুপ ও সাবজেক্ট সিলেকশন -->
+        <!-- পরীক্ষা, গ্রুপ ও সাবজেক্ট সিলেকশন কার্ড -->
         <div class="card-custom">
+            <!-- ১. পরীক্ষা নির্বাচন ড্রপডাউন -->
+            <div class="mb-2">
+                <label class="form-label small fw-bold text-muted mb-1"><i class="fa-solid fa-graduation-cap text-primary"></i> Select Examination</label>
+                <select class="form-select form-select-sm fw-bold" id="examSelect" onchange="onExamChanged()" style="border: 1.5px solid #2563eb; color: #1e40af; border-radius: 8px;">
+                    <option value="">-- Loading Exams from Cloud --</option>
+                </select>
+            </div>
+
             <div class="row g-2">
                 <div class="col-6">
                     <label class="form-label small fw-bold text-muted mb-1">Group / Section</label>
                     <select class="form-select form-select-sm" id="groupSelect" onchange="onGroupChanged()">
                         <option value="">-- Select Group --</option>
-                        <option value="Group-A">Science (Group-A)</option>
-                        <option value="Group-B">Science (Group-B)</option>
-                        <option value="Group-C">Science (Group-C)</option>
-                        <option value="Humanities">Humanities</option>
-                        <option value="B.Studies">Business Studies</option>
                     </select>
                 </div>
                 <div class="col-6">
@@ -279,7 +288,7 @@
             <div id="setPinView" style="display: none;">
                 <div class="mb-2"><i class="fa-solid fa-key text-warning" style="font-size: 2.2rem;"></i></div>
                 <h6 class="fw-bold text-dark mb-1">Set 4-Digit Secret PIN</h6>
-                <p class="small text-muted mb-3">No PIN set for this subject in this group. Enter 4-digit PIN:</p>
+                <p class="small text-muted mb-3">No PIN set for this subject. Enter a 4-digit PIN:</p>
                 <input type="password" id="newPin" class="form-control pin-box mx-auto mb-3" maxlength="4" placeholder="••••" inputmode="numeric">
                 <button type="button" class="btn btn-primary w-100 rounded-pill fw-bold" onclick="saveNewPin()">Save PIN & Open</button>
             </div>
@@ -305,7 +314,7 @@
 
             <div class="search-wrap">
                 <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" id="studentSearchInp" class="search-inp" placeholder="Search ID, Name or Merit..." oninput="filterStudentsOnTheFly()">
+                <input type="text" id="studentSearchInp" class="search-inp" placeholder="Search ID, Name or Roll..." oninput="filterStudentsOnTheFly()">
             </div>
 
             <div class="d-flex justify-content-between align-items-center mb-2 px-1">
@@ -328,7 +337,7 @@
 
     </div>
 
-    <!-- Firebase SDK v10 -->
+    <!-- Firebase SDK v10 (Pure Cloud Connection) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, get, set, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
@@ -348,8 +357,10 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         const auth = getAuth(app);
+        signInAnonymously(auth).catch(() => {});
 
-        const SUBJECTS_LIST = {
+        // পুরোনো মডিউলের ফিক্সড বিষয়ের তালিকা
+        const LEGACY_SUBJECTS = {
             Science: [
                 { key: 'B1', name: 'Bangla 1st' }, { key: 'B2', name: 'Bangla 2nd' },
                 { key: 'E1', name: 'English 1st' }, { key: 'E2', name: 'English 2nd' },
@@ -377,52 +388,143 @@
             ]
         };
 
-        let currentSubject = "";
+        let loadedExamsList = [];
+        let currentExam = null;
+        let isLegacyExam = false;
         let currentGroup = "";
-        let activeExamId = "exam_fn02_2026";
-        let isExamLocked = false;
+        let currentSubject = "";
         let maxMarkAllowed = 15;
+        let isExamLocked = false;
         let storedPIN = null;
-        let activeExamSubjects = null;
 
-        signInAnonymously(auth).catch(() => {});
+        // ১. ক্লাউড ফায়ারবেস থেকে সব পরীক্ষা লাইভ লোড করা
+        async function fetchAllExamsDirectlyFromFirebase() {
+            const examSelect = document.getElementById('examSelect');
+            examSelect.innerHTML = '<option value="">-- Select Examination --</option>';
+            loadedExamsList = [];
 
-        async function fetchActiveExam() {
             try {
-                const actSnap = await get(ref(db, 'evaluation_system/active_exam_id'));
-                if (actSnap.exists() && actSnap.val()) {
-                    activeExamId = actSnap.val();
+                // (ক) পুরোনো সিস্টেমের পরীক্ষা লোড
+                const legActiveSnap = await get(ref(db, 'evaluation_system/active_exam_id'));
+                let legacyActiveId = legActiveSnap.exists() ? legActiveSnap.val() : "exam_fn02_2026";
+
+                const legSnap = await get(ref(db, 'evaluation_system/exams'));
+                if (legSnap.exists()) {
+                    const legExams = legSnap.val();
+                    Object.keys(legExams).forEach(k => {
+                        const ex = legExams[k];
+                        loadedExamsList.push({
+                            type: 'legacy',
+                            id: k,
+                            name: `${ex.title || k} (Legacy Running)`,
+                            date: ex.date || '',
+                            max: parseFloat(ex.max) || 15,
+                            isLocked: ex.isLocked === true,
+                            activeSubjects: ex.activeSubjects || null
+                        });
+                    });
+                } else {
+                    loadedExamsList.push({
+                        type: 'legacy',
+                        id: legacyActiveId,
+                        name: `Scholarship Assessment (Legacy)`,
+                        max: 15,
+                        isLocked: false
+                    });
                 }
 
-                const exSnap = await get(ref(db, `evaluation_system/exams/${activeExamId}`));
-                if (exSnap.exists()) {
-                    const data = exSnap.val();
-                    document.getElementById('liveExamName').innerText = `${data.title || 'Exam'} (${data.date || ''})`;
-                    maxMarkAllowed = parseFloat(data.max) || 15;
-                    document.getElementById('maxMarkDisplay').innerText = maxMarkAllowed;
-                    
-                    isExamLocked = data.isLocked === true;
-                    if (isExamLocked) {
-                        document.getElementById('examLockedAlert').style.display = 'block';
-                        const saveBtn = document.getElementById('saveBtnEl');
-                        if (saveBtn) {
-                            saveBtn.disabled = true;
-                            saveBtn.innerText = 'Entry Closed by Admin';
-                        }
-                    } else {
-                        document.getElementById('examLockedAlert').style.display = 'none';
-                    }
-
-                    if (data.activeSubjects && Array.isArray(data.activeSubjects)) {
-                        activeExamSubjects = data.activeSubjects;
-                    }
+                // (খ) নতুন CPSCL ERP-এর পরীক্ষা লাইভ লোড
+                const newSnap = await get(ref(db, 'cpscl_exams'));
+                if (newSnap.exists()) {
+                    const newExams = newSnap.val();
+                    const examArr = Array.isArray(newExams) ? newExams : Object.values(newExams);
+                    examArr.forEach(ex => {
+                        loadedExamsList.push({
+                            type: 'cpscl',
+                            id: ex.id,
+                            name: `${ex.name} (${ex.class || 'CPSCL'})`,
+                            class: ex.class || '',
+                            date: ex.date || '',
+                            subjects: ex.subjects || {},
+                            groups: ex.groups || [],
+                            isLocked: ex.status === 'Locked'
+                        });
+                    });
                 }
-            } catch (e) {
-                console.error("Exam load error:", e);
+
+                // ড্রপডাউনে পপুলেট
+                loadedExamsList.forEach((ex, idx) => {
+                    const opt = document.createElement('option');
+                    opt.value = idx;
+                    opt.innerText = ex.name;
+                    examSelect.appendChild(opt);
+                });
+
+                if (loadedExamsList.length > 0) {
+                    examSelect.value = 0;
+                    window.onExamChanged();
+                }
+
+            } catch (err) {
+                console.error("Cloud Exams fetch error:", err);
+                examSelect.innerHTML = '<option value="">Error connecting cloud database</option>';
             }
         }
-        fetchActiveExam();
+        fetchAllExamsDirectlyFromFirebase();
 
+        // ২. পরীক্ষা নির্বাচন পরিবর্তন হ্যান্ডলার
+        window.onExamChanged = function () {
+            const examSelect = document.getElementById('examSelect');
+            const selectedIdx = examSelect.value;
+
+            document.getElementById('pinCard').style.display = 'none';
+            document.getElementById('entrySection').style.display = 'none';
+
+            if (selectedIdx === "") return;
+
+            currentExam = loadedExamsList[parseInt(selectedIdx)];
+            isLegacyExam = (currentExam.type === 'legacy');
+
+            document.getElementById('liveExamName').innerText = currentExam.name;
+            isExamLocked = currentExam.isLocked === true;
+
+            const lockAlert = document.getElementById('examLockedAlert');
+            if (lockAlert) lockAlert.style.display = isExamLocked ? 'block' : 'none';
+
+            populateGroupsDropdown();
+        };
+
+        // ৩. গ্রুপ ড্রপডাউন পপুলেট
+        function populateGroupsDropdown() {
+            const grpSelect = document.getElementById('groupSelect');
+            grpSelect.innerHTML = '<option value="">-- Select Group --</option>';
+
+            const subSelect = document.getElementById('subjectSelect');
+            subSelect.innerHTML = '<option value="">-- Select Subject --</option>';
+
+            if (!currentExam) return;
+
+            if (isLegacyExam) {
+                grpSelect.innerHTML += `
+                    <option value="Group-A">Science (Group-A)</option>
+                    <option value="Group-B">Science (Group-B)</option>
+                    <option value="Group-C">Science (Group-C)</option>
+                    <option value="Humanities">Humanities</option>
+                    <option value="B.Studies">Business Studies</option>
+                `;
+            } else {
+                // নতুন CPSCL পরীক্ষার গ্রুপ লোড
+                const grpList = (currentExam.groups && currentExam.groups.length > 0) 
+                    ? currentExam.groups 
+                    : [{ name: 'Group A' }, { name: 'Group B' }];
+
+                grpList.forEach(g => {
+                    grpSelect.innerHTML += `<option value="${g.name}">${g.name}</option>`;
+                });
+            }
+        }
+
+        // ৪. গ্রুপ নির্বাচন পরিবর্তন হ্যান্ডলার
         window.onGroupChanged = function () {
             currentGroup = document.getElementById('groupSelect').value;
             const subSelect = document.getElementById('subjectSelect');
@@ -431,56 +533,73 @@
             document.getElementById('pinCard').style.display = 'none';
             document.getElementById('entrySection').style.display = 'none';
 
-            if (!currentGroup) return;
+            if (!currentGroup || !currentExam) return;
 
-            let groupCategory = "Science";
-            if (currentGroup === 'Humanities') groupCategory = "Humanities";
-            else if (currentGroup === 'B.Studies') groupCategory = "BStudies";
+            if (isLegacyExam) {
+                let streamKey = "Science";
+                if (currentGroup === 'Humanities') streamKey = "Humanities";
+                else if (currentGroup === 'B.Studies') streamKey = "BStudies";
 
-            let subs = SUBJECTS_LIST[groupCategory] || [];
-            if (activeExamSubjects && activeExamSubjects.length > 0) {
-                subs = subs.filter(s => activeExamSubjects.includes(s.key));
+                let subs = LEGACY_SUBJECTS[streamKey] || [];
+                if (currentExam.activeSubjects && currentExam.activeSubjects.length > 0) {
+                    subs = subs.filter(s => currentExam.activeSubjects.includes(s.key));
+                }
+
+                subs.forEach(s => {
+                    subSelect.innerHTML += `<option value="${s.key}" data-max="${currentExam.max || 15}">${s.name} (${s.key})</option>`;
+                });
+            } else {
+                // নতুন পরীক্ষার বিষয়সমূহ
+                const subs = currentExam.subjects || {};
+                Object.keys(subs).forEach(subName => {
+                    const fullM = subs[subName] || 30;
+                    subSelect.innerHTML += `<option value="${subName}" data-max="${fullM}">${subName} (Full: ${fullM})</option>`;
+                });
             }
-
-            subs.forEach(s => {
-                const opt = document.createElement('option');
-                opt.value = s.key;
-                opt.innerText = `${s.name} (${s.key})`;
-                subSelect.appendChild(opt);
-            });
         };
 
-        // স্ট্রিম-ভিত্তিক পিন পাথ
-        function getPinPath() {
-            let stream = "Science";
-            if (currentGroup === 'Humanities') stream = "Humanities";
-            else if (currentGroup === 'B.Studies') stream = "BStudies";
-            return `evaluation_system/pins/${stream}_${currentSubject}`;
+        // পিন সেভ পাথ নির্ধারণ
+        function getPinCloudPath() {
+            if (isLegacyExam) {
+                let stream = "Science";
+                if (currentGroup === 'Humanities') stream = "Humanities";
+                else if (currentGroup === 'B.Studies') stream = "BStudies";
+                return `evaluation_system/pins/${stream}_${currentSubject}`;
+            } else {
+                const cleanSub = currentSubject.replace(/[^a-zA-Z0-9_-]/g, '_');
+                return `cpscl_pins/${currentExam.id}_${cleanSub}`;
+            }
         }
 
+        // ৫. বিষয় নির্বাচন ও সরাসরি ক্লাউড থেকে পিন চেক
         window.onSubjectSelected = async function () {
-            currentSubject = document.getElementById('subjectSelect').value;
+            const subSelect = document.getElementById('subjectSelect');
+            currentSubject = subSelect.value;
+
             const pinCard = document.getElementById('pinCard');
             const setPinView = document.getElementById('setPinView');
             const enterPinView = document.getElementById('enterPinView');
-            const entrySection = document.getElementById('entrySection');
             const pinError = document.getElementById('pinError');
 
             pinError.style.display = 'none';
             document.getElementById('newPin').value = '';
             document.getElementById('inputPin').value = '';
-            entrySection.style.display = 'none';
+            document.getElementById('entrySection').style.display = 'none';
 
             if (!currentSubject || !currentGroup) {
                 pinCard.style.display = 'none';
                 return;
             }
 
+            const opt = subSelect.options[subSelect.selectedIndex];
+            maxMarkAllowed = opt ? parseFloat(opt.getAttribute('data-max')) || 15 : 15;
+            document.getElementById('maxMarkDisplay').innerText = maxMarkAllowed;
+
             pinCard.style.display = 'block';
 
             try {
-                let pSnap = await get(ref(db, getPinPath()));
-                if (!pSnap.exists()) {
+                let pSnap = await get(ref(db, getPinCloudPath()));
+                if (!pSnap.exists() && isLegacyExam) {
                     pSnap = await get(ref(db, `evaluation_system/pins/${currentSubject}`));
                 }
 
@@ -499,6 +618,7 @@
             }
         };
 
+        // নতুন পিন ক্লাউডে স্থায়ী সেভ
         window.saveNewPin = async function () {
             const pin = document.getElementById('newPin').value.trim();
             if (pin.length !== 4 || isNaN(pin)) {
@@ -508,94 +628,163 @@
 
             storedPIN = pin;
             try {
-                await set(ref(db, getPinPath()), pin);
+                await set(ref(db, getPinCloudPath()), pin);
                 document.getElementById('pinCard').style.display = 'none';
                 document.getElementById('entrySection').style.display = 'block';
-                renderStudentsLive();
+                renderStudentsLiveFromCloud();
             } catch (e) {
-                alert("Failed to save PIN: " + e.message);
+                alert("Failed to save PIN in cloud: " + e.message);
             }
         };
 
+        // পিন ভেরিফিকেশন
         window.verifyPin = function () {
             const inputVal = document.getElementById('inputPin').value.trim();
             const pinError = document.getElementById('pinError');
 
-            // নিরাপদ স্ট্রিং তুলনা
             if (storedPIN && inputVal === storedPIN) {
                 pinError.style.display = 'none';
                 document.getElementById('pinCard').style.display = 'none';
                 document.getElementById('entrySection').style.display = 'block';
-                renderStudentsLive();
+                renderStudentsLiveFromCloud();
             } else {
                 pinError.style.display = 'block';
                 document.getElementById('inputPin').value = '';
             }
         };
 
-        async function renderStudentsLive() {
+        // ৬. ফায়ারবেস থেকে সরাসরি লাইভ শিক্ষার্থী ও নম্বর লোড
+        async function renderStudentsLiveFromCloud() {
             document.getElementById('statusBadge').innerText = `${currentSubject} • ${currentGroup}`;
             const container = document.getElementById('studentsContainer');
-            container.innerHTML = '<div class="text-center p-4 text-primary"><i class="fa-solid fa-spinner fa-spin fa-2x"></i><p class="mt-2 fw-bold">Loading students...</p></div>';
+            container.innerHTML = '<div class="text-center p-4 text-primary"><i class="fa-solid fa-spinner fa-spin fa-2x"></i><p class="mt-2 fw-bold">Connecting Firebase Cloud...</p></div>';
 
             try {
-                const stdSnap = await get(ref(db, 'evaluation_system/students'));
                 let students = [];
-                if (stdSnap.exists()) {
-                    students = Object.values(stdSnap.val());
-                }
-
-                let filtered = students.filter(s => {
-                    if (currentGroup === 'Humanities') return s.group === 'Humanities';
-                    if (currentGroup === 'B.Studies') return s.group === 'B.Studies';
-                    
-                    // সায়েন্স গ্রুপ সমন্বয় (fallback সহ)
-                    const sRank = Number(s.overallRank !== undefined && s.overallRank !== null ? s.overallRank : s.sl);
-                    const subGrp = s.subGroup || (sRank <= 55 ? 'Group-A' : (sRank <= 105 ? 'Group-B' : 'Group-C'));
-                    return s.group === 'Science' && subGrp === currentGroup;
-                });
-
-                // সর্বশেষ মেধা ক্রমিক (overallRank) অনুযায়ী সর্টিং
-                filtered.sort((a, b) => {
-                    const rA = (a.overallRank !== undefined && a.overallRank !== null) ? Number(a.overallRank) : (Number(a.sl) || 9999);
-                    const rB = (b.overallRank !== undefined && b.overallRank !== null) ? Number(b.overallRank) : (Number(b.sl) || 9999);
-                    return rA - rB;
-                });
-
                 let existingMarks = {};
-                try {
-                    const mSnap = await get(ref(db, `evaluation_system/marks/${activeExamId}`));
+
+                if (isLegacyExam) {
+                    // পুরোনো ফায়ারবেস নোড থেকে লোড
+                    const stdSnap = await get(ref(db, 'evaluation_system/students'));
+                    if (stdSnap.exists()) students = Object.values(stdSnap.val());
+
+                    students = students.filter(s => {
+                        if (currentGroup === 'Humanities') return s.group === 'Humanities';
+                        if (currentGroup === 'B.Studies') return s.group === 'B.Studies';
+                        const sRank = Number(s.overallRank !== undefined && s.overallRank !== null ? s.overallRank : s.sl);
+                        const subGrp = s.subGroup || (sRank <= 55 ? 'Group-A' : (sRank <= 105 ? 'Group-B' : 'Group-C'));
+                        return s.group === 'Science' && subGrp === currentGroup;
+                    });
+
+                    students.sort((a, b) => {
+                        const rA = Number(a.overallRank !== undefined ? a.overallRank : a.sl) || 9999;
+                        const rB = Number(b.overallRank !== undefined ? b.overallRank : b.sl) || 9999;
+                        return rA - rB;
+                    });
+
+                    const mSnap = await get(ref(db, `evaluation_system/marks/${currentExam.id}`));
                     if (mSnap.exists()) existingMarks = mSnap.val() || {};
-                } catch(e) {}
+
+                } else {
+                    // নতুন CPSCL ফায়ারবেস নোড থেকে লোড
+                    const stdSnap = await get(ref(db, 'cpscl_students'));
+                    if (stdSnap.exists()) students = Object.values(stdSnap.val());
+
+                    // ক্লাস অনুযায়ী ফিল্টার
+                    const targetClass = String(currentExam.class || '').trim().toLowerCase();
+                    students = students.filter(s => {
+                        const c = String(s.class_name || s.class || '').trim().toLowerCase();
+                        return c === targetClass || c.includes(targetClass) || targetClass.includes(c);
+                    });
+
+                    // ক্লাউড ওভাররাইড লোড
+                    let overrides = {};
+                    try {
+                        const ovSnap = await get(ref(db, `cpscl_exam_group_overrides/${currentExam.id}`));
+                        if (ovSnap.exists()) overrides = ovSnap.val() || {};
+                    } catch(e) {}
+
+                    // রোল অনুযায়ী সর্ট
+                    students.sort((a, b) => {
+                        const rA = parseInt(a.roll_no || a.roll) || 0;
+                        const rB = parseInt(b.roll_no || b.roll) || 0;
+                        if (rA && rB) return rA - rB;
+                        return String(a.std_id || a.id).localeCompare(String(b.std_id || b.id));
+                    });
+
+                    // গ্রুপ বণ্টন হিসাব
+                    const groupsList = (currentExam.groups && currentExam.groups.length > 0)
+                        ? currentExam.groups
+                        : [{ name: "Group A", from: 1, to: 40 }, { name: "Group B", from: 41, to: "Rest" }];
+
+                    students.forEach((st, idx) => {
+                        const sId = String(st.std_id || st.id || '').trim();
+                        const sRoll = st.roll_no || st.roll || '';
+                        const effectiveNum = (sRoll && !isNaN(parseInt(sRoll))) ? parseInt(sRoll) : (idx + 1);
+
+                        let assigned = groupsList[0].name;
+                        for (let g of groupsList) {
+                            const fromNum = parseInt(g.from) || 1;
+                            const toNum = (g.to && String(g.to).toLowerCase() === 'rest') ? 999999 : (parseInt(g.to) || 999999);
+                            if (effectiveNum >= fromNum && effectiveNum <= toNum) {
+                                assigned = g.name;
+                                break;
+                            }
+                        }
+
+                        if (overrides[sId]) assigned = overrides[sId];
+                        st.computedGroup = assigned || "Group A";
+                    });
+
+                    // নির্বাচিত গ্রুপের শিক্ষার্থীদের রাখা
+                    students = students.filter(s => s.computedGroup === currentGroup);
+
+                    // নতুন পরীক্ষার নম্বর ফায়ারবেস থেকে লাইভ লোড
+                    const mSnap = await get(ref(db, `cpscl_exam_marks/${currentExam.id}_${currentSubject}`));
+                    if (mSnap.exists()) existingMarks = mSnap.val() || {};
+                }
 
                 container.innerHTML = '';
 
-                if (filtered.length === 0) {
-                    container.innerHTML = `<div class="text-center p-4 text-danger fw-bold">No students found for ${currentGroup}!<br><small class="text-muted">Upload student list from Admin Panel.</small></div>`;
+                if (students.length === 0) {
+                    container.innerHTML = `<div class="text-center p-4 text-danger fw-bold">No students found for ${currentGroup} in this class!</div>`;
                     return;
                 }
 
-                filtered.forEach(s => {
-                    const prevVal = (existingMarks[s.id] && existingMarks[s.id][currentSubject] !== undefined) ? existingMarks[s.id][currentSubject] : '';
-                    
-                    // মেধা পজিশন নিখুঁতভাবে নির্ধারণ
-                    const meritNumber = (s.overallRank !== undefined && s.overallRank !== null && s.overallRank !== '') ? s.overallRank : (s.sl || '-');
+                students.forEach((s, idx) => {
+                    const sId = String(s.std_id || s.id || '').trim();
+                    const sName = s.student_name || s.name || 'Unnamed';
+                    const sRoll = s.roll_no || s.roll || (idx + 1);
+
+                    let prevVal = '';
+                    if (isLegacyExam) {
+                        prevVal = (existingMarks[sId] && existingMarks[sId][currentSubject] !== undefined) ? existingMarks[sId][currentSubject] : '';
+                    } else {
+                        const rec = existingMarks[sId];
+                        if (rec) {
+                            if (typeof rec === 'object') {
+                                prevVal = (rec.rawMark !== null && rec.rawMark !== undefined) ? rec.rawMark : (rec.cq !== undefined ? rec.cq : '');
+                            } else {
+                                prevVal = rec;
+                            }
+                        }
+                    }
 
                     const row = document.createElement('div');
                     row.className = 'student-row-card';
-                    row.setAttribute('data-search', `${s.id} ${s.name} ${meritNumber}`.toLowerCase());
+                    row.setAttribute('data-search', `${sId} ${sName} ${sRoll}`.toLowerCase());
                     row.innerHTML = `
                         <div class="d-flex align-items-center gap-2" style="min-width: 0; flex: 1;">
-                            <span class="sl-badge">#${meritNumber}</span>
+                            <span class="sl-badge">#${sRoll}</span>
                             <div style="min-width: 0;">
-                                <div class="student-title">${s.name}</div>
-                                <div class="student-sub">ID: ${s.id} • Merit: #${meritNumber} ${s.section && !['HUM','BS','N/A'].includes(s.section) ? '• Sec: ' + s.section : ''}</div>
+                                <div class="student-title">${sName}</div>
+                                <div class="student-sub">ID: ${sId} • Roll: ${sRoll}</div>
                             </div>
                         </div>
                         <input type="text" 
                                inputmode="decimal" 
                                class="mark-input" 
-                               data-id="${s.id}" 
+                               data-id="${sId}" 
                                value="${prevVal}" 
                                maxlength="4" 
                                placeholder="-"
@@ -609,38 +798,11 @@
                 bindInputValidation();
 
             } catch (err) {
-                container.innerHTML = '<div class="text-center p-4 text-danger">Error: ' + err.message + '</div>';
+                container.innerHTML = `<div class="text-center p-4 text-danger">Cloud Error: ${err.message}</div>`;
             }
         }
 
-        window.filterStudentsOnTheFly = function () {
-            const query = document.getElementById('studentSearchInp').value.toLowerCase().trim();
-            const cards = document.querySelectorAll('.student-row-card');
-            cards.forEach(card => {
-                const text = card.getAttribute('data-search') || '';
-                if (!query || text.includes(query)) {
-                    card.classList.remove('hidden');
-                } else {
-                    card.classList.add('hidden');
-                }
-            });
-        };
-
-        // নিরাপদ রিসেট
-        window.clearScreenMarks = function () {
-            if (isExamLocked) {
-                alert("Exam is locked by Admin.");
-                return;
-            }
-            if (confirm(`Do you want to reset the inputs on screen for ${currentSubject}? (Unsaved changes will be cleared)`)) {
-                const inputs = document.querySelectorAll('.mark-input');
-                inputs.forEach(inp => {
-                    inp.value = '';
-                    inp.classList.remove('input-error');
-                });
-            }
-        };
-
+        // ইনপুট ভ্যালিডেশন ও Enter কীতে পরের ছাত্রে জাম্প
         function bindInputValidation() {
             const inputs = Array.from(document.querySelectorAll('.mark-input'));
             inputs.forEach((inp, idx) => {
@@ -666,10 +828,10 @@
             });
         }
 
-        // নিরাপদ মার্কস সেভ (নিরাপত্তা গার্ড সহ)
+        // ৭. ফায়ারবেসে ১০০% স্থায়ী সেভ (কোনো ডেটা ডিলিট হবে না)
         window.saveAllMarks = async function () {
             if (isExamLocked) {
-                alert("Exam is locked by Admin. Marks cannot be modified.");
+                alert("Exam is locked by Admin. Marks cannot be saved.");
                 return;
             }
 
@@ -691,38 +853,72 @@
             const updates = {};
             let validCount = 0;
 
-            for (let inp of inputs) {
-                const stdId = inp.getAttribute('data-id');
+            inputs.forEach(inp => {
+                const sId = inp.getAttribute('data-id');
                 const val = inp.value.trim();
-                const dbPath = `evaluation_system/marks/${activeExamId}/${stdId}/${currentSubject}`;
 
-                // ফাঁকা থাকলে ডেটা অক্ষত রাখা
                 if (val !== '') {
                     const num = parseFloat(val);
                     if (!isNaN(num) && num >= 0 && num <= maxMarkAllowed) {
-                        updates[dbPath] = String(num);
+                        if (isLegacyExam) {
+                            // পুরোনো ফায়ারবেস পাথে সেভ (আগের কোনো ডেটা মুছবে না)
+                            updates[`evaluation_system/marks/${currentExam.id}/${sId}/${currentSubject}`] = String(num);
+                        } else {
+                            // নতুন CPSCL ফায়ারবেস পাথে সেভ (Live Tabulation ও Mark Manager-এ সরাসরি আপডেট হবে)
+                            updates[`cpscl_exam_marks/${currentExam.id}_${currentSubject}/${sId}`] = {
+                                rawMark: num,
+                                cq: num,
+                                mcq: 0,
+                                practical: 0,
+                                updatedAt: new Date().toISOString()
+                            };
+                        }
                         validCount++;
                     }
                 }
-            }
+            });
 
-            // নিরাপত্তা গার্ড: কোনো নম্বর না লিখে সেভ চাপলে আটকাবে
             if (Object.keys(updates).length === 0) {
                 alert("কোনো নতুন বা পরিবর্তিত নম্বর পাওয়া যায়নি। দয়া করে নম্বর বসিয়ে সেভ করুন।");
                 return;
             }
 
             saveBtn.disabled = true;
-            saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+            saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving directly to Cloud...';
 
             try {
+                // সরাসরি ফায়ারবেস ক্লাউডে মার্জ করে সেভ
                 await update(ref(db), updates);
-                alert(`🎉 Saved Successfully!\n${validCount} students updated for ${currentSubject} (${currentGroup}).`);
+                alert(`🎉 Cloud Save Successful!\n${validCount} students updated for ${currentSubject} (${currentGroup}).`);
             } catch (err) {
-                alert("Failed to save: " + err.message);
+                alert("Cloud save failed: " + err.message);
             } finally {
                 saveBtn.disabled = false;
                 saveBtn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> Save Marks';
+            }
+        };
+
+        // লাইভ সার্চ
+        window.filterStudentsOnTheFly = function () {
+            const query = document.getElementById('studentSearchInp').value.toLowerCase().trim();
+            const cards = document.querySelectorAll('.student-row-card');
+            cards.forEach(card => {
+                const text = card.getAttribute('data-search') || '';
+                if (!query || text.includes(query)) {
+                    card.classList.remove('hidden');
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+        };
+
+        window.clearScreenMarks = function () {
+            if (isExamLocked) return alert("Exam is locked by Admin.");
+            if (confirm(`Do you want to reset the fields on screen for ${currentSubject}?`)) {
+                document.querySelectorAll('.mark-input').forEach(inp => {
+                    inp.value = '';
+                    inp.classList.remove('input-error');
+                });
             }
         };
 
