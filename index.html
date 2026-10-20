@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>CPSCL - Marks Entry Portal</title>
     <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Tiro+Bangla&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     
     <style>
@@ -19,7 +19,7 @@
 
         * {
             box-sizing: border-box;
-            font-family: 'Plus Jakarta Sans', 'Tiro Bangla', sans-serif !important;
+            font-family: 'Plus Jakarta Sans', sans-serif !important;
             -webkit-tap-highlight-color: transparent;
         }
 
@@ -42,7 +42,6 @@
             vertical-align: -2px;
         }
 
-        /* হালকা সবুজ কর্পোরেট হেডার */
         .app-header {
             background: linear-gradient(135deg, #064e3b, #059669);
             color: white;
@@ -273,31 +272,31 @@
 </head>
 <body>
 
-    <!-- হেডার -->
+    <!-- Header -->
     <div class="app-header mb-3">
         <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg-795xmOcuKYH8wjija8JrA-qVjfOp_4KieeZ1pOQJaqX2uXsqGLMo09AXsGGsfGjH9LpK5fPlUNGbebFguiAzPC_YvbRXcHePj7cORQd6GMxDUg-LCeXtmNkccGI2K4Hv73PJqJkGX0Ju9N4knQuqKOAImqB6qy_WWFXpKeIaQhRgk7YbLqBLpCmL0cio/s1600/%E0%A6%95%E0%A7%8D%E0%A6%AF%E0%A6%AA%E0%A6%BE%E0%A6%A8%E0%A7%8D%E0%A6%9F%E0%A6%A8%E0%A6%AE%E0%A7%87%E0%A6%A8%E0%A7%8D%E0%A6%9F_%E0%A6%AA%E0%A6%BE%E0%A6%AC%E0%A6%B2%E0%A6%BF%E0%A6%95_%E0%A6%B8%E0%A7%8D%E0%A6%9F%E0%A7%81%E0%A6%B2_%E0%A6%93_%E0%A6%95%E0%A6%B2%E0%A7%87%E0%A6%9C_%E0%A6%B2%E0%A6%BE%E0%A6%B2%E0%A6%AE%E0%A6%A8%E0%A6%BF%E0%A6%B0%E0%A6%B9%E0%A6%BE%E0%A6%9F%E0%A7%87%E0%A6%B0_%E0%A6%B2%E0%A7%8B%E0%A6%97%E0%A7%8B.png" alt="CPSCL Logo" class="school-logo">
         <h6 class="mb-0 fw-bold" style="font-size: 0.95rem;">Cantonment Public School & College Lalmonirhat</h6>
-        <div class="exam-badge" id="liveExamName">Connecting Cloud...</div>
+        <div class="exam-badge" id="liveExamName">Loading Examination...</div>
     </div>
 
     <div class="container" style="max-width: 480px;">
 
-        <!-- লক অ্যালার্ট -->
+        <!-- Lock Alert -->
         <div id="examLockedAlert" class="locked-alert" style="display:none;">
             <svg class="icon-svg me-1" viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
             Entry Closed by Admin
         </div>
 
-        <!-- পরীক্ষা, গ্রুপ ও সাবজেক্ট সিলেকশন কার্ড -->
+        <!-- Examination, Group & Subject Selection -->
         <div class="card-custom">
-            <!-- ১. পরীক্ষা নির্বাচন ড্রপডাউন -->
+            <!-- 1. Select Examination -->
             <div class="mb-2">
                 <label class="form-label small fw-bold text-muted mb-1 d-flex align-items-center gap-1">
                     <svg class="icon-svg" style="fill: var(--primary);" viewBox="0 0 24 24"><path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/></svg>
                     Select Examination
                 </label>
                 <select class="form-select form-select-sm fw-bold" id="examSelect" onchange="onExamChanged()" style="border: 1.5px solid var(--primary); color: var(--primary-dark); border-radius: 8px;">
-                    <option value="">-- Loading Exams from Cloud --</option>
+                    <option value="">-- Choose Examination --</option>
                 </select>
             </div>
 
@@ -317,7 +316,7 @@
             </div>
         </div>
 
-        <!-- পিন কার্ড -->
+        <!-- PIN Card -->
         <div id="pinCard" class="card-custom text-center p-4" style="display: none;">
             <div id="setPinView" style="display: none;">
                 <div class="mb-2">
@@ -341,7 +340,7 @@
             </div>
         </div>
 
-        <!-- নম্বর এন্ট্রি সেকশন -->
+        <!-- Marks Entry Section -->
         <div id="entrySection" style="display: none;">
             <div class="rule-note d-flex align-items-center justify-content-between">
                 <div>
@@ -383,7 +382,7 @@
 
     </div>
 
-    <!-- Firebase SDK v10 (Pure Cloud Connection) -->
+    <!-- Firebase SDK v10 (Pure Realtime Persistence) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, get, set, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
@@ -405,7 +404,6 @@
         const auth = getAuth(app);
         signInAnonymously(auth).catch(() => {});
 
-        // পুরোনো মডিউলের ফিক্সড বিষয়ের তালিকা
         const LEGACY_SUBJECTS = {
             Science: [
                 { key: 'B1', name: 'Bangla 1st' }, { key: 'B2', name: 'Bangla 2nd' },
@@ -443,14 +441,14 @@
         let isExamLocked = false;
         let storedPIN = null;
 
-        // ১. ক্লাউড ফায়ারবেস থেকে সব পরীক্ষা লাইভ লোড করা
-        async function fetchAllExamsDirectlyFromFirebase() {
+        // 1. Fetch Active Exams Only (Excludes Closed/Locked Tests like Test-03)
+        async function fetchAllActiveExams() {
             const examSelect = document.getElementById('examSelect');
             examSelect.innerHTML = '<option value="">-- Select Examination --</option>';
             loadedExamsList = [];
 
             try {
-                // পুরোনো সিস্টেমের পরীক্ষা লোড
+                // (A) Check Active Legacy Exam ID
                 const legActiveSnap = await get(ref(db, 'evaluation_system/active_exam_id'));
                 let legacyActiveId = legActiveSnap.exists() ? legActiveSnap.val() : "exam_fn02_2026";
 
@@ -459,46 +457,60 @@
                     const legExams = legSnap.val();
                     Object.keys(legExams).forEach(k => {
                         const ex = legExams[k];
-                        loadedExamsList.push({
-                            type: 'legacy',
-                            id: k,
-                            name: `${ex.title || k} (Legacy Running)`,
-                            date: ex.date || '',
-                            max: parseFloat(ex.max) || 15,
-                            isLocked: ex.isLocked === true,
-                            activeSubjects: ex.activeSubjects || null
-                        });
-                    });
-                } else {
-                    loadedExamsList.push({
-                        type: 'legacy',
-                        id: legacyActiveId,
-                        name: `Scholarship Assessment (Legacy)`,
-                        max: 15,
-                        isLocked: false
+                        // Only add if exam is NOT locked and matches active or ongoing status
+                        const isClosed = (ex.isLocked === true) || (ex.status === 'Closed') || (k !== legacyActiveId && ex.isLocked);
+                        if (!isClosed) {
+                            loadedExamsList.push({
+                                type: 'legacy',
+                                id: k,
+                                name: ex.title || k,
+                                date: ex.date || '',
+                                max: parseFloat(ex.max) || 15,
+                                isLocked: false,
+                                activeSubjects: ex.activeSubjects || null
+                            });
+                        }
                     });
                 }
 
-                // নতুন CPSCL ERP-এর পরীক্ষা লাইভ লোড
+                // If no active legacy exam was picked up, fallback only to the active one
+                if (loadedExamsList.length === 0 && legacyActiveId) {
+                    const actSnap = await get(ref(db, `evaluation_system/exams/${legacyActiveId}`));
+                    if (actSnap.exists() && actSnap.val().isLocked !== true) {
+                        const d = actSnap.val();
+                        loadedExamsList.push({
+                            type: 'legacy',
+                            id: legacyActiveId,
+                            name: d.title || 'Ongoing Assessment',
+                            max: parseFloat(d.max) || 15,
+                            isLocked: false
+                        });
+                    }
+                }
+
+                // (B) Load Active CPSCL ERP Exams
                 const newSnap = await get(ref(db, 'cpscl_exams'));
                 if (newSnap.exists()) {
                     const newExams = newSnap.val();
                     const examArr = Array.isArray(newExams) ? newExams : Object.values(newExams);
                     examArr.forEach(ex => {
-                        loadedExamsList.push({
-                            type: 'cpscl',
-                            id: ex.id,
-                            name: `${ex.name} (${ex.class || 'CPSCL'})`,
-                            class: ex.class || '',
-                            date: ex.date || '',
-                            subjects: ex.subjects || {},
-                            groups: ex.groups || [],
-                            isLocked: ex.status === 'Locked'
-                        });
+                        // Skip closed or locked exams
+                        if (ex.status !== 'Locked' && ex.status !== 'Closed') {
+                            loadedExamsList.push({
+                                type: 'cpscl',
+                                id: ex.id,
+                                name: `${ex.name} (${ex.class || 'CPSCL'})`,
+                                class: ex.class || '',
+                                date: ex.date || '',
+                                subjects: ex.subjects || {},
+                                groups: ex.groups || [],
+                                isLocked: false
+                            });
+                        }
                     });
                 }
 
-                // ড্রপডাউনে পপুলেট
+                // Populate Dropdown cleanly
                 loadedExamsList.forEach((ex, idx) => {
                     const opt = document.createElement('option');
                     opt.value = idx;
@@ -509,16 +521,18 @@
                 if (loadedExamsList.length > 0) {
                     examSelect.value = 0;
                     window.onExamChanged();
+                } else {
+                    document.getElementById('liveExamName').innerText = "No Active Exams";
                 }
 
             } catch (err) {
-                console.error("Cloud Exams fetch error:", err);
-                examSelect.innerHTML = '<option value="">Error connecting cloud database</option>';
+                console.error("Exam load error:", err);
+                examSelect.innerHTML = '<option value="">Failed to load examinations</option>';
             }
         }
-        fetchAllExamsDirectlyFromFirebase();
+        fetchAllActiveExams();
 
-        // ২. পরীক্ষা নির্বাচন পরিবর্তন হ্যান্ডলার
+        // 2. Exam Changed Handler
         window.onExamChanged = function () {
             const examSelect = document.getElementById('examSelect');
             const selectedIdx = examSelect.value;
@@ -540,7 +554,7 @@
             populateGroupsDropdown();
         };
 
-        // ৩. গ্রুপ ড্রপডাউন পপুলেট
+        // 3. Populate Groups Dropdown
         function populateGroupsDropdown() {
             const grpSelect = document.getElementById('groupSelect');
             grpSelect.innerHTML = '<option value="">-- Select Group --</option>';
@@ -569,7 +583,7 @@
             }
         }
 
-        // ৪. গ্রুপ নির্বাচন পরিবর্তন হ্যান্ডলার
+        // 4. Group Changed Handler
         window.onGroupChanged = function () {
             currentGroup = document.getElementById('groupSelect').value;
             const subSelect = document.getElementById('subjectSelect');
@@ -602,7 +616,6 @@
             }
         };
 
-        // পিন ক্লাউড পাথ (evaluation_system/pins এর অধীনে সংরক্ষিত)
         function getPinCloudPath() {
             if (isLegacyExam) {
                 let stream = "Science";
@@ -616,7 +629,7 @@
             }
         }
 
-        // ৫. বিষয় নির্বাচন ও পিন চেক
+        // 5. Subject Selected Handler
         window.onSubjectSelected = async function () {
             const subSelect = document.getElementById('subjectSelect');
             currentSubject = subSelect.value;
@@ -663,7 +676,6 @@
             }
         };
 
-        // পিন সেভ
         window.saveNewPin = async function () {
             const pin = document.getElementById('newPin').value.trim();
             if (pin.length !== 4 || isNaN(pin)) {
@@ -676,13 +688,12 @@
                 await set(ref(db, getPinCloudPath()), pin);
                 document.getElementById('pinCard').style.display = 'none';
                 document.getElementById('entrySection').style.display = 'block';
-                renderStudentsLiveFromCloud();
+                renderStudentsLive();
             } catch (e) {
-                alert("Failed to save PIN in cloud: " + e.message);
+                alert("Failed to save PIN: " + e.message);
             }
         };
 
-        // পিন ভেরিফিকেশন
         window.verifyPin = function () {
             const inputVal = document.getElementById('inputPin').value.trim();
             const pinError = document.getElementById('pinError');
@@ -691,18 +702,18 @@
                 pinError.style.display = 'none';
                 document.getElementById('pinCard').style.display = 'none';
                 document.getElementById('entrySection').style.display = 'block';
-                renderStudentsLiveFromCloud();
+                renderStudentsLive();
             } else {
                 pinError.style.display = 'block';
                 document.getElementById('inputPin').value = '';
             }
         };
 
-        // ৬. ফায়ারবেস থেকে সরাসরি লাইভ শিক্ষার্থী ও নম্বর লোড
-        async function renderStudentsLiveFromCloud() {
+        // 6. Live Students Render
+        async function renderStudentsLive() {
             document.getElementById('statusBadge').innerText = `${currentSubject} • ${currentGroup}`;
             const container = document.getElementById('studentsContainer');
-            container.innerHTML = '<div class="text-center p-4 text-success"><p class="mt-2 fw-bold">Connecting Firebase Cloud...</p></div>';
+            container.innerHTML = '<div class="text-center p-4" style="color: var(--primary);"><p class="mt-2 fw-bold">Loading students...</p></div>';
 
             try {
                 let students = [];
@@ -835,11 +846,10 @@
                 bindInputValidation();
 
             } catch (err) {
-                container.innerHTML = `<div class="text-center p-4 text-danger">Cloud Error: ${err.message}</div>`;
+                container.innerHTML = `<div class="text-center p-4 text-danger">Failed to load student list. Please try again.</div>`;
             }
         }
 
-        // ইনপুট ভ্যালিডেশন
         function bindInputValidation() {
             const inputs = Array.from(document.querySelectorAll('.mark-input'));
             inputs.forEach((inp, idx) => {
@@ -865,7 +875,7 @@
             });
         }
 
-        // ফায়ারবেসে ১০০% স্থায়ী সেভ
+        // 7. Save Marks (Permanent Persistence)
         window.saveAllMarks = async function () {
             if (isExamLocked) {
                 alert("Exam is locked by Admin. Marks cannot be saved.");
@@ -882,7 +892,7 @@
             });
 
             if (hasErrors) {
-                alert(`Some marks exceed full mark (${maxMarkAllowed}). Please correct red fields.`);
+                alert(`Some marks exceed full mark (${maxMarkAllowed}). Please correct highlighted fields.`);
                 return;
             }
 
@@ -914,18 +924,18 @@
             });
 
             if (Object.keys(updates).length === 0) {
-                alert("কোনো নতুন বা পরিবর্তিত নম্বর পাওয়া যায়নি। দয়া করে নম্বর বসিয়ে সেভ করুন।");
+                alert("No new or changed marks found to save.");
                 return;
             }
 
             saveBtn.disabled = true;
-            saveBtn.innerHTML = 'Saving directly to Cloud...';
+            saveBtn.innerHTML = 'Saving...';
 
             try {
                 await update(ref(db), updates);
-                alert(`🎉 Cloud Save Successful!\n${validCount} students updated for ${currentSubject} (${currentGroup}).`);
+                alert(`🎉 Saved Successfully!\n${validCount} students updated for ${currentSubject} (${currentGroup}).`);
             } catch (err) {
-                alert("Cloud save failed: " + err.message);
+                alert("Failed to save marks. Please check your connection.");
             } finally {
                 saveBtn.disabled = false;
                 saveBtn.innerHTML = `
@@ -934,7 +944,6 @@
             }
         };
 
-        // লাইভ সার্চ
         window.filterStudentsOnTheFly = function () {
             const query = document.getElementById('studentSearchInp').value.toLowerCase().trim();
             const cards = document.querySelectorAll('.student-row-card');
