@@ -406,7 +406,7 @@
 </head>
 <body>
 
-    <!-- 100% In-App Centered Modal Dialog (No Native Browser Popup) -->
+    <!-- 100% In-App Centered Modal Dialog -->
     <div id="customModalOverlay" class="custom-modal-overlay">
         <div class="custom-modal-box">
             <div id="modalIconWrap" class="modal-icon-wrap success">
@@ -415,12 +415,10 @@
             <h5 id="modalTitleText" class="modal-title-text">Saved!</h5>
             <p id="modalSubText" class="modal-sub-text">Marks updated successfully.</p>
             
-            <!-- Single OK Button Mode -->
             <div id="modalSingleBtnWrap">
                 <button type="button" class="modal-ok-btn" onclick="closeCustomModal()">OK</button>
             </div>
 
-            <!-- Dual Confirm/Cancel Mode (For Permanent Reset) -->
             <div id="modalDualBtnWrap" class="modal-dual-btns" style="display: none;">
                 <button type="button" class="modal-cancel-btn" onclick="closeCustomModal()">Cancel</button>
                 <button type="button" class="modal-confirm-btn" id="modalConfirmActionBtn">Reset</button>
@@ -445,7 +443,6 @@
 
         <!-- Examination, Group & Subject Selection -->
         <div class="card-custom">
-            <!-- 1. Select Examination -->
             <div class="mb-2">
                 <label class="form-label small fw-bold text-muted mb-1 d-flex align-items-center gap-1">
                     <svg class="icon-svg" style="fill: var(--primary);" viewBox="0 0 24 24"><path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/></svg>
@@ -513,7 +510,7 @@
                 <span class="search-icon">
                     <svg class="icon-svg" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
                 </span>
-                <input type="text" id="studentSearchInp" class="search-inp" placeholder="Search ID, Name or Roll..." oninput="filterStudentsOnTheFly()">
+                <input type="text" id="studentSearchInp" class="search-inp" placeholder="Search by Name or ID..." oninput="filterStudentsOnTheFly()">
             </div>
 
             <div class="d-flex justify-content-between align-items-center mb-2 px-1">
@@ -544,7 +541,7 @@
 
     </div>
 
-    <!-- Printable Official Marks Sheet (Auto-fills on 'PDF Sheet' Click) -->
+    <!-- Printable Official Marks Sheet -->
     <div id="printableMarksSheet" class="printable-sheet">
         <div class="print-header">
             <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg-795xmOcuKYH8wjija8JrA-qVjfOp_4KieeZ1pOQJaqX2uXsqGLMo09AXsGGsfGjH9LpK5fPlUNGbebFguiAzPC_YvbRXcHePj7cORQd6GMxDUg-LCeXtmNkccGI2K4Hv73PJqJkGX0Ju9N4knQuqKOAImqB6qy_WWFXpKeIaQhRgk7YbLqBLpCmL0cio/s1600/%E0%A6%95%E0%A7%8D%E0%A6%AF%E0%A6%AA%E0%A6%BE%E0%A6%A8%E0%A7%8D%E0%A6%9F%E0%A6%A8%E0%A6%AE%E0%A7%87%E0%A6%A8%E0%A7%8D%E0%A6%9F_%E0%A6%AA%E0%A6%BE%E0%A6%AC%E0%A6%B2%E0%A6%BF%E0%A6%95_%E0%A6%B8%E0%A7%8D%E0%A6%9F%E0%A7%81%E0%A6%B2_%E0%A6%93_%E0%A6%95%E0%A6%B2%E0%A7%87%E0%A6%9C_%E0%A6%B2%E0%A6%BE%E0%A6%B2%E0%A6%AE%E0%A6%A8%E0%A6%BF%E0%A6%B0%E0%A6%B9%E0%A6%BE%E0%A6%9F%E0%A7%87%E0%A6%B0_%E0%A6%B2%E0%A7%8B%E0%A6%97%E0%A7%8B.png" class="print-logo" alt="CPSCL Logo">
@@ -561,10 +558,9 @@
             <thead>
                 <tr>
                     <th style="width: 8%;">SL</th>
-                    <th style="width: 14%;">Roll No</th>
-                    <th style="width: 20%;">Student ID</th>
+                    <th style="width: 25%;">Student ID</th>
                     <th style="text-align: left; padding-left: 10px;">Student Name</th>
-                    <th style="width: 18%;">Obtained Marks</th>
+                    <th style="width: 25%;">Obtained Marks</th>
                 </tr>
             </thead>
             <tbody id="printTableBody"></tbody>
@@ -600,7 +596,6 @@
         const auth = getAuth(app);
         signInAnonymously(auth).catch(() => {});
 
-        // 100% In-App Centered Modal Handler (NO Native Alert / Confirm)
         function showInAppModal(title, sub, type = 'success') {
             const overlay = document.getElementById('customModalOverlay');
             const iconWrap = document.getElementById('modalIconWrap');
@@ -625,7 +620,6 @@
             overlay.style.display = 'flex';
         }
 
-        // In-App Confirmation Modal (Replaces browser confirm)
         function showConfirmModal(title, sub, onConfirm) {
             const overlay = document.getElementById('customModalOverlay');
             const iconWrap = document.getElementById('modalIconWrap');
@@ -695,7 +689,7 @@
         let isExamLocked = false;
         let storedPIN = null;
 
-        // 1. Fetch Active Exams Only (Excludes Closed/Locked Tests)
+        // 1. Fetch Active Exams Only (Excludes Locked/Closed Exams)
         async function fetchAllActiveExams() {
             const examSelect = document.getElementById('examSelect');
             examSelect.innerHTML = '<option value="">-- Select Examination --</option>';
@@ -724,20 +718,6 @@
                             });
                         }
                     });
-                }
-
-                if (loadedExamsList.length === 0 && legacyActiveId) {
-                    const actSnap = await get(ref(db, `evaluation_system/exams/${legacyActiveId}`));
-                    if (actSnap.exists() && actSnap.val().isLocked !== true) {
-                        const d = actSnap.val();
-                        loadedExamsList.push({
-                            type: 'legacy',
-                            id: legacyActiveId,
-                            name: d.title || 'Ongoing Assessment',
-                            max: parseFloat(d.max) || 15,
-                            isLocked: false
-                        });
-                    }
                 }
 
                 // (B) Load Active CPSCL ERP Exams
@@ -958,7 +938,7 @@
             }
         };
 
-        // 6. Live Students Render
+        // 6. Live Students Render (Pure Merit Order & Zero Roll)
         async function renderStudentsLive() {
             document.getElementById('statusBadge').innerText = `${currentSubject} • ${currentGroup}`;
             const container = document.getElementById('studentsContainer');
@@ -1000,41 +980,41 @@
                     });
 
                     let overrides = {};
+                    let meritOrderList = [];
+
                     try {
                         const ovSnap = await get(ref(db, `cpscl_exam_group_overrides/${currentExam.id}`));
                         if (ovSnap.exists()) overrides = ovSnap.val() || {};
+
+                        const orderSnap = await get(ref(db, `cpscl_exam_group_overrides/${currentExam.id}_merit_order`));
+                        if (orderSnap.exists()) meritOrderList = orderSnap.val() || [];
                     } catch(e) {}
 
-                    students.sort((a, b) => {
-                        const rA = parseInt(a.roll_no || a.roll) || 0;
-                        const rB = parseInt(b.roll_no || b.roll) || 0;
-                        if (rA && rB) return rA - rB;
-                        return String(a.std_id || a.id).localeCompare(String(b.std_id || b.id));
-                    });
+                    // 🌟 মেধা অনুযায়ী সর্ট করা (মেহরাব ১ নম্বরে, এহতেশাম ২ নম্বরে...)
+                    if (meritOrderList && meritOrderList.length > 0) {
+                        students.sort((a, b) => {
+                            const idA = String(a.std_id || a.id || '').trim();
+                            const idB = String(b.std_id || b.id || '').trim();
+                            let idxA = meritOrderList.indexOf(idA);
+                            let idxB = meritOrderList.indexOf(idB);
+                            if (idxA === -1) idxA = 99999;
+                            if (idxB === -1) idxB = 99999;
+                            return idxA - idxB;
+                        });
+                    } else {
+                        students.sort((a, b) => String(a.std_id || a.id).localeCompare(String(b.std_id || b.id)));
+                    }
 
-                    const groupsList = (currentExam.groups && currentExam.groups.length > 0)
-                        ? currentExam.groups
-                        : [{ name: "Group A", from: 1, to: 40 }, { name: "Group B", from: 41, to: "Rest" }];
-
+                    // গ্রুপ নির্ধারণ
                     students.forEach((st, idx) => {
                         const sId = String(st.std_id || st.id || '').trim();
-                        const sRoll = st.roll_no || st.roll || '';
-                        const effectiveNum = (sRoll && !isNaN(parseInt(sRoll))) ? parseInt(sRoll) : (idx + 1);
-
-                        let assigned = groupsList[0].name;
-                        for (let g of groupsList) {
-                            const fromNum = parseInt(g.from) || 1;
-                            const toNum = (g.to && String(g.to).toLowerCase() === 'rest') ? 999999 : (parseInt(g.to) || 999999);
-                            if (effectiveNum >= fromNum && effectiveNum <= toNum) {
-                                assigned = g.name;
-                                break;
-                            }
-                        }
+                        let assigned = (idx < 40) ? "Group A" : "Group B";
 
                         if (overrides[sId]) assigned = overrides[sId];
                         st.computedGroup = assigned || "Group A";
                     });
 
+                    // নির্বাচিত গ্রুপের শিক্ষার্থীদের ফিল্টার করা
                     students = students.filter(s => s.computedGroup === currentGroup);
 
                     const mSnap = await get(ref(db, `cpscl_exam_marks/${currentExam.id}_${currentSubject}`));
@@ -1048,10 +1028,11 @@
                     return;
                 }
 
+                // রোলের ঘর ছাড়া মেধা অনুযায়ী ক্রমিক ১ থেকে সাজানো
                 students.forEach((s, idx) => {
                     const sId = String(s.std_id || s.id || '').trim();
                     const sName = s.student_name || s.name || 'Unnamed';
-                    const sRoll = s.roll_no || s.roll || (idx + 1);
+                    const slNum = idx + 1;
 
                     let prevVal = '';
                     if (isLegacyExam) {
@@ -1069,13 +1050,13 @@
 
                     const row = document.createElement('div');
                     row.className = 'student-row-card';
-                    row.setAttribute('data-search', `${sId} ${sName} ${sRoll}`.toLowerCase());
+                    row.setAttribute('data-search', `${sId} ${sName}`.toLowerCase());
                     row.innerHTML = `
                         <div class="d-flex align-items-center gap-2" style="min-width: 0; flex: 1;">
-                            <span class="sl-badge">#${sRoll}</span>
+                            <span class="sl-badge">#${slNum}</span>
                             <div style="min-width: 0;">
                                 <div class="student-title">${sName}</div>
-                                <div class="student-sub">ID: ${sId} • Roll: ${sRoll}</div>
+                                <div class="student-sub">ID: ${sId}</div>
                             </div>
                         </div>
                         <input type="text" 
@@ -1194,7 +1175,7 @@
             }
         };
 
-        // 8. Download / Print PDF Marks Sheet Feature
+        // 8. Download / Print PDF Marks Sheet Feature (No Roll)
         window.downloadMarksPDF = function () {
             const inputs = document.querySelectorAll('.mark-input');
             const tbody = document.getElementById('printTableBody');
@@ -1213,20 +1194,13 @@
             inputs.forEach((inp, idx) => {
                 const card = inp.closest('.student-row-card');
                 if (!card) return;
-                const sl = card.querySelector('.sl-badge') ? card.querySelector('.sl-badge').innerText.replace('#','') : (idx + 1);
                 const title = card.querySelector('.student-title') ? card.querySelector('.student-title').innerText : '';
-                const subText = card.querySelector('.student-sub') ? card.querySelector('.student-sub').innerText : '';
                 const sId = inp.getAttribute('data-id') || '-';
                 const mark = inp.value.trim() !== '' ? inp.value.trim() : '-';
-
-                let roll = sl;
-                const matchRoll = subText.match(/Roll:\s*(\d+)/i);
-                if (matchRoll) roll = matchRoll[1];
 
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td>${idx + 1}</td>
-                    <td>${roll}</td>
                     <td><strong>${sId}</strong></td>
                     <td style="text-align: left; padding-left: 10px;">${title}</td>
                     <td style="font-weight: 800;">${mark}</td>
@@ -1256,7 +1230,7 @@
             });
         };
 
-        // 9. Permanent Cloud Reset (Zero Impact on other subjects / groups)
+        // 9. Permanent Cloud Reset
         window.clearScreenMarks = function () {
             if (isExamLocked) return showInAppModal("Notice", "Entry closed by Admin.", "error");
 
@@ -1268,19 +1242,15 @@
                 `Permanently delete ${currentSubject} (${currentGroup}) marks from Cloud?`,
                 async () => {
                     const updates = {};
-                    let count = 0;
 
                     inputs.forEach(inp => {
                         const sId = inp.getAttribute('data-id');
                         if (sId) {
                             if (isLegacyExam) {
-                                // Strictly nullifies ONLY the current subject key
                                 updates[`evaluation_system/marks/${currentExam.id}/${sId}/${currentSubject}`] = null;
                             } else {
-                                // Strictly nullifies ONLY the student entry in the current subject node
                                 updates[`cpscl_exam_marks/${currentExam.id}_${currentSubject}/${sId}`] = null;
                             }
-                            count++;
                         }
                     });
 
@@ -1289,7 +1259,6 @@
                             await update(ref(db), updates);
                         }
 
-                        // Wipe fields on screen
                         inputs.forEach(inp => {
                             inp.value = '';
                             inp.classList.remove('input-error');
