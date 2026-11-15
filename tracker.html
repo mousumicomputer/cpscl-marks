@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>CPSCL - Progress Tracker & Live Evaluation</title>
     
-    <!-- Fonts -->
+    <!-- Fonts & Bootstrap 5 -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
@@ -301,6 +301,11 @@
             background: #f0fdf4;
             box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15);
         }
+        .mark-inp-pill.input-error {
+            border-color: var(--danger) !important;
+            background: #fef2f2 !important;
+            color: var(--danger) !important;
+        }
 
         .btn-icon-action {
             height: 36px;
@@ -391,7 +396,7 @@
         <div class="container" style="max-width: 480px; margin-top: 15px;">
             
             <!-- Examination Selection Dropdown -->
-            <div class="card-custom mb-3">
+            <div class="rounded-box mb-3">
                 <label class="form-label small fw-bold text-muted mb-1 d-flex align-items-center gap-1">
                     <svg class="icon-svg" style="fill: var(--primary);" viewBox="0 0 24 24"><path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/></svg>
                     Select Examination
@@ -409,7 +414,7 @@
                         <h4 class="mb-0 fw-bold" id="lblOverallPct" style="color: var(--primary-dark);">0%</h4>
                     </div>
                     <div class="d-flex gap-2">
-                        <button class="btn-icon-action" onclick="printLiveTabulationSheet()" title="Print Live Tabulation Sheet for Selected Group">
+                        <button class="btn-icon-action" onclick="printLiveTabulationSheet()" title="Print Live Tabulation Sheet">
                             <svg class="icon-svg" viewBox="0 0 24 24"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>
                             Print
                         </button>
@@ -478,14 +483,14 @@
         </div>
     </div>
 
-    <!-- 4. Subject Mark Entry Modal (PURE MERIT ORDER & ZERO ROLL) -->
+    <!-- 4. Subject Mark Entry Modal (DYNAMIC FULL MARKS & ZERO ROLL) -->
     <div class="modal fade" id="modalMarkEntry" tabindex="-1" style="z-index: 1070;">
         <div class="modal-dialog modal-fullscreen-sm-down modal-dialog-scrollable">
             <div class="modal-content" style="border-radius: 28px 28px 0 0; background: #f8fafc;">
                 <div class="modal-header border-0 bg-white" style="border-radius: 28px 28px 0 0; padding: 14px 20px;">
                     <div>
                         <h6 class="fw-bold mb-0" id="lblSheetTitle">Marks Sheet</h6>
-                        <span class="small text-muted" id="lblSheetGroupMeta">Full Mark: 30</span>
+                        <span class="small text-muted" id="lblSheetGroupMeta">Full Mark: 20</span>
                     </div>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
@@ -589,46 +594,13 @@
         let activeSelectedSub = null;
         let isCreatingNewPin = false;
 
-        const LEGACY_MASTER_SUBJECTS = [
-            { stream: 'Science', key: 'B1', name: 'Bangla 1st' },
-            { stream: 'Science', key: 'B2', name: 'Bangla 2nd' },
-            { stream: 'Science', key: 'E1', name: 'English 1st' },
-            { stream: 'Science', key: 'E2', name: 'English 2nd' },
-            { stream: 'Science', key: 'Math', name: 'General Math' },
-            { stream: 'Science', key: 'HM_AG', name: 'HM/AG' },
-            { stream: 'Science', key: 'Phy', name: 'Physics' },
-            { stream: 'Science', key: 'Che', name: 'Chemistry' },
-            { stream: 'Science', key: 'Bio', name: 'Biology' },
-            { stream: 'Science', key: 'BGS', name: 'BGS' },
-            { stream: 'Science', key: 'Reli', name: 'Religion' },
-            { stream: 'Science', key: 'ICT', name: 'ICT' },
-            
-            { stream: 'Humanities', key: 'B1', name: 'Bangla 1st' },
-            { stream: 'Humanities', key: 'B2', name: 'Bangla 2nd' },
-            { stream: 'Humanities', key: 'E1', name: 'English 1st' },
-            { stream: 'Humanities', key: 'E2', name: 'English 2nd' },
-            { stream: 'Humanities', key: 'Math', name: 'General Math' },
-            { stream: 'Humanities', key: 'AG_HE', name: 'AG/HE' },
-            { stream: 'Humanities', key: 'His', name: 'History' },
-            { stream: 'Humanities', key: 'Geo', name: 'Geography' },
-            { stream: 'Humanities', key: 'Civ', name: 'Civics' },
-            { stream: 'Humanities', key: 'Sci', name: 'General Science' },
-            { stream: 'Humanities', key: 'Reli', name: 'Religion' },
-            { stream: 'Humanities', key: 'ICT', name: 'ICT' },
-            
-            { stream: 'B.Studies', key: 'B1', name: 'Bangla 1st' },
-            { stream: 'B.Studies', key: 'B2', name: 'Bangla 2nd' },
-            { stream: 'B.Studies', key: 'E1', name: 'English 1st' },
-            { stream: 'B.Studies', key: 'E2', name: 'English 2nd' },
-            { stream: 'B.Studies', key: 'Math', name: 'General Math' },
-            { stream: 'B.Studies', key: 'AG_HE', name: 'AG/HE' },
-            { stream: 'B.Studies', key: 'Fin', name: 'Finance' },
-            { stream: 'B.Studies', key: 'Acc', name: 'Accounting' },
-            { stream: 'B.Studies', key: 'BE', name: 'Business Ent.' },
-            { stream: 'B.Studies', key: 'Sci', name: 'General Science' },
-            { stream: 'B.Studies', key: 'Reli', name: 'Religion' },
-            { stream: 'B.Studies', key: 'ICT', name: 'ICT' }
-        ];
+        function isSSC27Exam(exam) {
+            if (!exam) return false;
+            const c = String(exam.class || '').toLowerCase();
+            const n = String(exam.name || '').toLowerCase();
+            const id = String(exam.id || '').toUpperCase();
+            return id.startsWith('SSC27_') || c.includes('10') || c.includes('ssc') || n.includes('ssc') || n.includes('daily test');
+        }
 
         // 1. Verify Master PIN Gateway
         window.verifyAuthPin = function () {
@@ -671,20 +643,20 @@
             });
         }
 
-        // 2. Fetch exams published by the Admin Panel
+        // 2. Fetch exams published by Admin Panel (Handles both Class 8 and SSC-27)
         async function fetchAllActiveTrackerExams() {
             const examSelect = document.getElementById('examSelect');
             examSelect.innerHTML = '<option value="">-- Choose Examination --</option>';
             loadedExamsList = [];
 
             try {
-                // This is the same registry written by the Admin Panel.
                 const newSnap = await get(ref(db, 'cpscl_exams'));
                 if (newSnap.exists()) {
                     const newExams = newSnap.val();
                     const examEntries = Array.isArray(newExams)
                         ? newExams.map((exam, index) => [String(index), exam])
                         : Object.entries(newExams);
+
                     examEntries.forEach(([key, ex]) => {
                         if (!ex || typeof ex !== 'object') return;
                         const status = getExamStatus(ex);
@@ -694,11 +666,13 @@
 
                         const id = String(ex.id || ex.examId || ex.exam_id || key);
                         const examName = String(ex.name || ex.examName || ex.title || id);
-                        const examClass = String(ex.class || ex.className || ex.class_name || '');
+                        const examClass = String(ex.class || ex.className || ex.class_name || (isSSC27Exam(ex) ? 'Class 10' : 'Class 8'));
+                        
                         loadedExamsList.push({
                             type: 'cpscl',
                             id,
-                            name: `${examName} (${examClass || 'CPSCL'})`,
+                            name: `${examName} (${examClass})`,
+                            rawName: examName,
                             class: examClass,
                             date: ex.date || '',
                             subjects: ex.subjects || {},
@@ -778,30 +752,39 @@
 
             let html = `<button class="btn-pill active" onclick="setFilter('All', this)">All</button>`;
 
-            if (isLegacyExam) {
-                html += `
-                    <button class="btn-pill" onclick="setFilter('Group-A', this)">Group-A</button>
-                    <button class="btn-pill" onclick="setFilter('Group-B', this)">Group-B</button>
-                    <button class="btn-pill" onclick="setFilter('Group-C', this)">Group-C</button>
-                    <button class="btn-pill" onclick="setFilter('Humanities', this)">Humanities</button>
-                    <button class="btn-pill" onclick="setFilter('B.Studies', this)">B.Studies</button>
-                `;
-            } else {
-                const grpList = (currentExam.groups && currentExam.groups.length > 0) 
-                    ? currentExam.groups 
-                    : [{ name: 'Group A' }, { name: 'Group B' }];
+            const grpList = (currentExam.groups && currentExam.groups.length > 0) 
+                ? currentExam.groups 
+                : (isSSC27Exam(currentExam) 
+                    ? [{ name: 'Group A (Science)' }, { name: 'Group B (Science)' }, { name: 'Group C (Science)' }, { name: 'Group D (Humanities)' }, { name: 'Group D (Business Studies)' }]
+                    : [{ name: 'Group A' }, { name: 'Group B' }]);
 
-                grpList.forEach(g => {
-                    html += `<button class="btn-pill" onclick="setFilter('${g.name}', this)">${g.name}</button>`;
-                });
-            }
+            grpList.forEach(g => {
+                const shortLabel = g.name.replace('Group ', '').replace('(Science)', 'Sci').replace('(Humanities)', 'Hum').replace('(Business Studies)', 'B.Stud');
+                html += `<button class="btn-pill" onclick="setFilter('${g.name}', this)">${shortLabel}</button>`;
+            });
 
             html += `<button class="btn-pill" style="color: var(--danger); border-color: #fca5a5;" onclick="setFilter('Due', this)">Due Only</button>`;
             container.innerHTML = html;
             currentFilter = 'All';
         }
 
-        // 4. Fetch Live Progress Data from Cloud (Pure Merit Order)
+        function getStudentTrack(student) {
+            const info = [
+                student.department,
+                student.student_category,
+                student.studentCategory,
+                student.academic_group,
+                student.group,
+                student.group_name,
+                student.stream,
+                student.sec
+            ].filter(Boolean).join(' ').toLowerCase();
+            if (/business|commerce|b\.?\s*studies/.test(info)) return 'business';
+            if (/humanities|arts|\bhum\b/.test(info)) return 'humanities';
+            return 'science';
+        }
+
+        // 4. Fetch Live Progress Data from Cloud (SSC-27 20-Marks & Class 8 Safe)
         window.fetchTrackerLiveData = async function () {
             if (!currentExam) return;
 
@@ -809,93 +792,105 @@
                 const pinSnap = await get(ref(db, 'evaluation_system/pins'));
                 allPins = pinSnap.exists() ? pinSnap.val() : {};
 
-                if (isLegacyExam) {
-                    const stdSnap = await get(ref(db, 'evaluation_system/students'));
-                    allStudents = stdSnap.exists() ? Object.values(stdSnap.val()) : [];
+                const stdSnap = await get(ref(db, 'cpscl_students'));
+                let rawStudents = stdSnap.exists() ? Object.values(stdSnap.val()) : [];
 
-                    allStudents.forEach(s => {
-                        if (s.group === 'Science') {
-                            const sRank = Number(s.overallRank !== undefined && s.overallRank !== null ? s.overallRank : (s.sl || 9999));
-                            s.assignedGroup = s.subGroup || (sRank <= 55 ? 'Group-A' : (sRank <= 105 ? 'Group-B' : 'Group-C'));
-                        } else {
-                            s.assignedGroup = s.group;
-                        }
-                    });
+                const isSSC = isSSC27Exam(currentExam);
+                const targetClass = String(currentExam.class || '').trim().toLowerCase();
 
-                    const mSnap = await get(ref(db, `evaluation_system/marks/${currentExam.id}`));
-                    liveMarks = mSnap.exists() ? mSnap.val() : {};
-
-                    if (currentExam.activeSubjects && Array.isArray(currentExam.activeSubjects)) {
-                        activeSubjectsList = LEGACY_MASTER_SUBJECTS.filter(s => currentExam.activeSubjects.includes(s.key));
+                allStudents = rawStudents.filter(s => {
+                    const c = String(s.class_name || s.class || s['Class Name *'] || '').trim().toLowerCase();
+                    const b = String(s.section_batch || s.section || s.batch || s['Section/Batch *'] || '').trim().toLowerCase();
+                    
+                    if (isSSC) {
+                        const isC10 = c.includes('10') || c.includes('ten') || c.includes('ssc');
+                        const isS27 = b.includes('ssc') || b.includes('27') || b.includes('prep');
+                        const isC8 = c.includes('eight') || c.includes('8') || b.includes('scholarship');
+                        return (isC10 || isS27) && !isC8;
                     } else {
-                        activeSubjectsList = LEGACY_MASTER_SUBJECTS;
-                    }
-                } else {
-                    const stdSnap = await get(ref(db, 'cpscl_students'));
-                    let rawStudents = stdSnap.exists() ? Object.values(stdSnap.val()) : [];
-
-                    const targetClass = String(currentExam.class || '').trim().toLowerCase();
-                    allStudents = rawStudents.filter(s => {
-                        const c = String(s.class_name || s.class || '').trim().toLowerCase();
                         return c === targetClass || c.includes(targetClass) || targetClass.includes(c);
+                    }
+                });
+
+                let overrides = {};
+                let meritOrderList = [];
+
+                try {
+                    const ovSnap = await get(ref(db, `cpscl_exam_group_overrides/${currentExam.id}`));
+                    if (ovSnap.exists()) overrides = ovSnap.val() || {};
+
+                    const orderSnap = await get(ref(db, `cpscl_exam_group_overrides/${currentExam.id}_merit_order`));
+                    if (orderSnap.exists()) meritOrderList = orderSnap.val() || [];
+                } catch(e) {}
+
+                // মেধা অর্ডার অনুযায়ী সর্টিং
+                if (meritOrderList && meritOrderList.length > 0) {
+                    allStudents.sort((a, b) => {
+                        const idA = String(a.std_id || a.student_id || a.id || '').trim();
+                        const idB = String(b.std_id || b.student_id || b.id || '').trim();
+                        let idxA = meritOrderList.indexOf(idA);
+                        let idxB = meritOrderList.indexOf(idB);
+                        if (idxA === -1) idxA = 99999;
+                        if (idxB === -1) idxB = 99999;
+                        return idxA - idxB;
                     });
+                } else {
+                    allStudents.sort((a, b) => {
+                        const idA = String(a.std_id || a.student_id || a.id || '').trim();
+                        const idB = String(b.std_id || b.student_id || b.id || '').trim();
+                        return idA.localeCompare(idB);
+                    });
+                }
 
-                    let overrides = {};
-                    let meritOrderList = [];
+                // গ্রুপ নির্ধারণ লজিক
+                const trackRanks = { science: 0, humanities: 0, business: 0 };
+                allStudents.forEach((st, idx) => {
+                    const sId = String(st.std_id || st.student_id || st.id || '').trim();
+                    let assigned = "Group A";
 
-                    try {
-                        const ovSnap = await get(ref(db, `cpscl_exam_group_overrides/${currentExam.id}`));
-                        if (ovSnap.exists()) overrides = ovSnap.val() || {};
+                    if (overrides[sId]) {
+                        assigned = overrides[sId];
+                    } else if (isSSC) {
+                        const trk = getStudentTrack(st);
+                        trackRanks[trk] = (trackRanks[trk] || 0) + 1;
+                        const trkRank = trackRanks[trk];
 
-                        const orderSnap = await get(ref(db, `cpscl_exam_group_overrides/${currentExam.id}_merit_order`));
-                        if (orderSnap.exists()) meritOrderList = orderSnap.val() || [];
-                    } catch(e) {}
-
-                    // 🌟 মেধা অনুযায়ী সর্ট করা (মেহরাব ১ নম্বরে, এহতেশাম ২ নম্বরে...)
-                    if (meritOrderList && meritOrderList.length > 0) {
-                        allStudents.sort((a, b) => {
-                            const idA = String(a.std_id || a.id || '').trim();
-                            const idB = String(b.std_id || b.id || '').trim();
-                            let idxA = meritOrderList.indexOf(idA);
-                            let idxB = meritOrderList.indexOf(idB);
-                            if (idxA === -1) idxA = 99999;
-                            if (idxB === -1) idxB = 99999;
-                            return idxA - idxB;
-                        });
+                        if (trk === 'humanities') assigned = 'Group D (Humanities)';
+                        else if (trk === 'business') assigned = 'Group D (Business Studies)';
+                        else {
+                            assigned = trkRank <= 55 ? 'Group A (Science)' : (trkRank <= 105 ? 'Group B (Science)' : 'Group C (Science)');
+                        }
                     } else {
-                        allStudents.sort((a, b) => String(a.std_id || a.id).localeCompare(String(b.std_id || b.id)));
+                        assigned = (idx < 40) ? "Group A" : "Group B";
                     }
 
-                    allStudents.forEach((st, idx) => {
-                        const sId = String(st.std_id || st.id || '').trim();
-                        let assigned = (idx < 40) ? "Group A" : "Group B";
+                    st.computedGroup = assigned;
+                    st.assignedGroup = assigned;
+                });
 
-                        if (overrides[sId]) assigned = overrides[sId];
-                        st.computedGroup = assigned || "Group A";
-                        st.assignedGroup = st.computedGroup;
+                const examSubs = currentExam.subjects || {};
+                activeSubjectsList = [];
+                liveMarks = {};
+
+                const defaultMarkLimit = isSSC ? 20 : 30;
+
+                for (let subName of Object.keys(examSubs)) {
+                    const fullM = parseInt(examSubs[subName]) || defaultMarkLimit;
+                    activeSubjectsList.push({
+                        key: subName,
+                        name: subName,
+                        stream: currentExam.class || 'CPSCL',
+                        max: fullM
                     });
 
-                    const examSubs = currentExam.subjects || {};
-                    activeSubjectsList = [];
-                    liveMarks = {};
-
-                    for (let subName of Object.keys(examSubs)) {
-                        activeSubjectsList.push({
-                            key: subName,
-                            name: subName,
-                            stream: currentExam.class || 'CPSCL',
-                            max: examSubs[subName] || 30
+                    const mSnap = await get(ref(db, `cpscl_exam_marks/${currentExam.id}_${subName}`));
+                    if (mSnap.exists()) {
+                        const subMarkObj = mSnap.val();
+                        Object.keys(subMarkObj).forEach(stId => {
+                            if (!liveMarks[stId]) liveMarks[stId] = {};
+                            const rec = subMarkObj[stId];
+                            liveMarks[stId][subName] = (typeof rec === 'object') ? (rec.rawMark !== null && rec.rawMark !== undefined ? rec.rawMark : rec.cq) : rec;
                         });
-
-                        const mSnap = await get(ref(db, `cpscl_exam_marks/${currentExam.id}_${subName}`));
-                        if (mSnap.exists()) {
-                            const subMarkObj = mSnap.val();
-                            Object.keys(subMarkObj).forEach(stId => {
-                                if (!liveMarks[stId]) liveMarks[stId] = {};
-                                const rec = subMarkObj[stId];
-                                liveMarks[stId][subName] = (typeof rec === 'object') ? (rec.rawMark !== null && rec.rawMark !== undefined ? rec.rawMark : rec.cq) : rec;
-                            });
-                        }
                     }
                 }
 
@@ -912,52 +907,31 @@
             let cDone = 0, cWait = 0, cDue = 0;
 
             activeSubjectsList.forEach(sub => {
-                let targetStudents = [];
                 let breakdown = {};
+                const isSSC = isSSC27Exam(currentExam);
 
-                if (isLegacyExam) {
-                    targetStudents = allStudents.filter(s => s.group === sub.stream);
-                    if (sub.stream === 'Science') {
-                        breakdown['Group-A'] = { target: 0, done: 0 };
-                        breakdown['Group-B'] = { target: 0, done: 0 };
-                        breakdown['Group-C'] = { target: 0, done: 0 };
-                    } else {
-                        breakdown[sub.stream] = { target: 0, done: 0 };
+                const grpList = (currentExam.groups && currentExam.groups.length > 0) 
+                    ? currentExam.groups 
+                    : (isSSC 
+                        ? [{ name: 'Group A (Science)' }, { name: 'Group B (Science)' }, { name: 'Group C (Science)' }, { name: 'Group D (Humanities)' }, { name: 'Group D (Business Studies)' }]
+                        : [{ name: 'Group A' }, { name: 'Group B' }]);
+
+                grpList.forEach(g => {
+                    breakdown[g.name] = { target: 0, done: 0 };
+                });
+
+                allStudents.forEach(s => {
+                    const grpKey = s.assignedGroup || (isSSC ? "Group A (Science)" : "Group A");
+                    if (!breakdown[grpKey]) breakdown[grpKey] = { target: 0, done: 0 };
+                    breakdown[grpKey].target++;
+
+                    const sId = String(s.std_id || s.student_id || s.id || '').trim();
+                    if (liveMarks[sId] && liveMarks[sId][sub.key] !== undefined && liveMarks[sId][sub.key] !== '') {
+                        breakdown[grpKey].done++;
                     }
+                });
 
-                    targetStudents.forEach(s => {
-                        let grpKey = s.assignedGroup || sub.stream;
-                        if (!breakdown[grpKey]) breakdown[grpKey] = { target: 0, done: 0 };
-                        breakdown[grpKey].target++;
-
-                        if (liveMarks[s.id] && liveMarks[s.id][sub.key] !== undefined && liveMarks[s.id][sub.key] !== '') {
-                            breakdown[grpKey].done++;
-                        }
-                    });
-
-                } else {
-                    targetStudents = allStudents;
-                    const grpList = (currentExam.groups && currentExam.groups.length > 0) 
-                        ? currentExam.groups 
-                        : [{ name: 'Group A' }, { name: 'Group B' }];
-
-                    grpList.forEach(g => {
-                        breakdown[g.name] = { target: 0, done: 0 };
-                    });
-
-                    targetStudents.forEach(s => {
-                        const grpKey = s.assignedGroup || "Group A";
-                        if (!breakdown[grpKey]) breakdown[grpKey] = { target: 0, done: 0 };
-                        breakdown[grpKey].target++;
-
-                        const sId = s.std_id || s.id;
-                        if (liveMarks[sId] && liveMarks[sId][sub.key] !== undefined && liveMarks[sId][sub.key] !== '') {
-                            breakdown[grpKey].done++;
-                        }
-                    });
-                }
-
-                let subTarget = targetStudents.length;
+                let subTarget = allStudents.length;
                 let subEntered = 0;
                 Object.values(breakdown).forEach(b => subEntered += b.done);
 
@@ -998,15 +972,12 @@
             let list = activeSubjectsList.filter(s => {
                 if (currentFilter === 'All') return true;
                 if (currentFilter === 'Due') return s.entered < s.target;
-                if (['Group-A', 'Group-B', 'Group-C'].includes(currentFilter)) {
-                    return s.stream === 'Science' && s.breakdown[currentFilter] !== undefined;
-                }
                 if (s.breakdown && s.breakdown[currentFilter] !== undefined) return true;
                 return s.stream === currentFilter;
             });
 
             if (list.length === 0) {
-                container.innerHTML = '<div class="text-center p-4 small text-muted">No records found for this filter.</div>';
+                container.innerHTML = '<div class="text-center p-4 small text-muted">No subjects found for this filter.</div>';
                 return;
             }
 
@@ -1021,6 +992,8 @@
                 let breakdownHTML = '';
                 Object.keys(sub.breakdown).forEach(gKey => {
                     const b = sub.breakdown[gKey];
+                    if (b.target === 0) return;
+
                     let stCls = 'pending', shortIcon = '✕';
                     if (b.target > 0 && b.done === b.target) {
                         stCls = 'done'; shortIcon = '✓';
@@ -1029,7 +1002,7 @@
                     }
 
                     const isCurrentGroup = (currentFilter === gKey);
-                    const shortLabel = gKey.replace('Group-', '');
+                    const shortLabel = gKey.replace('Group ', '').replace('(Science)', 'Sci').replace('(Humanities)', 'Hum').replace('(Business Studies)', 'B.Stud');
                     breakdownHTML += `
                         <span class="grp-pill ${stCls}" style="${isCurrentGroup ? 'outline: 2px solid var(--primary); font-weight:800;' : ''}">
                             ${shortLabel}: ${b.done}/${b.target} ${shortIcon}
@@ -1055,8 +1028,8 @@
                 card.innerHTML = `
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <div class="fw-bold" style="font-size:0.88rem; color:#0f172a;">${sub.name}</div>
-                            <div class="text-muted" style="font-size:0.72rem;">${sub.stream} • Total: <b>${sub.entered}/${sub.target}</b></div>
+                            <div class="fw-bold" style="font-size:0.92rem; color:#0f172a;">${sub.name} <small class="text-muted">(${sub.max} Marks)</small></div>
+                            <div class="text-muted" style="font-size:0.75rem;">${currentExam.class} • Total: <b>${sub.entered}/${sub.target}</b></div>
                         </div>
                         <span class="chip-status ${badgeClass}">${badgeText}</span>
                     </div>
@@ -1081,7 +1054,8 @@
                 Object.keys(sub.breakdown).forEach(gKey => {
                     const b = sub.breakdown[gKey];
                     if (b.done < b.target) {
-                        dueGrps.push(`${gKey} (${b.target - b.done} remaining)`);
+                        const shortLabel = gKey.replace('Group ', '').replace('(Science)', 'Sci').replace('(Humanities)', 'Hum').replace('(Business Studies)', 'B.Stud');
+                        dueGrps.push(`${shortLabel} (${b.target - b.done} pending)`);
                     }
                 });
 
@@ -1103,7 +1077,7 @@
             });
         };
 
-        // 7. Tabulation Print Engine (Zero Roll Column)
+        // 7. Tabulation Print Engine (Pure Merit Order, Zero Roll Column)
         window.printLiveTabulationSheet = function () {
             if (!currentExam) return;
 
@@ -1119,127 +1093,70 @@
             tbody.innerHTML = '';
             thead.innerHTML = '';
 
-            const isGroupFilter = ['Group-A', 'Group-B', 'Group-C', 'Group A', 'Group B', 'Humanities', 'B.Studies'].includes(currentFilter);
+            const isGroupFilter = currentFilter !== 'All' && currentFilter !== 'Due';
+            const groupLabel = isGroupFilter ? ` (${currentFilter})` : ' (All Groups)';
+            subTitle.innerText = `${currentExam.class || 'CPSCL'} - Performance Evaluation Statement${groupLabel}`;
 
-            if (isLegacyExam) {
-                const streamKey = (currentFilter === 'Humanities') ? 'Humanities' : ((currentFilter === 'B.Studies') ? 'B.Studies' : 'Science');
-                const subjects = LEGACY_MASTER_SUBJECTS.filter(s => s.stream === streamKey);
-                const fullMarksTotal = subjects.length * (currentExam.max || 15);
+            const examSubs = currentExam.subjects || {};
+            const subKeys = Object.keys(examSubs);
+            const isSSC = isSSC27Exam(currentExam);
+            const defaultMark = isSSC ? 20 : 30;
+            
+            let fullMarksTotal = 0;
+            subKeys.forEach(k => fullMarksTotal += (parseInt(examSubs[k]) || defaultMark));
 
-                const groupLabel = isGroupFilter ? ` (${currentFilter})` : ' (All Students)';
-                subTitle.innerText = `Performance Evaluation Statement (Full Tabulation)${groupLabel}`;
+            let targetStudents = allStudents.filter(s => {
+                if (isGroupFilter) return s.assignedGroup === currentFilter;
+                return true;
+            });
 
-                let targetStudents = allStudents.filter(s => {
-                    if (isGroupFilter) return s.assignedGroup === currentFilter;
-                    return s.group === 'Science';
+            let thHtml = `<tr>
+                <th style="width: 40px;">Merit</th>
+                <th style="width: 100px;">Student ID</th>
+                <th style="text-align: left; padding-left: 6px;">Student Name</th>
+                <th style="width: 90px;">Group</th>
+            `;
+            subKeys.forEach(k => {
+                thHtml += `<th>${k}<br><small>(${examSubs[k] || defaultMark})</small></th>`;
+            });
+            thHtml += `<th style="width: 70px;">Total<br><small>(${fullMarksTotal})</small></th></tr>`;
+            thead.innerHTML = thHtml;
+
+            let computedRows = targetStudents.map(s => {
+                const sId = String(s.std_id || s.student_id || s.id || '').trim();
+                let total = 0;
+                let scores = {};
+                subKeys.forEach(k => {
+                    const m = (liveMarks[sId] && liveMarks[sId][k] !== undefined) ? liveMarks[sId][k] : '';
+                    const v = parseFloat(m);
+                    if (!isNaN(v)) total += v;
+                    scores[k] = (m !== '') ? m : '-';
                 });
-                if (targetStudents.length === 0) targetStudents = allStudents;
+                return { ...s, sId, total, scores };
+            });
 
-                let thHtml = `<tr>
-                    <th style="width: 35px;">SL</th>
-                    <th style="width: 90px;">Std ID</th>
-                    <th style="text-align: left; padding-left: 6px;">Student Name</th>
-                    <th style="width: 60px;">Group</th>
-                `;
-                subjects.forEach(sb => {
-                    const label = sb.key === 'HM_AG' ? 'HM/AG' : (sb.key === 'AG_HE' ? 'AG/HE' : sb.key);
-                    thHtml += `<th>${label}</th>`;
-                });
-                thHtml += `<th style="width: 60px;">Total<br>(${fullMarksTotal})</th></tr>`;
-                thead.innerHTML = thHtml;
+            computedRows.sort((a, b) => b.total - a.total);
 
-                let computedRows = targetStudents.map(s => {
-                    let total = 0;
-                    let scores = {};
-                    subjects.forEach(sb => {
-                        const m = (liveMarks[s.id] && liveMarks[s.id][sb.key] !== undefined) ? liveMarks[s.id][sb.key] : '';
-                        const v = parseFloat(m);
-                        if (!isNaN(v)) total += v;
-                        scores[sb.key] = (m !== '') ? m : '0';
-                    });
-                    return { ...s, total, scores };
-                });
-
-                computedRows.sort((a, b) => b.total - a.total);
-
-                computedRows.forEach((s, idx) => {
-                    const tr = document.createElement('tr');
-                    let tdHtml = `
-                        <td>${idx + 1}</td>
-                        <td style="font-weight:700;">${s.id}</td>
-                        <td class="name-col">${s.name}</td>
-                        <td>${s.assignedGroup || '-'}</td>
-                    `;
-                    subjects.forEach(sb => {
-                        tdHtml += `<td>${s.scores[sb.key]}</td>`;
-                    });
-                    tdHtml += `<td class="total-col">${s.total}</td>`;
-                    tr.innerHTML = tdHtml;
-                    tbody.appendChild(tr);
-                });
-
-            } else {
-                const groupLabel = isGroupFilter ? ` (${currentFilter})` : ' (All Groups)';
-                subTitle.innerText = `${currentExam.class || 'CPSCL'} - Live Tabulation Sheet${groupLabel}`;
-
-                const examSubs = currentExam.subjects || {};
-                const subKeys = Object.keys(examSubs);
-                let fullMarksTotal = 0;
-                subKeys.forEach(k => fullMarksTotal += (parseInt(examSubs[k]) || 30));
-
-                let targetStudents = allStudents.filter(s => {
-                    if (isGroupFilter) return s.assignedGroup === currentFilter;
-                    return true;
-                });
-
-                let thHtml = `<tr>
-                    <th style="width: 40px;">Merit</th>
-                    <th style="width: 100px;">Student ID</th>
-                    <th style="text-align: left; padding-left: 6px;">Student Name</th>
-                    <th style="width: 80px;">Group</th>
+            computedRows.forEach((s, idx) => {
+                const tr = document.createElement('tr');
+                let tdHtml = `
+                    <td>${idx + 1}</td>
+                    <td style="font-weight:700;">${s.sId}</td>
+                    <td class="name-col">${s.student_name || s.name || s.name_english || '-'}</td>
+                    <td>${s.assignedGroup || '-'}</td>
                 `;
                 subKeys.forEach(k => {
-                    thHtml += `<th>${k}<br><small>(${examSubs[k] || 30})</small></th>`;
+                    tdHtml += `<td>${s.scores[k]}</td>`;
                 });
-                thHtml += `<th style="width: 70px;">Total<br><small>(${fullMarksTotal})</small></th></tr>`;
-                thead.innerHTML = thHtml;
-
-                let computedRows = targetStudents.map((s, idx) => {
-                    const sId = s.std_id || s.id;
-                    let total = 0;
-                    let scores = {};
-                    subKeys.forEach(k => {
-                        const m = (liveMarks[sId] && liveMarks[sId][k] !== undefined) ? liveMarks[sId][k] : '';
-                        const v = parseFloat(m);
-                        if (!isNaN(v)) total += v;
-                        scores[k] = (m !== '') ? m : '-';
-                    });
-                    return { ...s, sId, total, scores };
-                });
-
-                computedRows.sort((a, b) => b.total - a.total);
-
-                computedRows.forEach((s, idx) => {
-                    const tr = document.createElement('tr');
-                    let tdHtml = `
-                        <td>${idx + 1}</td>
-                        <td style="font-weight:700;">${s.sId}</td>
-                        <td class="name-col">${s.student_name || s.name}</td>
-                        <td>${s.assignedGroup || '-'}</td>
-                    `;
-                    subKeys.forEach(k => {
-                        tdHtml += `<td>${s.scores[k]}</td>`;
-                    });
-                    tdHtml += `<td class="total-col">${s.total}</td>`;
-                    tr.innerHTML = tdHtml;
-                    tbody.appendChild(tr);
-                });
-            }
+                tdHtml += `<td class="total-col">${s.total}</td>`;
+                tr.innerHTML = tdHtml;
+                tbody.appendChild(tr);
+            });
 
             window.print();
         };
 
-        // 8. Subject Entry & Direct Mark Input from Tracker (Pure Merit Order)
+        // 8. Subject Entry & Direct Mark Input from Tracker
         window.triggerSubjectEntry = async function (subKey, stream) {
             try {
                 if (await refreshCurrentExamLockStatus()) {
@@ -1247,54 +1164,40 @@
                     return;
                 }
             } catch (err) {
-                console.error("Exam lock status check failed:", err);
+                console.error("Exam lock check failed:", err);
                 showInAppModal("Sync Required", "Exam status could not be verified. Marks cannot be entered.", "error");
                 return;
             }
+
             const sub = activeSubjectsList.find(s => s.key === subKey && s.stream === stream);
             if (!sub) return;
             activeSelectedSub = sub;
 
-            document.getElementById('lblSelectedSubName').innerText = `${sub.name} (${sub.stream})`;
+            document.getElementById('lblSelectedSubName').innerText = `${sub.name} (${currentExam.class})`;
             document.getElementById('inpSubPin').value = '';
             document.getElementById('subPinErr').style.display = 'none';
 
             const grpBox = document.getElementById('grpSelectionBox');
             const selGrp = document.getElementById('selEntryGroup');
             selGrp.innerHTML = '';
+            grpBox.style.display = 'block';
 
-            if (isLegacyExam && sub.stream === 'Science') {
-                grpBox.style.display = 'block';
-                ['Group-A', 'Group-B', 'Group-C'].forEach(g => {
-                    const opt = document.createElement('option');
-                    opt.value = g;
-                    opt.innerText = `Science (${g})`;
-                    selGrp.appendChild(opt);
-                });
-            } else if (!isLegacyExam) {
-                grpBox.style.display = 'block';
-                const grpList = (currentExam.groups && currentExam.groups.length > 0) 
-                    ? currentExam.groups 
-                    : [{ name: 'Group A' }, { name: 'Group B' }];
-                grpList.forEach(g => {
-                    const opt = document.createElement('option');
-                    opt.value = g.name;
-                    opt.innerText = g.name;
-                    selGrp.appendChild(opt);
-                });
-            } else {
-                grpBox.style.display = 'none';
+            const isSSC = isSSC27Exam(currentExam);
+            const grpList = (currentExam.groups && currentExam.groups.length > 0) 
+                ? currentExam.groups 
+                : (isSSC 
+                    ? [{ name: 'Group A (Science)' }, { name: 'Group B (Science)' }, { name: 'Group C (Science)' }, { name: 'Group D (Humanities)' }, { name: 'Group D (Business Studies)' }]
+                    : [{ name: 'Group A' }, { name: 'Group B' }]);
+
+            grpList.forEach(g => {
                 const opt = document.createElement('option');
-                opt.value = sub.stream;
-                opt.innerText = sub.stream;
+                opt.value = g.name;
+                opt.innerText = g.name;
                 selGrp.appendChild(opt);
-            }
+            });
 
             const cleanSub = sub.key.replace(/[^a-zA-Z0-9_-]/g, '_');
-            const pinPath = isLegacyExam 
-                ? `${sub.stream === 'B.Studies' ? 'BStudies' : sub.stream}_${sub.key}`
-                : `cpscl_${String(currentExam.id).replace(/[^a-zA-Z0-9_-]/g, '_')}_${cleanSub}`;
-
+            const pinPath = `cpscl_${String(currentExam.id).replace(/[^a-zA-Z0-9_-]/g, '_')}_${cleanSub}`;
             const existingPin = allPins[pinPath] || allPins[sub.key];
 
             if (!existingPin) {
@@ -1318,7 +1221,7 @@
                     return;
                 }
             } catch (err) {
-                console.error("Exam lock status check failed:", err);
+                console.error("Exam lock check failed:", err);
                 showInAppModal("Sync Required", "Exam status could not be verified. Marks cannot be entered.", "error");
                 return;
             }
@@ -1330,9 +1233,7 @@
             }
 
             const cleanSub = activeSelectedSub.key.replace(/[^a-zA-Z0-9_-]/g, '_');
-            const pinKey = isLegacyExam 
-                ? `${activeSelectedSub.stream === 'B.Studies' ? 'BStudies' : activeSelectedSub.stream}_${activeSelectedSub.key}`
-                : `cpscl_${String(currentExam.id).replace(/[^a-zA-Z0-9_-]/g, '_')}_${cleanSub}`;
+            const pinKey = `cpscl_${String(currentExam.id).replace(/[^a-zA-Z0-9_-]/g, '_')}_${cleanSub}`;
 
             const pinModalEl = document.getElementById('modalSubPin');
             const pinModal = bootstrap.Modal.getInstance(pinModalEl);
@@ -1354,38 +1255,29 @@
             }
         };
 
-        // Open Mark Entry Sheet (Pure Merit Order & Zero Roll)
+        // Open Mark Entry Sheet (Dynamic 20 or 30 Full Marks, Zero Roll)
         function openMarkEntrySheet() {
             if (isExamLocked) {
                 showInAppModal("Entry Locked", "The Admin Panel has locked this exam. Marks cannot be entered.", "error");
                 return;
             }
+
             const targetGroup = document.getElementById('selEntryGroup').value;
-            const fullM = activeSelectedSub.max || currentExam.max || 30;
+            const fullM = activeSelectedSub.max || (isSSC27Exam(currentExam) ? 20 : 30);
+            
             document.getElementById('lblSheetTitle').innerText = `${activeSelectedSub.name} - ${targetGroup}`;
             document.getElementById('lblSheetGroupMeta').innerText = `Full Mark: ${fullM}`;
 
             const container = document.getElementById('sheetContainer');
             container.innerHTML = '';
 
-            let list = [];
-            if (isLegacyExam) {
-                list = allStudents.filter(s => {
-                    if (activeSelectedSub.stream === 'Science') {
-                        return s.group === 'Science' && (s.assignedGroup === targetGroup);
-                    }
-                    return s.group === activeSelectedSub.stream;
-                });
-                list.sort((a, b) => (Number(a.overallRank || a.sl) || 9999) - (Number(b.overallRank || b.sl) || 9999));
-            } else {
-                list = allStudents.filter(s => s.assignedGroup === targetGroup);
-            }
+            const list = allStudents.filter(s => s.assignedGroup === targetGroup);
 
             if (list.length === 0) {
                 container.innerHTML = `<div class="text-center p-3 text-danger fw-bold">No students found in ${targetGroup}!</div>`;
             } else {
                 list.forEach((s, idx) => {
-                    const sId = s.std_id || s.id;
+                    const sId = String(s.std_id || s.student_id || s.id || '').trim();
                     const prev = (liveMarks[sId] && liveMarks[sId][activeSelectedSub.key] !== undefined) ? liveMarks[sId][activeSelectedSub.key] : '';
                     const slNum = idx + 1;
 
@@ -1395,7 +1287,7 @@
                         <div class="d-flex align-items-center gap-2 ps-1">
                             <span class="badge rounded-pill bg-light text-success fw-bold" style="color:var(--primary-dark)!important;">#${slNum}</span>
                             <div>
-                                <div class="fw-bold small mb-0">${s.student_name || s.name}</div>
+                                <div class="fw-bold small mb-0">${s.student_name || s.name || s.name_english || 'Student'}</div>
                                 <span class="text-muted" style="font-size:0.72rem;">ID: ${sId}</span>
                             </div>
                         </div>
@@ -1424,7 +1316,7 @@
                     const num = parseFloat(this.value);
                     if (!isNaN(num) && (num > fullM || num < 0)) {
                         this.classList.add('input-error');
-                        showInAppModal("Attention!", `Mark cannot exceed ${fullM}.`, "error");
+                        showInAppModal("Limit Exceeded!", `Full Mark for this exam is ${fullM}.`, "error");
                     } else {
                         this.classList.remove('input-error');
                     }
@@ -1440,7 +1332,7 @@
         }
 
         window.saveDirectMarksToFirebase = async function () {
-            if (!currentExam || currentExam.type !== 'cpscl' || !activeSelectedSub) {
+            if (!currentExam || !activeSelectedSub) {
                 showInAppModal("Notice", "Select an exam and subject before saving marks.", "error");
                 return;
             }
@@ -1451,13 +1343,13 @@
                     return;
                 }
             } catch (err) {
-                console.error("Exam lock status check failed:", err);
+                console.error("Exam lock check failed:", err);
                 showInAppModal("Sync Required", "Exam status could not be verified. Marks were not saved.", "error");
                 return;
             }
 
             const inputs = document.querySelectorAll('.mark-field');
-            const fullM = activeSelectedSub.max || currentExam.max || 30;
+            const fullM = activeSelectedSub.max || (isSSC27Exam(currentExam) ? 20 : 30);
             const updates = {};
 
             inputs.forEach(inp => {
