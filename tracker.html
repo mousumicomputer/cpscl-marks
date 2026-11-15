@@ -643,45 +643,57 @@
             });
         }
 
-        // 2. Fetch exams published by Admin Panel (Handles both Class 8 and SSC-27)
+        // 2. Fetch exams published from BOTH 'cpscl_exams' AND 'cpscl_ssc27_exams'
         async function fetchAllActiveTrackerExams() {
             const examSelect = document.getElementById('examSelect');
             examSelect.innerHTML = '<option value="">-- Choose Examination --</option>';
             loadedExamsList = [];
 
             try {
-                const newSnap = await get(ref(db, 'cpscl_exams'));
-                if (newSnap.exists()) {
-                    const newExams = newSnap.val();
-                    const examEntries = Array.isArray(newExams)
-                        ? newExams.map((exam, index) => [String(index), exam])
-                        : Object.entries(newExams);
+                // দুটি নোড থেকেই প্যারালালে পরীক্ষা রিড করা
+                const [generalSnap, sscSnap] = await Promise.all([
+                    get(ref(db, 'cpscl_exams')).catch(() => null),
+                    get(ref(db, 'cpscl_ssc27_exams')).catch(() => null)
+                ]);
 
-                    examEntries.forEach(([key, ex]) => {
-                        if (!ex || typeof ex !== 'object') return;
-                        const status = getExamStatus(ex);
-                        const normalizedStatus = status.toLowerCase();
-                        const isLocked = isExamEntryLocked({ ...ex, status });
-                        if (!['active', 'locked', 'closed'].includes(normalizedStatus)) return;
+                let allRawExams = [];
 
-                        const id = String(ex.id || ex.examId || ex.exam_id || key);
-                        const examName = String(ex.name || ex.examName || ex.title || id);
-                        const examClass = String(ex.class || ex.className || ex.class_name || (isSSC27Exam(ex) ? 'Class 10' : 'Class 8'));
-                        
-                        loadedExamsList.push({
-                            type: 'cpscl',
-                            id,
-                            name: `${examName} (${examClass})`,
-                            rawName: examName,
-                            class: examClass,
-                            date: ex.date || '',
-                            subjects: ex.subjects || {},
-                            groups: ex.groups || [],
-                            status,
-                            isLocked
-                        });
-                    });
+                if (generalSnap && generalSnap.exists()) {
+                    const gData = generalSnap.val();
+                    const gList = Array.isArray(gData) ? gData : Object.values(gData);
+                    allRawExams.push(...gList);
                 }
+
+                if (sscSnap && sscSnap.exists()) {
+                    const sData = sscSnap.val();
+                    const sList = Array.isArray(sData) ? sData : Object.values(sData);
+                    allRawExams.push(...sList);
+                }
+
+                allRawExams.forEach((ex, idx) => {
+                    if (!ex || typeof ex !== 'object') return;
+                    const status = getExamStatus(ex);
+                    const normalizedStatus = status.toLowerCase();
+                    const isLocked = isExamEntryLocked({ ...ex, status });
+                    if (!['active', 'locked', 'closed'].includes(normalizedStatus)) return;
+
+                    const id = String(ex.id || ex.examId || ex.exam_id || idx);
+                    const examName = String(ex.name || ex.examName || ex.title || id);
+                    const examClass = String(ex.class || ex.className || ex.class_name || (isSSC27Exam(ex) ? 'Class 10' : 'Class 8'));
+                    
+                    loadedExamsList.push({
+                        type: 'cpscl',
+                        id,
+                        name: `${examName} (${examClass})`,
+                        rawName: examName,
+                        class: examClass,
+                        date: ex.date || '',
+                        subjects: ex.subjects || {},
+                        groups: ex.groups || [],
+                        status,
+                        isLocked
+                    });
+                });
 
                 loadedExamsList.forEach((ex, idx) => {
                     const opt = document.createElement('option');
@@ -722,7 +734,8 @@
 
         async function refreshCurrentExamLockStatus() {
             if (!currentExam) throw new Error('No exam is selected.');
-            const snap = await get(ref(db, 'cpscl_exams'));
+            const targetPath = isSSC27Exam(currentExam) ? 'cpscl_ssc27_exams' : 'cpscl_exams';
+            const snap = await get(ref(db, targetPath));
             const rawExams = snap.exists() ? snap.val() : null;
             const entries = Array.isArray(rawExams)
                 ? rawExams.map((exam, index) => [String(index), exam])
@@ -784,7 +797,7 @@
             return 'science';
         }
 
-        // 4. Fetch Live Progress Data from Cloud (SSC-27 20-Marks & Class 8 Safe)
+        // 4. Fetch Live Progress Data from Cloud
         window.fetchTrackerLiveData = async function () {
             if (!currentExam) return;
 
@@ -823,7 +836,6 @@
                     if (orderSnap.exists()) meritOrderList = orderSnap.val() || [];
                 } catch(e) {}
 
-                // মেধা অর্ডার অনুযায়ী সর্টিং
                 if (meritOrderList && meritOrderList.length > 0) {
                     allStudents.sort((a, b) => {
                         const idA = String(a.std_id || a.student_id || a.id || '').trim();
@@ -842,7 +854,6 @@
                     });
                 }
 
-                // গ্রুপ নির্ধারণ লজিক
                 const trackRanks = { science: 0, humanities: 0, business: 0 };
                 allStudents.forEach((st, idx) => {
                     const sId = String(st.std_id || st.student_id || st.id || '').trim();
@@ -1077,7 +1088,7 @@
             });
         };
 
-        // 7. Tabulation Print Engine (Pure Merit Order, Zero Roll Column)
+        // 7. Tabulation Print Engine
         window.printLiveTabulationSheet = function () {
             if (!currentExam) return;
 
@@ -1255,7 +1266,6 @@
             }
         };
 
-        // Open Mark Entry Sheet (Dynamic 20 or 30 Full Marks, Zero Roll)
         function openMarkEntrySheet() {
             if (isExamLocked) {
                 showInAppModal("Entry Locked", "The Admin Panel has locked this exam. Marks cannot be entered.", "error");
@@ -1339,12 +1349,12 @@
 
             try {
                 if (await refreshCurrentExamLockStatus()) {
-                    showInAppModal("Entry Locked", "The Admin Panel has locked this exam. Marks were not saved.", "error");
+                    showInAppModal("Entry Locked", "The Admin Panel has locked this exam. Marks cannot be entered.", "error");
                     return;
                 }
             } catch (err) {
                 console.error("Exam lock check failed:", err);
-                showInAppModal("Sync Required", "Exam status could not be verified. Marks were not saved.", "error");
+                showInAppModal("Sync Required", "Exam status could not be verified. Marks cannot be entered.", "error");
                 return;
             }
 
