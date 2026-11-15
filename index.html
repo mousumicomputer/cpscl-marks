@@ -669,6 +669,36 @@
             return id.startsWith('SSC27_') || c.includes('10') || c.includes('ssc') || n.includes('daily test') || n.includes('ssc');
         }
 
+        // --- স্মার্ট গ্রুপ-সাবজেক্ট ফিল্টারিং গার্ড ---
+        function isSubjectAllowedForGroup(subName, groupName) {
+            if (!groupName || groupName === "") return true;
+
+            const g = String(groupName).toLowerCase();
+            const s = String(subName).toLowerCase().replace(/[^a-z0-9]/g, '');
+
+            const isScienceGroup = g.includes('science') || g.includes('group a') || g.includes('group b') || g.includes('group c');
+            const isHumanitiesGroup = g.includes('humanities');
+            const isBusinessGroup = g.includes('business') || g.includes('commerce');
+
+            // ১. বিজ্ঞান বিভাগের গ্রুপ (A, B, C)-তে কোনো কমার্স/আর্টস বা সাধারণ বিজ্ঞান বিষয় দেখানো যাবে না
+            if (isScienceGroup) {
+                if (s === 'sci' || s === 'generalsci') return false;
+                if (s.includes('acc') || s.includes('geo')) return false;
+                if (s.includes('fin') || s.includes('his')) return false;
+                if (s.includes('bent') || s.includes('civ') || s.includes('ben')) return false;
+                return true;
+            }
+
+            // ২. আর্টস বা কমার্স গ্রুপ (Group D)-তে কোনো পিওর সায়েন্সের বিষয় (Phy, Che, Bio, Higher Math) দেখানো যাবে না
+            if (isHumanitiesGroup || isBusinessGroup) {
+                if (s.includes('phy') || s.includes('che') || s.includes('bio')) return false;
+                if (s.startsWith('hm') || s.includes('highermath')) return false;
+                return true;
+            }
+
+            return true;
+        }
+
         // 1. Fetch Exams from BOTH 'cpscl_ssc27_exams' AND 'cpscl_exams'
         async function fetchAllActiveExams() {
             const examSelect = document.getElementById('examSelect');
@@ -676,13 +706,11 @@
             loadedExamsList = [];
 
             try {
-                // ১. ডেডিকেটেড SSC 27 ড্রয়ার এবং সাধারণ ড্রয়ার দুটি থেকেই পরীক্ষা আনা
                 const [sscSnap, generalSnap] = await Promise.all([
                     get(ref(db, 'cpscl_ssc27_exams')).catch(() => null),
                     get(ref(db, 'cpscl_exams')).catch(() => null)
                 ]);
 
-                // SSC 27 পরীক্ষাগুলো আগে যোগ করা (যেমন: Daily Test-01)
                 if (sscSnap && sscSnap.exists()) {
                     const sData = sscSnap.val();
                     const sList = Array.isArray(sData) ? sData : Object.values(sData);
@@ -702,14 +730,12 @@
                     });
                 }
 
-                // সাধারণ পরীক্ষা যোগ করা (ডিলিট হওয়া বা ডুপ্লিকেট পুরোনো টেস্ট ফিল্টার করে)
                 if (generalSnap && generalSnap.exists()) {
                     const gData = generalSnap.val();
                     const gList = Array.isArray(gData) ? gData : Object.values(gData);
                     gList.forEach(ex => {
                         if (ex && ex.status !== 'Locked' && ex.status !== 'Closed') {
                             const n = String(ex.name || '').trim();
-                            // পুরোনো 'Test-01' বাদ দেওয়া
                             if (n !== 'Test-01' && !loadedExamsList.some(e => e.id === ex.id)) {
                                 loadedExamsList.push({
                                     type: isSSC27(ex) ? 'ssc27' : 'cpscl',
@@ -768,7 +794,7 @@
             populateGroupsDropdown();
         };
 
-        // 3. Populate Groups Dropdown (SSC 27 এর জন্য ৫টি গ্রুপ)
+        // 3. Populate Groups Dropdown
         function populateGroupsDropdown() {
             const grpSelect = document.getElementById('groupSelect');
             grpSelect.innerHTML = '<option value="">-- Select Group --</option>';
@@ -797,7 +823,7 @@
             });
         }
 
-        // 4. Group Changed Handler (রুটিনের বিষয়গুলো লোড করা)
+        // 4. Group Changed Handler (স্মার্ট গ্রুপ অনুযায়ী রুটিনের বিষয় ফিল্টার করা)
         window.onGroupChanged = function () {
             currentGroup = document.getElementById('groupSelect').value;
             const subSelect = document.getElementById('subjectSelect');
@@ -812,10 +838,19 @@
             const isSSC = isSSC27(currentExam);
             const defaultMark = isSSC ? 20 : 30;
 
+            let count = 0;
             Object.keys(subs).forEach(subName => {
-                const fullM = subs[subName] || defaultMark;
-                subSelect.innerHTML += `<option value="${subName}" data-max="${fullM}">${subName} (Full: ${fullM})</option>`;
+                // স্মার্ট ফিল্টারিং প্রয়োগ
+                if (isSubjectAllowedForGroup(subName, currentGroup)) {
+                    const fullM = subs[subName] || defaultMark;
+                    subSelect.innerHTML += `<option value="${subName}" data-max="${fullM}">${subName} (Full: ${fullM})</option>`;
+                    count++;
+                }
             });
+
+            if (count === 0) {
+                subSelect.innerHTML = '<option value="">-- No Subjects Assigned for this Group --</option>';
+            }
         };
 
         function getPinCloudPath() {
@@ -920,7 +955,7 @@
             return 'science';
         }
 
-        // 6. Live Students Render (রোল ছাড়া মেধা অনুযায়ী ১ থেকে সাজানো)
+        // 6. Live Students Render
         async function renderStudentsLive() {
             document.getElementById('statusBadge').innerText = `${currentSubject} • ${currentGroup}`;
             const container = document.getElementById('studentsContainer');
@@ -1089,7 +1124,7 @@
             });
         }
 
-        // 7. Save Marks (স্থায়ীভাবে cpscl_exam_marks এ সেভ)
+        // 7. Save Marks
         window.saveAllMarks = async function () {
             if (isExamLocked) {
                 showInAppModal("Notice", "Entry closed by Admin.", "error");
@@ -1154,7 +1189,7 @@
             }
         };
 
-        // 8. Download / Print PDF Marks Sheet Feature (No Roll)
+        // 8. Download / Print PDF Marks Sheet Feature
         window.downloadMarksPDF = function () {
             const inputs = document.querySelectorAll('.mark-input');
             const tbody = document.getElementById('printTableBody');
